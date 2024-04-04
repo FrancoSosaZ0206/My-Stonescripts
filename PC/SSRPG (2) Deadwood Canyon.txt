@@ -1,0 +1,441 @@
+﻿// *******************************************************
+//                     2-Deadwood.txt                     
+// *******************************************************
+
+
+// Script for Deadwood Canyon
+
+
+//IMPORTS
+
+
+var p
+p = import MyScripts/Imports/performanceV2
+var i
+i = import MyScripts/Imports/MyBetterInfo
+var c = import MyScripts/Imports/combat
+var a = import MyScripts/Imports/MyArsenal
+var u = import MyScripts/Imports/utilities
+
+
+var som
+som = import MyScripts/Imports/Speed_O_Meter
+
+
+
+
+// VARIABLES
+
+
+var keepMask = true
+var smiteScr = 1
+
+
+?p.ll
+  keepMask = false
+
+
+
+
+// FUNCTIONS:
+
+
+func harvFunc(btn)
+  btnPressed = true
+  ?btn = yesBtn
+    choice = true
+  : // btn = noBtn
+    choice = false
+  
+  return
+
+
+func ldtF(mode)
+
+
+  ?mode = "default"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield1@
+  :?mode = "armorRegen"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield2@
+  :?mode = "escape"
+    equipL mind
+    ?!keepMask
+      equipR @a.cshield1@
+  :?mode = "magnet"
+    equipL star
+    ?!keepMask
+      equipR triskelion
+
+
+  :?mode = "harv"
+    ?!keepMask
+      equipL moon
+      equipR hatchet
+    :
+      equipL triskelion
+
+
+  :?mode = "aidPassive"
+    equipL ouroboros
+    ?!keepMask
+      equipR triskelion
+  :?mode = "aidActive"
+    equipL @a.vhammer3@
+    ?!keepMask
+      equipR @a.vshield2@
+
+
+
+
+  :?mode = "unmkDmg"
+    ?keepMask & p.fc > 1
+      equipL @a.dUSWORD2@
+    :
+      equipL @a.dUsword1@
+    ?!keepMask
+      equipR @a.dUSWORD2@
+
+
+  :?mode = "poenaStun"
+    ?!keepMask
+      equipL Speedy Hammer
+      equipR Vantum Phoenix
+    :
+      equipL Speedy Hammer
+
+
+  :?mode = "magic"
+    ?keepMask
+      equipL @a.dIwand1@
+    :
+      ?p.fds ! "damage"
+        equipL @a.dPwand@
+      :
+        equipL @a.dFwand@
+      equipR @a.dIwand1@
+
+
+  :?mode = "rangedDmg"
+    equip @a.rbow@
+
+
+  :
+    >c-10,0,#red,
+    ^ERROR: ldtF() recieved incorrect mode: @mode@
+
+
+  return
+
+
+
+
+// PROCEDURE:
+
+
+var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+?som.speedOmeterUpdate(false)
+  som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+?somui
+  somui.Recycle()
+  somui = null
+
+
+
+
+var choice = false
+var btnPressed = false
+
+
+var yesBtn
+var noBtn
+
+
+var dontShowAgain = false
+
+
+
+
+?!btnPressed
+  ?!yesBtn
+    yesBtn = i.makeButton(
+    ^-5,9,4,4,null,null,
+    ^"Yes",green,-5,harvFunc)
+  ?!noBtn
+    noBtn = i.makeButton(
+    ^5,9,5,4,null,null,
+    ^"No",red,-5,harvFunc)
+
+
+  i.showStrCentered("Harvest trees?",6,30,yellow)
+
+
+:
+  ?yesBtn
+    yesBtn.Recycle()
+    yesBtn = null
+  ?noBtn
+    noBtn.Recycle()
+    noBtn = null
+
+
+  ?!dontShowAgain
+    var aux = p.tt + 3*u.sec
+    ?p.tt < aux
+      ?choice
+        i.showStrCentered("Harvest trees is enabled",6,30,"green")
+        ?keepMask
+          i.showStrCentered("(Will start harvesting in the next run!)",7,40,"green")
+      :
+        i.showStrCentered("Harvest trees is disabled",6,30,"red")
+    :
+      ?!dontShowAgain
+        dontShowAgain = true
+
+
+
+
+?p.ils = 3
+  equipL wand 0*
+  equipL @p.il@
+?p.irs = 3
+  equipR @a.cshield1@
+  equipR @p.ir@
+
+
+?p.lb
+  p.rs = res.stone
+  p.rw = res.wood
+  p.rb = res.bronze
+
+
+  ?p.rb >= 10
+    ?p.rw >= 10
+      ?p.ip ! "berserk"
+        brew wood + bronze
+    :?p.rs >= 10
+      ?p.ip ! "lucky"
+        brew stone + bronze
+    :
+      loc.Leave()
+  :
+    loc.Leave()
+
+
+?keepMask
+  equipR mask
+
+
+?p.lb | p.ll
+  equipL triskelion
+  equipR @a.cshield1@
+
+
+:?p.f ! "poena" & c.canUseTali()
+  equipL triskelion
+  c.useTali("r")
+
+
+:?c.canUsePotDmg() & keepMask
+  activate potion
+
+
+:?choice & harvest.distance < 5
+  ldtF("harv")
+  ?c.canUseHatchet() & !keepMask
+    c.useHatchet()
+
+
+:?pickup.distance < 15
+  ldtF("magnet")
+
+
+:
+  p.fd = foe.distance
+  p.aiE = ai.enabled
+
+
+  ?c.canUseQstaff()
+    ?p.aiE & p.ir ! "hatchet"
+    ^& p.ir ! "heavy hammer"
+    ^& p.ir ! "bardiche"
+    ^& p.ir ! Kubikiribocho
+    ^& ((!c.canBash() & !c.canDash())
+    ^| (p.fd < 11 | p.fd > 15))
+      c.useQstaff(a.myqstaff)
+
+
+  ?c.canUseBladeDS(smiteScr)
+    c.useBladeDS()
+
+
+  ?(p.f ! "tree_boss" & p.f ! "poena" & p.fd > 22)
+  ^|(p.fd > 15)
+    ?hp ! maxhp
+      ldtF("aidPassive")
+    :
+      p.pa = armor
+      ?14 <= p.pa & p.pa <= 29
+        ldtF("default")
+      :?p.pa < 14
+        ldtF("armorRegen")
+      :
+        equipL triskelion
+        equipR mask
+
+
+  :
+    ?p.f = "wasp" | p.f = "wasp_nest"
+      p.fds = foe.debuffs.string
+
+
+      ?p.fd <= 10 & c.canUseHamm()
+        c.useHamm()
+
+
+      :?p.fds ! "chill:6"
+        ldtF("magic")
+      :
+        ldtF("rangedDmg")
+
+
+    :?c.canBash()
+      c.bash(a.dLsword)
+    :?c.canDash()
+      c.dash(a.dLsword,a.dshield)
+
+
+    :
+      p.fc = foe.count
+
+
+      ?p.f ! "tree_boss" & p.f ! "poena"
+
+
+        ?p.fc >= 5 & !c.canUseBlade()
+        ^& c.canUseHamm()
+          c.useHamm()
+
+
+        :?p.f ! "immune_to_ranged"
+          ldtF("magic")
+        :
+          ?p.fc > 1
+            ldtF("unmkDmg")
+          :
+            ?keepMask
+              ?p.fds ! "chill:6"
+                equipL @a.dIsword@
+              :?p.fds ! "damage"
+                equipL @a.dPsword1@
+              :?p.fds ! "dot"
+                equipL @a.dFsword@
+              :
+                equipL @a.fsword@
+            :
+              ?p.fds ! "chill:6" |
+              ^p.fds ! "damage" |
+              ^p.fds ! "dot"
+                // Left hand:
+                ?p.fds ! "chill:6"
+                  equipL @a.dIsword@
+                :
+                  equipL @a.fsword@
+
+
+                // Right hand:
+                ?p.fds ! "damage"
+                  equipR @a.dPsword1@
+                :?p.fds ! "dot"
+                  equipR @a.dFsword@
+                :
+                  equipR Vantum Phoenix
+              :
+                p.bs = buffs.string
+                ?p.bs = "berserk"
+                  c.doMoondial(Vantum Phoenix, a.fsword, 2)
+                :?p.bs = "lucky"
+                  c.doMoondial(Vantum Phoenix, a.fsword, 0)
+
+
+      : // ?foe = "tree_boss" | foe = "poena"
+        ?p.ls > 5 & c.canUsePotDmg()
+          activate potion
+
+
+        :
+          ?p.f = "phase1" // = "Xyloalgia"
+            p.fds = foe.debuffs.string
+
+
+            ?c.canUseMask()
+              c.useMask()
+            :?p.ls <= 5 & c.canUseBard()
+              c.useBard(a.fastBard)
+
+
+            :
+              ?keepMask
+                ?p.fds ! "chill:6"
+                  equipL @a.dIsword@
+                :?p.fds ! "damage"
+                  equipL @a.dPsword1@
+                :?p.fds ! "dot"
+                  equipL @a.dFsword@
+                :
+                  equipL @a.fsword@
+              :
+                ?p.fds ! "chill:6" |
+                ^p.fds ! "damage" |
+                ^p.fds ! "dot"
+                  // Left hand:
+                  ?p.fds ! "chill:6"
+                    equipL @a.dIsword@
+                  :
+                    equipL @a.fsword@
+
+
+                  // Right hand:
+                  ?p.fds ! "damage"
+                    equipR @a.dPsword1@
+                  :?p.fds ! "dot"
+                    equipR @a.dFsword@
+                  :
+                    equipR Vantum Phoenix
+                :
+                  p.bs = buffs.string
+                  ?p.bs = "berserk"
+                    c.doMoondial(Vantum Phoenix, a.fsword, 2)
+                  :?p.bs = "lucky"
+                    c.doMoondial(Vantum Phoenix, a.fsword, 0)
+
+
+          : // foe = "phase2" (poena)
+
+
+            /* hide cinderwisp to avoid
+            getting ignition debuff reflected */
+            ?c.canHideTali()
+              c.useTali("l")
+            :
+              p.fhp = foe.hp
+              p.bs = buffs.string
+
+
+              ?c.canUseBard() & p.fhp <= a.bardRDmg
+                c.useBard(Kubikiribocho)
+              :
+                ?c.canUseHamm() &
+                ^p.fhp <= a.hammDmg +
+                ^(a.smiteMult * c.getBuffInfo("smite",false,2))
+                  c.useHamm()
+                :
+                  ldtF("poenaStun")
+
+
+// *******************************************************
+//                 END OF "2-Deadwood.txt"                
+// *******************************************************

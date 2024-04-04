@@ -1,0 +1,635 @@
+﻿// *******************************************************
+//                       Combat.txt                       
+// *******************************************************
+
+
+/* Combat functions library
+  Made by Franco N. Sosa (Tom Crow)
+
+
+This library provides some game-related
+  functions to make the task of doing a
+  farming script easier.
+
+
+- How to use:
+  var c = import MyScripts\Imports\combat
+
+
+- Use the functions that you need like this:
+  ?c.useBlade() // example */
+
+
+
+
+// IMPORTS
+
+
+var p = import MyScripts/Imports/performanceV2
+var u = import MyScripts/Imports/utilities
+
+
+// VARIABLES
+
+
+
+
+// Status
+
+
+var midhp = maxhp / 2
+var lowhp = maxhp / 3
+var hihp = (4 * maxhp) / 5
+
+
+
+
+// FUNCTIONS
+
+
+
+
+
+
+// Stats
+
+
+
+
+/* - arrInfo[0] is symbol
+   - arrInfo[1] is id
+   - arrInfo[2] is stack count
+   - arrInfo[3] is remaining duration on first stack */
+func getBuffInfo(nameid,inFoe,infoIndex)
+// if inFoe = true, checks foe's buffs, else, player's buffs
+  var info
+  var buffFound
+  var arrBuffs
+
+
+  ?inFoe
+    arrBuffs = string.Split(p.fbs,",", true)
+  :
+    arrBuffs = string.Split(p.bs,",", true)
+    
+  ?arrBuffs & !buffFound
+    for buff : arrBuffs
+      ?buff = nameid
+        var arrInfo = string.Split(buff,":",true)
+
+
+        ?0 <= infoIndex & infoIndex <= 3
+          info = int.Parse(arrInfo[infoIndex])
+
+
+        buffFound = true
+
+
+    ?buffFound = true
+      return info
+    :
+      return 0
+
+
+/* - arrInfo[0] is symbol
+   - arrInfo[1] is id
+   - arrInfo[2] is stack count
+   - arrInfo[3] is remaining duration on first stack */
+func getDebuffLvl(nameid,inFoe)
+// if inFoe = true, checks foe's debuffs, else, player's debuffs
+  var lvl
+  var debuffFound
+  var arrDebuffs
+
+
+  ?inFoe
+    arrDebuffs = string.Split(p.fds,",", true)
+  :
+    arrDebuffs = string.Split(p.ds,",", true)
+
+
+  ?arrDebuffs & !debuffFound
+    for debuff : arrDebuffs
+      ?debuff = nameid
+        var arrInfo = string.Split(debuff,":",true)
+
+
+        lvl = int.Parse(arrInfo[2])
+        debuffFound = true
+
+
+    ?debuffFound = true
+      return lvl
+    :
+      return 0
+
+
+
+
+func getFoeTotalHP()
+  return p.fhp + p.fa
+
+
+
+
+
+
+// Lost items
+
+
+
+
+func canUseBlade()
+  return p.tt >= p.bladeDelay & p.canAct
+
+
+// cannot be interrupted, doesn't need a cooldown check
+func useBlade()
+  equip blade
+  activate R
+
+
+  p.bladeDelay = p.tt + p.bladeCd
+
+
+  return
+
+
+/* Checks if Blade of the Fallen God
+can be used in 2 screens of distance,
+according to a certain screen index. */
+func canUseBladeDS(nScreen)
+  return canUseBlade()
+  ^& p.si = nScreen
+
+
+var slideCount = 0 // counter to give screen.Next() time to slide
+func useBladeDS()
+  ?slideCount = 0
+    screen.Next()
+    slideCount = 20
+  
+  :?slideCount > 0
+    slideCount--
+  
+    ?slideCount = 0
+      useBlade()
+      screen.ResetOffset()
+      return
+
+
+
+
+func canUseArm()
+  return p.tt >= p.armDelay &
+  ^3 < p.fd & p.fd < 7
+  ^& p.canAct
+
+
+func useArm()
+  equip arm
+  activate R
+
+
+  p.armDelay = p.tt + p.armCd
+
+
+  return
+
+
+
+
+func canUseMask()
+  return p.tt >= p.maskDelay & p.canAct
+
+
+func useMask()
+  equipL triskelion
+  equipR mask
+  activate R
+
+
+  p.maskDelay = p.tt + p.maskCd
+
+
+  return
+
+
+func canUseMaskDS(nScreen)
+  return canUseMask()
+  ^& p.si = nScreen
+
+
+func useMaskDS()
+  ?slideCount = 0
+    screen.Next()
+    slideCount = 20
+  
+  :?slideCount > 0
+    slideCount--
+  
+    ?slideCount = 0
+      useMask()
+      screen.ResetOffset()
+      return
+
+
+
+
+
+
+func canUseTali()
+  return summon.count = 0 &
+  ^p.tt >= p.taliDelay &
+  ^p.canAct |
+  ^(p.il = talisman & p.ils = 2) |
+  ^(p.ir = talisman & p.irs = 2)
+
+
+func canHideTali()
+  return summon.count > 0 & summon.GetId() = "cinderwisp"
+  ^& p.tt >= p.taliDelay
+  ^& p.canAct |
+  ^(p.il = talisman & p.ils = 2) |
+  ^(p.ir = talisman & p.irs = 2)
+
+
+func useTali(hand)
+  ?hand = "l"
+    equipL talisman
+    activate L
+  :?hand = "r"
+    equipR talisman
+    activate R
+
+
+  p.taliDelay = p.tt + p.taliCd + p.castTime
+
+
+  return
+
+
+/* Checks if you can use the cinderwisp's "devour"
+ability. */
+func canUseCind()
+  return summon.count >= 1
+  ^& summon.GetId() = "cinderwisp"
+  ^& p.tt >= p.cindDelay & p.canAct
+
+
+/* Checks if the estimated damage of
+cinderwisp's "devour" ability will kill the foe,
+leaving a damage margin.
+  - cindDmg: represents the damage the cinderwisp does,
+             which will be multiplied by each ignition
+             debuff applied.
+  - margin: number representing a health margin to add
+            to the remaining foe's health. This is
+            necessary because the ability has a cast time
+            that will alter the estimations done here.
+            Send 0 if you don't want to use a margin. */
+func canKillCind(cindDmg,margin)
+  return getFoeTotalHP() <= (getDebuffLvl(ignition,true) * cindDmg) + margin
+
+
+func useCind()
+  activate cinderwisp
+  p.cindDelay = p.tt + p.cindCd + p.castTime
+  return
+
+
+
+
+/* Checks if you can use the
+bashing shield's ability. */
+func canBash()
+  return p.tt >= p.bashDelay & !p.aiI
+  ^& 11 <= p.fd & p.fd <= 15
+  ^& p.canAct
+
+
+func bash(lItem)
+  equipL @lItem@
+  equipR bashing shield
+
+
+  p.bashDelay = p.tt + p.bashCd
+
+
+  return
+
+
+
+
+
+
+
+
+// Special Weapons
+
+
+
+
+func canUseHamm()
+  return p.tt >= p.hammDelay &
+  ^p.canAct |
+  ^(p.ir = heavy hammer &
+  ^p.irs = 2)
+
+
+var hammCdSlower
+func canUseHamm2()
+  hammCdSlower = item.GetCooldown("hammer") <= 0
+  return hammCdSlower &
+  ^p.canAct |
+  ^(p.ir = "heavy hammer" &
+  ^p.irs = 2)
+
+
+func useHamm()
+  equip heavy hammer
+  activate R
+
+
+  p.hammDelay = p.tt + p.hammCd + p.castTime
+
+
+  return
+
+
+
+
+func canUseBard()
+  return p.tt >= p.bardDelay &
+  ^p.canAct |
+  ^(p.ir = bardiche &
+  ^p.irs = 2)
+
+
+var bardCdSlower
+func canUseBard2()
+  bardCdSlower = item.GetCooldown("bardiche") <= 0
+  return bardCdSlower &
+  ^p.canAct |
+  ^(p.ir = "bardiche" &
+  ^p.irs = 2)
+
+
+func useBard(yourBard)
+  ?p.fd < 10
+    equip @yourBard@
+    activate R
+
+
+    p.bardDelay = p.tt + p.bardCd + p.castTime
+
+
+  return
+
+
+
+
+/* Checks if you can use the
+dashing shield's ability. */
+func canDash()
+  return p.tt >= p.dashDelay & !p.aiI
+  ^& 11 <= p.fd & p.fd <= 15
+  ^& p.canAct
+
+
+func dash(lItem,yourDshield)
+  equipL @lItem@
+  equipR @yourDshield@
+
+
+  p.dashDelay = p.tt + p.dashCd
+
+
+  return
+
+
+
+
+func canUseQstaff()
+  ?p.tt >= p.qstaffDelay
+
+
+    return p.canAct |
+    ^(p.ir = quarterstaff
+    ^& p.irs = 2)
+  :
+    return false
+
+
+// recieves a string
+func useQstaff(yourQstaff)
+  equip @yourQstaff@
+  activate R
+
+
+  p.qstaffDelay = p.tt + p.qstaffCd
+
+
+  return
+
+
+func canUseMind()
+  return item.GetCooldown("mind") <= 0 & p.canAct
+
+
+
+
+
+
+
+
+// Tools
+
+
+
+
+func canUseHatchet()
+  return item.GetCooldown("hatchet") <= 0
+  ^& p.canAct
+  ^& harvest.distance < 5
+  ^& p.ir = hatchet
+
+
+func useHatchet()
+  activate R
+  return
+
+
+
+
+
+
+
+
+// Potions
+
+
+
+
+func canUsePot()
+  return p.ip ! empty & p.canAct
+
+
+/* Checks if a healing type potion
+can be used.
+Healing type potions are considered:
+  - healing
+  - defensive
+  - vampiric */
+func canUsePotHeal()
+  ?canUsePot()
+    ?p.ip = healing |
+    ^p.ip = vampiric
+      return hp < lowhp
+
+
+    :?p.ip = defensive
+      return hp < midhp
+    
+    :
+      return false
+  :
+    return false
+
+
+/* Determines if a damage buff potion
+is brewed. Generally used for bosses.
+Potions related:
+  - berserk
+  - lucky */
+func canUsePotDmg()
+  return canUsePot() &
+  ^(p.ip = berserk | p.ip = lucky)
+
+
+/* Determines if a special potion
+can be activated, given a special
+condition that's different for each potion type.
+Valid potion types and conditions:
+  - cleansing | min. no. of debuffs to cleanse
+  - strength | min. amount of foe's armor
+  - lightning, | ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+  - experience | min. no. of foes to activate
+  - invisibility | NONE (will activate if foe = boss)
+    + (send true as condition for this type) */
+func canUsePotSpecial(type,cond)
+  ?canUsePot()
+
+
+    ?p.ip = type
+      ?p.ip = cleansing
+        return hp < midhp &
+        ^debuffs.count >= cond
+        // ^^^ = no. of debuffs to cleanse
+    
+      :?p.ip = strength
+        return foe.armor & foe.armor > cond
+
+
+      :?p.ip = lightning
+      ^|p.ip = experience
+        return foe.count >= cond
+
+
+      :?p.ip = invisibility
+        return p.f = boss
+
+
+      :
+        >c-10,0,#red,
+        ^func canUsePotSpecial() - Potion recieved\n
+        ^does not belong to this function: "@type@"
+        return false
+
+
+    :
+      >c-10,0,#red,
+      ^func canUsePotSpecial() - Potion recieved\n
+      ^is not valid or equipped: "@type@"
+      return false
+
+
+  : // potion hasn't been brewed, it's been used,
+    return false //or just can't be activated atm
+
+
+
+
+
+
+
+
+// Others
+
+
+
+
+var moonTimer = 0
+var moonFrame
+func doMoondial(weapon1, weapon2, mode)
+  ?mode = 0 // Normal moondialing
+    moonTimer++
+    moonFrame = moonTimer % 3
+
+
+    ?moonFrame = 1
+      equipL moon
+      equipR @weapon1@
+    :?moonFrame = 2
+      equipL moon
+      equipR @weapon2@
+    :
+      equipL @weapon1@
+      equipR @weapon2@
+
+
+  :?mode = 1
+    /* Berserk Moondialing (For non-speed enchanted *max
+    swords) */
+    moonTimer++
+    moonFrame = moonTimer % 4
+
+
+    ?moonFrame = 1
+      equipL @weapon2@ // on cooldown
+      equipR @weapon1@
+    :?moonFrame = 2
+      equipL moon
+      equipR @weapon1@
+    :?moonFrame = 3
+      equipL @weapon1@ // on cooldown
+      equipR @weapon2@
+    :?moonFrame = 4
+      equipL moon
+      equipR @weapon2@
+  
+  :?mode = 2
+    /* Not moondialing, but useful to have here (speed
+    enchant *max swords) */
+    equipL @weapon2@
+    equipR @weapon1@
+
+
+  :?mode = 3
+    /* For when you have just 1 +21 sword (weapon2 can be
+    anything, it will not be used) */
+    ?p.fd <= 5
+      equipL moon
+    :
+      equipL @weapon2@
+    equipR @weapon1@
+
+
+
+
+  return
+
+
+// *******************************************************
+//                  END OF "Combat.txt"                   
+// *******************************************************

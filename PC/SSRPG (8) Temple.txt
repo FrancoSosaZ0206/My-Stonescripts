@@ -1,0 +1,342 @@
+﻿// *******************************************************
+//                      8-Temple.txt                      
+// *******************************************************
+
+
+// Script for Temple
+
+
+//IMPORTS
+
+
+var u = import MyScripts/Imports/utilities
+var p
+p = import MyScripts/Imports/performanceV2
+var i
+i = import MyScripts/Imports/MyBetterInfo
+var c = import MyScripts/Imports/combat
+var a = import MyScripts/Imports/MyArsenal
+
+
+var som
+som = import MyScripts/Imports/Speed_O_Meter
+
+
+
+
+
+
+// VARIABLES
+
+
+var smiteScr = 2
+var keepMask = true
+
+
+?p.ll
+  keepMask = false
+
+
+
+
+// FUNCTIONS:
+
+
+func Fight1v1()
+  p.fds = foe.debuffs.string
+  p.php = hp
+  p.pmhp = maxhp
+
+
+  ?keepMask
+    ?p.fds ! "chill:6"
+      equipL @a.dIsword@
+    :?p.fds ! "damage"
+      equipL @a.dPsword1@
+    :?p.fds ! "dot"
+      equipL @a.dFsword@
+    :?p.php ! p.pmhp
+      equipL @a.dLsword@
+    :
+      equipL Bifrost
+
+
+  :
+    ?p.fds ! "chill:6" |
+    ^p.fds ! "damage" |
+    ^p.fds ! "dot"
+      //Left hand:
+      ?p.fds ! "chill:6"
+        equipL @a.dIsword@
+      :?p.php ! p.pmhp
+        equipL @a.dLsword@
+      :
+        equipL @a.isword@
+
+
+      //Right hand:
+      ?p.fds ! "damage"
+        equipR @a.dPsword1@
+      :?p.fds ! "dot"
+        equipR @a.dFsword@
+      :
+        equipR Bifrost
+    :
+      c.doMoondial(Bifrost,a.isword, 3)
+
+
+  return
+
+
+// LOADOUTS:
+
+
+func ldtF(mode)
+
+
+  ?mode = "default"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield1@
+  :?mode = "armorRegen"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield2@
+  :?mode = "engage"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.ishield@
+  :?mode = "escape"
+    equipL mind
+    ?!keepMask
+      equipR @a.ishield@
+  :?mode = "magnet"
+    equipL star
+    ?!keepMask
+      equipR triskelion
+
+
+
+
+  :?mode = "meleeDmg"
+    equipL Bifrost
+    ?!keepMask
+      equipR @a.isword@
+  :?mode = "meleeDef"
+    equipL Bifrost
+    ?!keepMask
+      equipR @a.ishield@
+
+
+  :?mode = "magic"
+    ?keepMask
+      ?p.fds ! "chill:6" &
+      ^p.f ! "immune_to_debuff_chill"
+        equipL @a.dIwand1@
+      :?p.fds ! "damage" &
+      ^p.f ! "immune_to_debuff_damage"
+        equipL @a.dPwand@
+      :?p.fds ! "dot" &
+      ^p.f ! "immune_to_debuff_dot"
+        equipL @a.dFwand@
+      :
+        equipL @a.dPwand@
+    :
+      ?p.fds ! "damage" &
+      ^p.f ! "immune_to_debuff_damage"
+        equipL @a.dPwand@
+      :?p.fds ! "dot" &
+      ^p.f ! "immune_to_debuff_dot"
+        equipL @a.dFwand@
+      :
+        equipL @a.dPwand@
+      equipR @a.dIwand1@
+
+
+  :
+    >o0,0,#red,ERROR: ldtF() recieved incorrect mode: @mode@
+
+
+
+
+  return
+
+
+// PROCEDURE:
+
+
+var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+?som.speedOmeterUpdate(false)
+  som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+?somui
+  somui.Recycle()
+  somui = null
+
+
+
+
+?p.ils = 3
+  equipL wand 0*
+  equipL @p.il@
+?p.irs = 3
+  equipR @a.cshield1@
+  equipR @p.ir@
+
+
+?hp < maxhp & !keepMask
+  loc.Leave()
+
+
+?p.lb
+  p.rs = res.stone
+  p.rw = res.wood
+  p.rb = res.bronze
+
+
+  ?p.rb >= 10
+    ?p.rw >= 10
+      ?p.ip ! "berserk"
+        brew wood + bronze
+    :?p.rs >= 10
+      ?p.ip ! "lucky"
+        brew stone + bronze
+    :
+      loc.Leave()
+  :
+    loc.Leave()
+
+
+?keepMask
+  equipR mask
+
+
+?p.lb | p.ll
+  equipL triskelion
+  equipR @a.cshield1@
+
+
+:?c.canUseTali()
+  equipL triskelion
+  c.useTali("r")
+
+
+:?c.canUsePotDmg() & keepMask
+  activate potion
+
+
+:?pickup.distance ! 9999
+  ?c.canUseQstaff()
+    c.useQstaff(a.myqstaff)
+  :
+    ldtF("magnet")
+
+
+:
+  p.fd = foe.distance
+  p.aiE = ai.enabled
+
+
+  ?c.canUseBladeDS(smiteScr)
+    ?p.fd <= 33
+      c.useBladeDS()
+
+
+  ?c.canUseQstaff() & !p.aiE
+  ^& p.ir ! "bardiche" & p.ir ! Kubikiribocho
+  ^& p.ir ! "heavy hammer" & (
+  ^(!c.canBash() & !c.canDash())
+  ^| (p.fd < 11 | p.fd > 15))
+    c.useQstaff(a.myqstaff)
+
+
+  :?p.fd > 35
+    p.pa = armor
+    ?14 <= p.pa & p.pa <= 29
+      ldtF("default")
+    :?p.pa < 14
+      ldtF("armorRegen")
+    :
+      equipL triskelion
+      equipR mask
+
+
+  :?p.fd > 15
+    ldtF("engage")
+    ?keepMask & p.fd <= 17
+      equipR @a.ishield@
+  :
+    ?p.f ! "nagaraja"
+      ?c.canBash()
+        c.bash(Bifrost)
+      :?c.canDash()
+        c.dash(Bifrost,a.dshield)
+      :
+        ?p.f = "acronian_cultist"
+          ?c.canUseMask()
+            c.useMask()
+          :
+            Fight1v1()  
+          
+        :
+          p.fc = foe.count
+
+
+          ?p.fc >= 7 &
+          ^c.canUseHamm() &
+          ^!c.canUseBlade()
+            c.useHamm()
+
+
+          :?p.fc > 1
+            ldtF("magic")
+
+
+          : // p.fc = 1
+            Fight1v1()
+
+
+    : // foe = "nagaraja"
+      p.fds = foe.debuffs.string
+      p.fs = foe.state
+      p.ft = foe.time
+
+
+      ?c.canUseCind()
+        ?p.fds = "ignition:10" |
+        ^c.canKillCind(a.taliRDmg,750)
+          c.useCind()
+
+
+      ?c.canUsePot()
+        activate potion
+
+
+      ?(p.fs = 112 | p.fs = 102)
+      ^& p.ft >= 55 & p.ft <= 65
+        ?c.canUseMind()
+          ldtF("escape")
+        :?p.fd < 11
+          ldtF("meleeDef")
+        :
+          ?keepMask
+            equipL @a.altbow@
+          :
+            equip @a.ibow@
+
+
+      :?p.fs ! 4 // if it's not dying
+
+
+        ?c.canBash()
+          c.bash(Bifrost)
+        :?c.canDash()
+          c.dash(Bifrost,a.dshield)
+        :?c.canUseBard() & keepMask
+          c.useBard(Kubikiribocho)
+        :
+          Fight1v1()
+
+
+// *******************************************************
+//                  END OF "8-Temple.txt"                 
+// *******************************************************

@@ -1,0 +1,284 @@
+﻿// *******************************************************
+//                    Speed_O_Meter.txt                   
+// *******************************************************
+
+
+/* Time Display Utility
+  Made by MetalEagle26 (Tom Crow)
+
+
+  This library provides functions to display your times on
+    your runs!
+  Includes some speedrunning versions to submit your times
+    in frames ;)
+
+
+- How to use:
+  PC:
+    Put this file in C:/.../Stonescript/UI or your folder
+    of preference
+    and in your mindstone/ main script, do this:
+
+
+    var speedOmeter
+    speedOmeter = import UI/Speed_O_Meter
+
+
+  Mobile:
+    Copy-Paste this into your mindstone/script.
+
+
+- Use the functions that you need like this:
+  
+  Example for PC:
+    ?speedOmeter.speedOmeterUpdate()
+      speedOmeter.showSpeedOmeter(x,y,colorStr)
+
+
+  Example for Mobile (Recommended):
+    var SOMPanel
+    ?speedOmeterUpdate()
+      SOMPanel = showSpeedOmeterUI(x,y,colorStr)
+
+
+  ······················································
+
+
+  Tip: keep in mind that speedrunning functions need to
+    update constantly to show the frames, which may cause
+    some lag.
+    Also, remember to use ".Recycle()" function and assign
+    to "null" after using UI functions!
+
+
+Enjoy! */
+
+
+
+
+// Private (do not use!):
+
+
+func myFormatDigital(frames)
+  ?frames <= 0
+    return "00:00"
+  :
+    var timeStr
+    var secs
+    var mins
+    var secStr
+    var minStr
+
+
+    secs = frames/30
+    mins = (frames/30)/60
+
+
+    secs -= mins*60
+
+
+    ?mins < 10
+      minStr = "0" + mins
+    :
+      minStr = mins
+      
+    ?secs < 10
+      secStr = "0" + secs
+    :
+      secStr = secs
+    
+    return minStr + ":" + secStr
+
+
+
+
+
+
+// VARIABLES:
+
+
+var sec = 30 // frames
+
+
+// Times in frames:
+var tt
+var lbt
+var lavg
+
+
+tt = totaltime
+?tt <= 1
+  lbt = loc.bestTime
+  lavg = loc.averageTime
+
+
+// Times in seconds:
+var ttDigital = myFormatDigital(tt)
+var pb = myFormatDigital(lbt)
+var avg = myFormatDigital(lavg)
+
+
+// Variable updating frequency:
+?tt % 30 = 0
+  ttDigital = myFormatDigital(tt)
+?loc.loop
+  pb = myFormatDigital(lbt)
+  avg = myFormatDigital(lavg)
+
+
+
+
+
+
+// Public:
+
+
+
+
+// FUNCTIONS
+
+
+func speedOmeterUpdate(isSpeedrun)
+  ?isSpeedrun
+    return true
+  :
+    return tt % 30 = 0
+
+
+func speedOmeterToStr(isSpeedrun)
+  ?isSpeedrun
+    return
+    ^"   SPEED-O-METER" + "\n" +
+    ^"···················" + "\n" +
+    ^" CUR " + ttDigital + " (" + tt + "f)" + "\n" +
+    ^" PB  " + pb + " (" + lbt + "f)" + "\n" +
+    ^" AVG " + avg + " (" + lavg + "f)"
+
+
+  :
+    return
+    ^"SPEED-O-METER" + "\n" +
+    ^"·············" + "\n" +
+    ^" CUR " + ttDigital + "\n" +
+    ^" PB  " + pb + "\n" +
+    ^" AVG " + avg
+
+
+func printSpeedOmeter(x,y,colorStr,isSpeedrun)
+  ?isSpeedrun
+    >`@x@,@y@,@colorStr@,
+    ^   SPEED-O-METER\n
+    ^···················\n
+    ^ CUR @ttDigital@ (@tt@f)\n
+    ^ PB  @pb@ (@lbt@f)\n
+    ^ AVG @avg@ (@lavg@f)
+  :
+    >`@x@,@y@,@colorStr@,
+    ^SPEED-O-METER\n
+    ^·············\n
+    ^ CUR @ttDigital@\n
+    ^ PB  @pb@\n
+    ^ AVG @avg@
+
+
+  return
+
+
+func asciiPrintSpeedOmeter(x,y,colorStr,isSpeedrun)
+  ?isSpeedrun
+    >`@x@,@y@,@colorStr@,ascii
+###SPEED-O-METER###\n
+···················\n
+#CUR#@ttDigital@#(@tt@f)\n
+#PB##@pb@#(@lbt@f)\n
+#AVG#@avg@#(@lavg@f)
+asciiend
+
+
+  :
+  >`@x@,@y@,@colorStr@,ascii
+SPEED-O-METER
+·············
+#CUR#@ttDigital@
+#PB##@pb@
+#AVG#@avg@
+asciiend
+
+
+  return
+
+
+func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
+  var txt
+
+
+  ?isSpeedrun
+    txt = ui.AddText(
+    ^"   SPEED-O-METER" + "\n" +
+    ^"···················" + "\n" +
+    ^" CUR " + ttDigital + " (" + tt + "f)" + "\n" +
+    ^" PB  " + pb + " (" + lbt + "f)" + "\n" +
+    ^" AVG " + avg + " (" + lavg + "f)"               )
+
+
+  :
+    txt = ui.AddText(
+    ^"SPEED-O-METER" + "\n" +
+    ^"·············" + "\n" +
+    ^" CUR " + ttDigital + "\n" +
+    ^" PB  " + pb + "\n" +
+    ^" AVG " + avg              )
+
+
+  txt.anchor = top_left
+  txt.dock = top_left
+
+
+  txt.x = 1
+  txt.y = 1
+
+
+  ?isSpeedrun
+    txt.w = 19
+  :
+    txt.w = 11
+  txt.h = 5
+
+
+
+
+
+
+  var panel
+
+
+  panel = ui.AddPanel()
+  panel.Add(txt)
+  
+  panel.style = -2
+  
+  panel.anchor = top_left
+  panel.dock = top_left
+  
+  panel.x = x
+  panel.y = y
+  
+  panel.w = txt.w + 2
+  panel.h = txt.h + 2
+
+
+  ?colorStr
+    txt.color = colorStr
+    panel.color = colorStr
+
+
+  return panel
+
+
+
+
+
+
+// *******************************************************
+//               END OF "Speed_O_Meter.txt"               
+// *******************************************************

@@ -1,0 +1,388 @@
+﻿// *******************************************************
+//                     4-Mushroom.txt                     
+// *******************************************************
+
+
+// Script for Mushroom Forest:
+
+
+//IMPORTS
+
+
+var p
+p = import MyScripts/Imports/performanceV2
+var i
+i = import MyScripts/Imports/MyBetterInfo
+var c = import MyScripts/Imports/combat
+var a = import MyScripts/Imports/MyArsenal
+var u = import MyScripts/Imports/utilities
+
+
+var som
+som = import MyScripts/Imports/Speed_O_Meter
+
+
+
+
+
+
+// VARIABLES
+
+
+var keepMask = true
+var smiteScr = 1
+
+
+?p.ll
+  keepMask = false
+
+
+  ?p.tt = 1 & p.ls > 5 &
+  ^smiteScr ! 3
+    smiteScr++
+
+
+
+
+// LOADOUTS:
+
+
+func ldtF(mode)
+
+
+  ?mode = "default"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield1@
+  :?mode = "armorRegen"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield2@
+  :?mode = "engage"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.pshield@
+  :?mode = "escape"
+    equipL mind
+    ?!keepMask
+      equipR @a.pshield@
+  :?mode = "magnet"
+    equipL star
+    ?!keepMask
+      equipR triskelion
+
+
+
+
+  :?mode = "meleeDmg"
+    equipL Mamba Negra
+    ?!keepMask
+      equipR @a.psword@
+
+
+  :?mode = "armorDmg"
+    equipL @a.phammer1@
+    ?!keepMask
+      equipR @a.phammer2@
+
+
+  :?mode = "rangedDmg"
+    equip @a.pbow@
+
+
+  :?mode = "magic"
+    ?keepMask
+      ?p.fds ! "chill:6" &
+      ^p.f ! "immune_to_debuff_chill"
+        equipL @a.dIwand1@
+      :?p.fds ! "damage" &
+      ^p.f ! "immune_to_debuff_damage"
+        equipL @a.dPwand@
+      :?p.fds ! "dot" &
+      ^p.f ! "immune_to_debuff_dot"
+        equipL @a.dFwand@
+      :
+        equipL @a.dPwand@
+    :
+      ?p.fds ! "damage" &
+      ^p.f ! "immune_to_debuff_damage"
+        equipL @a.dPwand@
+      :?p.fds ! "dot" &
+      ^p.f ! "immune_to_debuff_dot"
+        equipL @a.dFwand@
+      :
+        equipL @a.dPwand@
+      equipR @a.dIwand1@
+
+
+  :
+    >c-10,0,#red,
+    ^ERROR: ldtF() recieved incorrect mode: @mode@
+
+
+  return
+
+
+
+
+// PROCEDURE:
+
+
+var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+?som.speedOmeterUpdate(false)
+  som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+?somui
+  somui.Recycle()
+  somui = null
+
+
+
+
+?hp < maxhp & !keepMask
+  loc.Leave()
+
+
+?p.lb
+  p.rs = res.stone
+  p.rw = res.wood
+  p.rb = res.bronze
+
+
+  ?p.rb >= 10
+    ?p.rw >= 10
+      ?p.ip ! "berserk"
+        brew wood + bronze
+    :?p.rs >= 10
+      ?p.ip ! "lucky"
+        brew stone + bronze
+    :
+      loc.Leave()
+  :
+    loc.Leave()
+
+
+?keepMask
+  equipR mask
+
+
+?p.lb | p.ll
+  equipL triskelion
+  equipR @a.cshield1@
+
+
+:?c.canUseTali()
+  equipL triskelion
+  c.useTali("r")
+
+
+:?c.canUsePotDmg() & keepMask
+  activate potion
+
+
+:?pickup.distance ! 9999
+  ldtF("magnet")
+
+
+:
+  p.fds = foe.debuffs.string
+  p.fd = foe.distance
+  p.fc = foe.count
+
+
+  ?(p.f = "explode" | (p.f = "epic_snail" & foe.maxhp > 50))
+  ^& p.fd <= 20
+    ?p.fd < 10 & c.canUseMind()
+      ldtF("escape")
+    :
+      ?p.fd > 5
+        ?p.fds ! "chill:6" |
+        ^p.fds ! "damage" |
+        ^p.fds ! "dot"
+          ldtF("magic")
+        :
+          ldtF("rangedDmg")
+
+
+  :
+    p.fs = foe.state
+    ?c.canUseBladeDS(smiteScr)
+      ?p.fd <= 33
+        c.useBladeDS()
+
+
+    ?c.canUseQstaff()
+      ?p.aiE & p.ir ! "heavy hammer"
+      ^& p.ir ! "bardiche"
+      ^& p.ir ! Kubikiribocho
+      ^& ((!c.canBash() & !c.canDash())
+      ^| (p.fd < 11 | p.fd > 15))
+        c.useQstaff(a.myqstaff)
+
+
+    ?p.fd > 35
+      p.pa = armor
+      ?14 <= p.pa & p.pa <= 29
+        ldtF("default")
+      :?p.pa < 14
+        ldtF("armorRegen")
+      :
+        equipL triskelion
+        equipR mask
+
+
+    :?p.fd > 15
+      ldtF("engage")
+      ?keepMask & 15 < p.fd & p.fd < 17
+        equipR @a.pshield@
+
+
+    :?c.canBash()
+      c.bash(Mamba Negra)
+    :?c.canDash()
+      c.dash(Mamba Negra,a.dshield)
+
+
+    :?p.f ! "mushroom_boss" &
+    ^p.f ! "mushroom_boss_fat" &
+    ^p.f ! "mushroom_boss_skinny"
+      ?p.fc >= 5 & c.canUseHamm() &
+      ^!c.canUseBlade()
+        c.useHamm()
+
+
+      :?p.fc = 1
+        p.bs = buffs.string
+        ?p.bs = "berserk"
+          ?keepMask
+            ?p.fds ! "chill:6" &
+            ^p.f ! "immune_to_debuff_chill"
+              equipL @a.dIsword@
+            :?p.fds ! "damage" &
+            ^p.f ! "immune_to_debuff_damage"
+              equipL @a.dPsword1@
+            :?p.fds ! "dot" &
+            ^p.f ! "immune_to_debuff_dot"
+              equipL @a.dFsword@
+            :
+              equipL Mamba Negra
+
+
+          :
+            //Left hand:
+            ?p.fds ! "chill:6" &
+            ^p.f ! "immune_to_debuff_chill"
+              equipL @a.dIsword@
+            :
+              equipL @a.psword@
+
+
+            //Right hand:
+            ?p.fds ! "damage" &
+            ^p.f ! "immune_to_debuff_damage"
+              equipR @a.dPsword1@
+            :?p.fds ! "dot" &
+            ^p.f ! "immune_to_debuff_dot"
+              equipR @a.dFsword@
+            :
+              equipR Mamba Negra
+        :
+          ldtF("meleeDmg")
+      :
+        ldtF("magic")
+
+
+
+
+    :?p.fs ! 1 // boss appearing animation
+    ^&p.fs ! 4 // dying
+      // foe = "mushroom_boss"(es)
+
+
+      p.ft = foe.time
+      p.bs = buffs.string
+
+
+      ?c.canUseCind()
+        ?p.fds = "ignition:10" |
+        ^c.canKillCind(a.taliRDmg,500)
+          c.useCind()
+
+
+      ?c.canUsePotDmg()
+        activate potion
+      :?c.canUseHamm()
+        c.useHamm()
+      :?c.canUseBard() & p.bs = "berserk" & keepMask
+        c.useBard(Kubikiribocho)
+
+
+      :?p.f = "phase2" & c.canUseMask()
+        c.useMask()
+
+
+      :?p.f = "phase1" & p.fs = 32 & p.ft >= 47 // boss's punch attack
+      ^& c.canUseMind()
+        ldtF("escape")
+
+
+      :
+        ?p.bs = "berserk"
+          ?keepMask
+            ?p.fds ! "chill:6" &
+            ^p.f ! "immune_to_debuff_chill"
+              equipL @a.dIsword@
+            :?p.fds ! "damage" &
+            ^p.f ! "immune_to_debuff_damage"
+              equipL @a.dPsword1@
+            :?p.fds ! "dot" &
+            ^p.f ! "immune_to_debuff_dot"
+              equipL @a.dFsword@
+            :?p.php ! p.pmhp
+              equipL @a.dLsword@
+            :?p.fa > 0
+              equipL @a.phammer1@
+            :
+              equipL Mamba Negra
+
+
+          :
+            //Left hand:
+            ?p.fds ! "chill:6" &
+            ^p.f ! "immune_to_debuff_chill"
+              equipL @a.dIsword@
+            :?p.php ! p.pmhp
+              equipL @a.dLsword@
+            :?p.fa > 0
+              equipL @a.phammer2@
+            :
+              equipL @a.psword@
+
+
+            //Right hand:
+            ?p.fds ! "damage" &
+            ^p.f ! "immune_to_debuff_damage"
+              equipR @a.dPsword1@
+            :?p.fds ! "dot" &
+            ^p.f ! "immune_to_debuff_dot"
+              equipR @a.dFsword@
+            :?p.fa > 0
+              equipR @a.phammer1@
+            :
+              equipR Mamba Negra
+
+
+        :
+          ?p.fa > 0
+            ldtF("armorDmg")
+          :
+            ldtF("meleeDmg")
+            ?p.php ! p.pmhp
+              ?keepMask
+                equipL @a.dLsword@
+              :
+                equipR @a.dLsword@
+
+
+// *******************************************************
+//                 END OF "4-Mushroom.txt"                
+// *******************************************************

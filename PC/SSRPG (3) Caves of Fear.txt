@@ -1,0 +1,361 @@
+﻿// *******************************************************
+//                      3-Caves.txt                       
+// *******************************************************
+
+
+// Script for Caves of Fear
+
+
+//IMPORTS
+
+
+var u = import MyScripts/Imports/utilities
+var p
+p = import MyScripts/Imports/performanceV2
+var i
+i = import MyScripts/Imports/MyBetterInfo
+var c = import MyScripts/Imports/combat
+var a = import MyScripts/Imports/MyArsenal
+
+
+var som
+som = import MyScripts/Imports/Speed_O_Meter
+
+
+
+
+// VARIABLES
+
+
+var runCount = 0
+var keepMask = true
+var smiteScr
+//var maskScr
+
+
+?p.ll | p.ls <= 5
+  keepMask = false
+  ?p.tt = 1
+    runCount++
+
+
+?!smiteScr
+  ?p.ls <= 5
+    smiteScr = 1
+  :
+    smiteScr = 2
+:?p.ll & p.tt = 1 & p.ls > 5 &
+^smiteScr ! 4
+  smiteScr++
+
+
+/*?!maskScr
+  ?p.ls <= 5
+    maskScr = 3
+  :
+    maskScr = 6*/
+
+
+
+
+
+
+// FUNCTIONS:
+
+
+func Fight1v1()
+  p.fds = foe.debuffs.string
+  p.php = hp
+  p.pmhp = maxhp
+  p.bs = buffs.string
+
+
+  ?keepMask
+    //Left hand:
+    ?p.fds ! "chill:6"
+      equipL @a.dIsword@
+    :?p.fds ! "damage"
+      equipL @a.dPsword1@
+    :?p.fds ! "dot"
+      equipL @a.dFsword@
+    :?p.php ! p.pmhp
+      equipL @a.dLsword@
+    :
+      equipL Bifrost
+  :
+    ?(p.fds ! "chill:6" |
+    ^ p.fds ! "damage" |
+    ^ p.fds ! "dot" |
+    ^p.php ! p.pmhp)
+      //Left hand:
+      ?p.fds ! "chill:6"
+        equipL @a.dIsword@
+      :?p.php ! p.pmhp
+        equipL @a.dLsword@
+      :
+        equipL @a.isword@
+
+
+      //Right hand:
+      ?p.fds ! "damage"
+        equipR @a.dPsword1@
+      :?p.fds ! "dot"
+        equipR @a.dFsword@
+      :
+        equipR Bifrost
+    :
+      ?p.bs = "berserk"
+        c.doMoondial(Bifrost, a.isword, 2)
+      :
+        c.doMoondial(Bifrost, a.isword, 3)
+  
+  return
+
+
+
+
+// LOADOUTS:
+
+
+func ldtF(mode)
+  ?mode = "default"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield1@
+  :?mode = "armorRegen"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield2@
+  :?mode = "engage"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.ishield@
+  :?mode = "escape"
+    equipL mind
+    ?!keepMask
+      equipR @a.ishield@
+  :?mode = "magnet"
+    equipL star
+    ?!keepMask
+      equipR triskelion
+
+
+  :?mode = "extend"
+    equipL triskelion
+    equipR mask
+
+
+
+
+  :?mode = "magic"
+    ?keepMask
+      ?p.fds ! "chill:6" &
+      ^p.f ! "immune_to_debuff_chill"
+        equipL @a.dIwand1@
+      :?p.fds ! "damage" &
+      ^p.f ! "immune_to_debuff_damage"
+        equipL @a.dPwand@
+      :?p.fds ! "dot" &
+      ^p.f ! "immune_to_debuff_dot"
+        equipL @a.dFwand@
+      :
+        equipL @a.dIwand1@
+    :
+      ?p.fds ! "damage" &
+      ^p.f ! "immune_to_debuff_damage"
+        equipL @a.dPwand@
+      :?p.fds ! "dot" &
+      ^p.f ! "immune_to_debuff_dot"
+        equipL @a.dFwand@
+      :
+        equipL @a.dIwand2@
+      equipR @a.dIwand1@
+
+
+  :
+    >c-10,0,#red,
+    ^ERROR: ldtF() recieved incorrect mode: @mode@
+
+
+  return
+
+
+
+
+// PROCEDURE:
+
+
+var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),true)
+?som.speedOmeterUpdate(true)
+  som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),true)
+?somui
+  somui.Recycle()
+  somui = null
+
+
+
+
+?p.ils = 3
+  equipL wand 0*
+  equipL @p.il@
+?p.irs = 3
+  equipR @a.cshield1@
+  equipR @p.ir@
+
+
+?(hp < maxhp) & runCount > 1
+  loc.Leave()
+
+
+?p.lb
+  p.rs = res.stone
+  p.rw = res.wood
+  p.rb = res.bronze
+
+
+  ?p.rb >= 10
+    ?p.rs >= 10
+      ?p.ip ! "lucky"
+        brew stone + bronze
+    :?p.rw >= 10
+      ?p.ip ! "berserk"
+        brew wood + bronze
+    :
+      loc.Leave()
+  :
+    loc.Leave()
+
+
+?keepMask
+  equipR mask
+
+
+?p.lb | p.ll
+  equipL triskelion
+  equipR @a.cshield1@
+
+
+:?c.canUseTali()
+  equipL triskelion
+  c.useTali("r")
+  
+:?c.canUsePot() & (keepMask
+^| (p.ls <= 5 & p.tt < 60 & p.ip = "berserk"))
+  activate potion
+
+
+:?pickup.distance < 15
+  ldtF("magnet")
+
+
+:
+  p.fd = foe.distance
+  p.aiE = ai.enabled
+  p.si = screen.i
+
+
+  ?c.canUseBladeDS(smiteScr)
+    p.bs = buffs.string
+
+
+    ?p.fd <= 33 & c.getBuffInfo("smite",false,2) ! 30 & p.ls > 5
+      c.useBladeDS()
+
+
+  ?c.canUseMaskDS(maskScr)
+    c.useMaskDS()
+
+
+  ?c.canUseQstaff() & p.aiE &
+  ^p.ir ! "bardiche" & p.ir ! Kubikiribocho &
+  ^p.ir ! "heavy hammer" & (
+  ^((c.canBash() | c.canDash()) & p.fd > 15)
+  ^| !(c.canBash() | c.canDash()))
+    c.useQstaff(a.myqstaff)
+
+
+  :?p.fd > 35
+    p.pa = armor
+    ?14 <= p.pa & p.pa <= 29
+      ldtF("default")
+    :?p.pa < 14
+      ldtF("armorRegen")
+    :
+      ldtF("extend")
+
+
+  :?p.fd > 15
+    p.aiE = ai.enabled
+    ?!p.aiI & p.aiE
+      ldtF("engage")
+      ?keepMask & p.fd <= 17
+        equipR @a.ishield@
+    :
+      ldtF("extend")
+
+
+  :
+    p.fs = foe.state
+    p.ft = foe.time
+
+
+    ?(p.f = "cool_bat" & p.fs = 33 & p.ft > 27) |
+    ^(p.f = "spider_boss_harder" & p.fs = 142 & p.ft > 57)
+      ?c.canUseMind()
+        ldtF("escape")
+      :
+        ?p.fd > 7
+          ldtF("magic")
+        :
+          ldtF("meleeDef")
+
+
+    :?c.canBash()
+      c.bash(a.isword)
+    :?c.canDash()
+      c.dash(a.isword,a.dshield)
+
+
+    :
+      ?p.f = "cool_bat"
+        Fight1v1()
+
+
+      :?p.f ! "spider_boss_harder"
+        p.fc = foe.count
+
+
+        ?p.fc = 1
+          c.doMoondial(Bifrost, a.isword, 3)
+
+
+        :?p.fc >= 5 & c.canUseHamm()
+        ^& !c.canUseBlade() &
+        ^p.ls > 5
+          c.useHamm()
+        :
+          ldtF("magic")
+
+
+      :?p.f = "spider_boss_harder"
+      ^& p.fs ! 4 // dying
+        ?c.canUsePotDmg()
+          activate potion
+        :?c.canUseMask()
+          c.useMask()
+
+
+        :?p.fd < 11
+          p.fmhp = foe.maxhp
+
+
+          ?c.canUseBard() &
+          ^(keepMask | p.fmhp <= a.bardRDmg)
+            c.useBard(Kubikiribocho)
+          :
+            Fight1v1()
+
+
+// *******************************************************
+//                  END OF "3-Caves.txt"                  
+// *******************************************************

@@ -1,0 +1,108 @@
+﻿// *******************************************************
+//                    Speed_O_Meter.txt                   
+// *******************************************************
+
+
+
+
+// VARIABLES
+
+
+// Times in seconds:
+var ttDigital = myFormatDigital(tt)
+var pb = myFormatDigital(lbt)
+var avg = myFormatDigital(lavg)
+
+
+// Variable updating frequency:
+?tt % 30 = 0
+  ttDigital = myFormatDigital(tt)
+?ll
+  pb = myFormatDigital(lbt)
+  avg = myFormatDigital(lavg)
+
+
+
+
+
+
+// FUNCTIONS
+
+
+func speedOmeterUpdate(isSpeedrun)
+  ?isSpeedrun
+    return true
+  :
+    return tt % 30 = 0
+
+
+func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
+  var txt
+
+
+  ?isSpeedrun
+    txt = ui.AddText(
+    ^"   SPEED-O-METER" + "\n" +
+    ^"···················" + "\n" +
+    ^" CUR " + ttDigital + " (" + tt + "f)" + "\n" +
+    ^" PB  " + pb + " (" + lbt + "f)" + "\n" +
+    ^" AVG " + avg + " (" + lavg + "f)"               )
+
+
+  :
+    txt = ui.AddText(
+    ^"SPEED-O-METER" + "\n" +
+    ^"·············" + "\n" +
+    ^"  CUR " + ttDigital + "\n" +
+    ^"  PB  " + pb + "\n" +
+    ^"  AVG " + avg              )
+
+
+  txt.anchor = top_left
+  txt.dock = top_left
+
+
+  txt.x = 1
+  txt.y = 1
+
+
+  ?isSpeedrun
+    txt.w = 19
+  :
+    txt.w = 13
+  txt.h = 5
+
+
+
+
+
+
+  var panel
+
+
+  panel = ui.AddPanel()
+  panel.Add(txt)
+  
+  panel.style = -2
+  
+  panel.anchor = top_left
+  panel.dock = top_left
+  
+  panel.x = x
+  panel.y = y
+  
+  panel.w = txt.w + 2
+  panel.h = txt.h + 2
+
+
+  ?colorStr
+    txt.color = colorStr
+    panel.color = colorStr
+
+
+  return panel
+
+
+// *******************************************************
+//               END OF "Speed_O_Meter.txt"               
+// *******************************************************

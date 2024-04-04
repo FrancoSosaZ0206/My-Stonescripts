@@ -1,0 +1,473 @@
+﻿// *******************************************************
+//                       1-Rocky.txt                      
+// *******************************************************
+
+
+// Script for Rocky Plateau
+
+
+
+
+// IMPORTS
+
+
+var p
+p = import MyScripts/Imports/performanceV2
+var i
+i = import MyScripts/Imports/MyBetterInfo
+var c = import MyScripts/Imports/combat
+var a = import MyScripts/Imports/MyArsenal
+var u = import MyScripts/Imports/utilities
+
+
+var som
+som = import MyScripts/Imports/Speed_O_Meter
+
+
+// FUNCTIONS
+
+
+func harvFunc(btn)
+  btnPressed = true
+  ?btn = yesBtn
+    choice = true
+  : // btn = noBtn
+    choice = false
+  
+  return
+
+
+func bossFight()
+
+
+  ?p.f = "phase1"
+    ?!keepMask & p.php = p.pmhp
+      c.doMoondial(Vantum Phoenix, a.fsword,0)
+    :
+      equipL Vantum Phoenix
+
+
+  :?p.f = "phase2"
+    ?p.f = "poison"
+      ?!keepMask & p.php = p.pmhp
+        c.doMoondial(Bifrost, a.isword,3)
+      :
+        equipL Bifrost
+    :?p.f = "vigor"
+      ldtF("pDmg")
+    :?p.f = "aether"
+      ldtF("vDmg")
+    :?p.f = "fire"
+      ldtF("aeDmg")
+    :?p.f = "ice"
+      ?!keepMask & p.php = p.pmhp
+        c.doMoondial(Vantum Phoenix, a.fsword,0)
+      :
+        equipL Vantum Phoenix
+
+
+  : // ?foe = phase3
+    ?c.canUsePotDmg()
+      activate potion
+    :?c.canUseMask()
+      c.useMask()
+
+
+    ?c.canUseCind()
+      var cindMargin
+      ?p.ls >= 13
+        cindMargin = 1000
+      :
+        cindMargin = 3000
+      ?p.fds = "ignition:10" |
+      ^c.canKillCind(a.taliRDmg,cindMargin)
+        c.useCind()
+        
+    p.ft = foe.time
+
+
+    ?((p.fs = 115 & p.ft < 70) |
+    ^(p.fs = 32 & p.fdmg = 1))
+    ^& p.ft >= 42 // putting up shield
+      dontDash = true
+
+
+      ?c.canUseMind()
+        ldtF("escape")
+      :?p.fd > 7
+        equip @a.ibow@
+      :?c.canUseMask()
+        c.useMask()
+    :
+      dontDash = false
+      ?p.fa > 0
+        ?c.canUseHamm2() & !bardCdSlower & p.fd < 11
+          c.useHamm()
+        :
+          equipL @a.phammer1@
+          ?!keepMask
+            equipR @a.aehammer1@
+      :
+        ?p.fbs ! "defense_fire"
+          ?!keepMask & p.php = p.pmhp
+            c.doMoondial(Vantum Phoenix, a.fsword,0)
+          :
+            equipL Vantum Phoenix
+        :
+          ?!keepMask & p.php = p.pmhp
+            c.doMoondial(Bifrost, a.isword,3)
+          :
+            equipL Bifrost
+
+
+
+
+  ?p.php < p.pmhp
+  ^& !c.canBash() & !c.canDash()
+  ^& !keepMask
+    equipR @a.dLsword@
+
+
+
+
+  return
+
+
+
+
+// LOADOUTS
+
+
+func ldtF(mode)
+  ?mode = "default"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield1@
+  :?mode = "armorRecover"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.cshield2@
+  :?mode = "escape"
+    equipL mind
+    equipR @a.cshield2@
+
+
+    p.mindDelay = p.tt + p.mindCd
+  :?mode = "magnet"
+    equipL star
+    ?!keepMask
+      equipR triskelion
+
+
+  :?mode = "harv"
+    equip shovel
+
+
+  //buffs/debuffs (oriented to duration)
+  :?mode = "pDeb1"
+    equipL @a.dPsword1@
+    equipR mask
+  :?mode = "pDeb2"
+    equipL @a.dPsword1@ // put 2 when upgraded back to normal
+    equipR mask
+  :?mode = "aidActive"
+    equipL @a.ahHammer@
+    equipR @a.ahShield@
+    
+  :?mode = "fDeb"
+    equipL @a.dFsword@
+    equipR mask
+  :?mode = "iDeb"
+    equipL @a.dIsword@
+    equipR mask
+  //damage
+  :?mode = "pDmg"
+    equipL Mamba Negra
+    ?!keepMask
+      equipR @a.psword@
+  :?mode = "vDmg"
+    equipL Dothaneel
+    ?!keepMask
+      equipR @a.vsword@
+  :?mode = "aeDmg"
+    equipL Void Slayer
+    ?!keepMask
+      equipR @a.aesword@
+
+
+  : // print error message on screen
+    i.showStrCentered(
+    ^"ERROR: ldtF() recieved incorrect mode: " + mode,
+    ^0, 30, "yellow")
+
+
+  return 
+
+
+
+
+// VARIABLES
+
+
+var dontDash
+var trueDmg
+
+
+var nRuns = 0
+
+
+var keepMask = true
+?p.ll
+  keepMask = false
+  ?p.tt = 1
+    nRuns++
+
+
+
+
+// PROCEDURE
+
+
+var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+?som.speedOmeterUpdate(false)
+  som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+?somui
+  somui.Recycle()
+  somui = null
+
+
+
+
+
+
+var choice = false
+var btnPressed = false
+
+
+var yesBtn
+var noBtn
+
+
+var dontShowAgain = false
+
+
+
+
+?!btnPressed
+  ?!yesBtn
+    yesBtn = i.makeButton(
+    ^-5,9,4,4,null,null,
+    ^"Yes","green",-5,harvFunc)
+  ?!noBtn
+    noBtn = i.makeButton(
+    ^5,9,5,4,null,null,
+    ^"No","red",-5,harvFunc)
+
+
+  i.showStrCentered("Harvest boulders?",6,30,"yellow")
+
+
+:
+  ?yesBtn
+    yesBtn.Recycle()
+    yesBtn = null
+  ?noBtn
+    noBtn.Recycle()
+    noBtn = null
+
+
+  ?!dontShowAgain
+    var aux = p.tt + 3*u.sec
+    ?p.tt < aux
+      ?choice
+        i.showStrCentered("Harvest boulders is enabled",6,30,"green")
+      :
+        i.showStrCentered("Harvest boulders is disabled",6,30,"red")
+    :
+      ?!dontShowAgain
+        dontShowAgain = true
+
+
+
+
+?p.ils = 3
+  equipL wand 0*
+  equipL @p.il@
+?p.irs = 3
+  equipR @a.cshield2@
+  equipR @p.ir@
+
+
+
+
+?debuffs.string | (p.tt > p.lavg & nRuns >= 2)
+  loc.Leave()
+
+
+?p.lb
+  p.rs = res.stone
+  p.rb = res.bronze
+
+
+  ?p.rb >= 10 & p.rs >= 10
+    ?p.ip ! "lucky"
+      brew stone + bronze
+  :
+    loc.Leave()
+
+
+?keepMask
+  equipR mask
+
+
+?p.lb | p.ll
+  /* ldtF("default") but w/o considering keepMask*/
+  equipL triskelion
+  equipR @a.cshield1@
+
+
+:?c.canUseTali()
+  equipL triskelion
+  c.useTali("r")
+  
+:?c.canUsePotDmg() & keepMask
+  activate potion
+
+
+:?choice & harvest.distance < 5
+  ldtF("harv")
+
+
+:?pickup.distance < 15
+  ldtF("magnet")
+
+
+:
+  p.fd = foe.distance
+  p.fs = foe.state
+  p.fdmg = foe.damage
+  p.php = hp
+  p.pmhp = maxhp
+
+
+  p.aiE = ai.enabled
+
+
+  ?p.f = "dysangelos" & p.fd <= 22
+  ^& c.canUseBard2() &
+  ^(p.fs = 100 | p.fs = 101 |
+  ^p.fs = 102 | p.fs = 126)
+    ?c.canUseHamm2()
+      c.useHamm()
+    :?c.canUseQstaff()
+      c.useQstaff(a.myqstaff)
+    :?c.canDash()
+      c.dash(Vantum Phoenix, a.dshield)
+    :
+      c.useBard(a.fastBard)
+
+
+  :?p.fd > 15 | !aiE |
+  ^(p.fs = 124 | p.fs = -1 |
+  ^(p.fs = 107 & p.fdmg = 3)) // Dysan's flying animation (after putting shield on phase3)
+    p.fa = armor
+    ?14 <= p.fa & p.fa <= 29
+      ldtF("default")
+    :
+      ldtF("armorRecover")
+      
+  :?p.aiE & p.fs ! -1
+    // fighting range
+
+
+    p.f = foe
+    p.fbs = foe.buffs.string
+    p.fds = foe.debuffs.string
+    p.fa = foe.armor
+
+
+    p.bs = buffs.string
+
+
+    ?p.f = "acronian_scout"
+      ?c.canBash()
+        c.bash(Vantum Phoenix)
+
+
+      :
+        ?keepMask
+          ?p.fds ! "chill:6"
+            equipL @a.dIsword@
+          :?p.fds ! "damage"
+            equipL @a.dPsword1@
+          :?p.fds ! "dot"
+            equipL @a.dFsword@
+          :
+            equipL Vantum Phoenix
+
+
+        :
+          ?p.php = p.pmhp
+            c.doMoondial(Vantum Phoenix, a.fsword,0)
+          :
+            equipL Vantum Phoenix
+            equipR @a.dLsword@
+
+
+
+
+    :?p.f = "dysangelos" &
+    ^p.fs ! 124
+    ^!(p.fs = 107 & p.fdmg = 3)
+
+
+      p.fdmg = foe.damage
+      p.ft = foe.time
+      
+      trueDmg = p.fdmg
+      ?p.fds = "damage"
+        ?p.f = "phase3"
+          trueDmg -= 8
+        :
+          trueDmg -= 4
+      ?p.fds = "feeble"
+        trueDmg -= 2*c.getDebuffLvl("feeble", true)
+      
+      
+      ?c.canBash() & !dontDash
+        c.bash(Vantum Phoenix)
+      :?c.canDash() & !dontDash
+        c.dash(Vantum Phoenix,a.dshield)
+
+
+      :?armor < trueDmg & p.fs = 32 & (
+      ^(p.f = "phase1" &
+      ^  ((p.fds = "chill" & p.ft > 58) // about to attack, slowed down by chill debuff
+      ^  |(48 < p.ft & p.ft < 52)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
+      ^(p.f = "phase3" & p.ft > 80)  ) // final phase, about to normal attack
+        ldtF("aidActive")
+
+
+      :?p.f ! "immune_to_debuff_damage"
+      ^& p.fbs ! "buff_protection"
+      ^& p.ls > 5
+        ?p.fds ! "chill:6"
+          ldtF("iDeb")
+        :
+          ?p.fds ! "damage"
+            ?p.f = "phase3"
+              ldtF("pDeb2")
+            :
+              ldtF("pDeb1")
+          :
+            ?p.fds ! "dot"
+              ldtF("fDeb")
+            :
+              bossFight()
+      :
+        bossFight()
+
+
+// *******************************************************
+//                  END OF "1-Rocky.txt"                  
+// *******************************************************

@@ -1,0 +1,279 @@
+﻿// *******************************************************
+//                    MyBetterInfo.txt                    
+// *******************************************************
+
+
+
+
+// FUNCTIONS
+
+
+
+
+
+
+func colorToHex(colorName)
+  ?colorName = "red"
+    return #FF0000
+  :?colorName = "orange"
+    return #FF7518
+  :?colorName = "yellow"
+    return #FFFF00
+  :?colorName = "gold"
+    return #E49B0F
+  :?colorName = "blue"
+    return #0000FF
+  :?colorName = "cyan"
+    return #00FFFF
+  :?colorName = "magenta"
+    return #FF00FF
+  :?colorName = "pink"
+    return #E0115F
+  :?colorName = "purple"
+    return #800080
+  :?colorName = "violet"
+    return #7F00FF
+  :?colorName = "green"
+    return #008000
+  :?colorName = "darkGreen"
+    return #023020
+  :?colorName = "white"
+    return #FFFFFF
+  :?colorName = "gray"
+    return #808080
+  :?colorName = "black"
+    return #000000
+  :?colorName = "brown"
+    return #7B3F00
+  :?colorName = "turquoise" | colorName = "turquesa"
+    return #40E0D0
+  :?colorName = "rainbow" | colorName = "rgb"
+    return #rainbow
+  :
+    >c-20,0,#red,ERROR: colorToHex() got unexisting color: @colorName@
+
+
+
+
+func makeTextbox(x,y,w,h,txtStr,colorName,styleID)
+
+
+  //declarations:
+  var panel
+  var txt
+
+
+  //assignations:
+  panel = ui.AddPanel()
+  txt = ui.AddText(txtStr)
+
+
+
+
+  //adding style and text to the panel:
+  panel.style = styleID
+  panel.Add(txt)
+
+
+  //adding alignment
+  panel.anchor = top_left
+  panel.dock = top_left
+  txt.anchor = top_left
+  txt.dock = top_left
+
+
+  //adding color
+  ?colorName
+    txt.color = colorToHex(colorName)
+    panel.color = colorToHex(colorName)
+
+
+  //adding position
+  panel.x = x
+  panel.y = y
+
+
+  txt.x = 1
+  txt.y = 1
+  txt.w = w
+  txt.h = h
+
+
+  //adding wide and height
+  panel.w = txt.w + 1
+  panel.h = txt.h + 1
+
+
+  return panel
+
+
+func makeButton(x,y,w,h,anchor,dock,txtStr,colorName,styleID,actionFunc)
+  var btn
+
+
+  btn = ui.AddButton()
+
+
+  btn.x = x
+  btn.y = y
+
+
+  btn.text = txtStr
+
+
+  btn.w = string.Size(btn.text) + w
+  btn.h = h
+
+
+  ?anchor
+    btn.anchor = anchor
+  ?dock
+    btn.dock = dock
+
+
+
+
+  ?styleID
+    btn.style = styleID
+
+
+  ?colorName
+    var colorID = colorToHex(colorName)
+    btn.tcolor = colorID
+    btn.bcolor = colorID
+    btn.hcolor = colorID
+  
+  btn.SetPressed(actionFunc)
+
+
+  return btn
+
+
+
+
+func showDebuffs(inFoe,x,y,colorName)
+  ?(inFoe & fds)
+  ^|(!inFoe & ds)
+    var arrDebuffs
+
+
+    ?inFoe
+      arrDebuffs = string.Split(fds,",", true)
+    :
+      arrDebuffs = string.Split(ds,",",true)
+
+
+    ?arrDebuffs
+      >`@x@,@y@,@colorToHex(colorName)@,Debuffs:
+      var i = 0
+      for debuff : arrDebuffs
+        var arrInfo = string.Split(debuff,":",true)
+
+
+        >`@x@,@y+1 + i@,@colorToHex(colorName)@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+        i++
+
+
+  return
+
+
+func showBuffs(inFoe,x,y,colorName)
+  ?(inFoe & fbs)
+  ^|(!inFoe & bs)
+    var arrBuffs
+
+
+    ?inFoe
+      arrBuffs = string.Split(fbs,",", true)
+    :
+      arrBuffs = string.Split(bs,",",true)
+
+
+    ?arrBuffs
+      >`@x@,@y@,@colorToHex(colorName)@,Buffs:
+      var i = 0
+      for buff : arrBuffs
+        var arrInfo = string.Split(buff,":",true)
+
+
+        >`@x@,@y+1 + i@,@colorToHex(colorName)@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+        ^ (@myFormatDigital(int.Parse(arrInfo[3]))@)
+        i++
+
+
+  return
+
+
+
+
+func showBigStrUI(str,maxwidth,x,y,colorID)
+
+
+  //declarations:
+  var panel
+  var txt
+
+
+  //assignations:
+  panel = ui.AddPanel()
+  txt = ui.AddText(str)
+
+
+
+
+  //adding style and text to the panel:
+  panel.style = -1
+  panel.Add(txt)
+
+
+  //adding alignment
+  panel.anchor = top_left
+  panel.dock = top_left
+  txt.anchor = top_left
+  txt.dock = top_left
+
+
+  //adding color
+  ?colorID
+    txt.color = colorToHex(colorID)
+    panel.color = colorToHex(colorID)
+
+
+  //adding position
+  panel.x = x
+  panel.y = y
+
+
+  txt.x = 1
+  txt.y = 1
+
+
+  txt.w = maxwidth
+
+
+  //adding wide and height
+  panel.w = txt.w + 2
+  panel.h = txt.h + 2
+
+
+  return panel
+
+
+
+
+func showStrCentered(str,y,maxW,colorName)
+  ?string.Size(str) <= maxW
+    >c@-(string.Size(str)-1)/2@,@y@,@colorToHex(colorName)@,@str@
+  :
+    var arrStr = string.Break(str,maxW)
+    ?arrStr
+      for i = 0 .. arrStr.Count() - 1
+        >c@-(string.Size(str)-1)/2@,@y-((arrStr.Count()-1))/2+i@,@colorToHex(colorName)@,@arrStr[i]@
+
+
+  return
+
+
+// *******************************************************
+//               END OF "MyBetterInfo.txt"                
+// *******************************************************

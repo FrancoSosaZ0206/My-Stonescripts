@@ -1,0 +1,47 @@
+﻿// *******************************************************
+//                       FILE INFO
+// *******************************************************
+
+
+/* MAIN SCRIPT, PC VERSION
+  Made by Franco N. Sosa (Tom Crow)
+
+
+
+
+Just drop this code into your mindstone, or import
+it like this:
+  import MyScripts/PC/MAIN
+And you're done!
+Enjoy your multi-location farming scripts package :3 */
+
+
+// MAIN SCRIPT
+
+
+var l = loc
+
+
+?l = "Rocky"
+  import MyScripts/PC/1-Rocky
+:?l = "Deadwood"
+  import MyScripts/PC/2-Deadwood
+:?l = "Caves"
+  import MyScripts/PC/3-Caves
+:?l = "Mushroom"
+  import MyScripts/PC/4-Mushroom
+:?l = "Halls"
+  import MyScripts/PC/5-Halls
+:?l = "Gate"
+  import MyScripts/PC/Gate
+:?l = "Mine"
+  import MyScripts/PC/6-Mine
+:?l = "Ridge"
+  import MyScripts/PC/7-Ridge
+:?l = "Temple"
+  import MyScripts/PC/8-Temple
+
+
+// *******************************************************
+//                      END OF FILE
+// *******************************************************

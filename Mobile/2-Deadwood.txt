@@ -1,38 +1,25 @@
-﻿// *******************************************************
-//                      3-Caves.txt                       
+﻿import Cosmetics/PetStonehead
+
+// *******************************************************
+//                       FILE INFO
 // *******************************************************
 
-
-// Script for Caves of Fear
-
+// Script for Deadwood Canyon
 
 //IMPORTS
-
 
 // *******************************************************
 //                     utilities.txt                      
 // *******************************************************
 
-
 // VARIABLES:
 
-
 //Units
-
 
 var sec = 30 // frames
 var scr = 69 // 1 screen = 69 units
 
-
 //FUNCTIONS:
-
-
-func max(n1,n2)
-  ?n1 >= n2
-    return n1
-  :
-    return n2
-
 
 func myFormatDigital(frames)
   ?frames <= 0
@@ -44,13 +31,10 @@ func myFormatDigital(frames)
     var secStr
     var minStr
 
-
     secs = frames/30
     mins = (frames/30)/60
 
-
     secs -= mins*60
-
 
     ?mins < 10
       minStr = "0" + mins
@@ -65,23 +49,16 @@ func myFormatDigital(frames)
     return minStr + ":" + secStr
 
 
-
-
 // *******************************************************
 //                 END OF "utilities.txt"                 
 // *******************************************************
-
 
 // *******************************************************
 //                    performanceV2.txt                   
 // *******************************************************
 
 
-
-
 // VARIABLES - definitions
-
-
 
 
 //Location
@@ -91,8 +68,6 @@ var lavg = loc.averageTime
 var lbt = loc.bestTime
 var lb = loc.begin
 var ll = loc.loop
-
-
 
 
 // Foe
@@ -111,11 +86,9 @@ var fa
 fa = foe.armor
 var fdmg
 
-
 // Time
 var tt
 tt = totaltime
-
 
 // Item
 var ip
@@ -127,14 +100,12 @@ ils = item.left.state
 var ilt
 var ili
 
-
 var ir
 ir = item.right
 var irs
 irs = item.right.state
 var irt
 var iri
-
 
 // Player stats
 var php
@@ -144,14 +115,10 @@ var pma
 var ds
 var bs
 
-
 // Ai
 var aiE
-aiE = ai.enabled
 var aiI
 aiI = ai.idle
-
-
 
 
 //screen
@@ -159,12 +126,18 @@ var si
 si = screen.i
 
 
+//resources
+var rs // res.stone
+var rw // res.wood
+var rt // res.tar
+var rb // res.bronze
+var rk // res.ki
+var rc // res.crystals
 
 
 // Functions
 var canAct
 canAct = item.CanActivate()
-
 
 // Cooldowns
 var bladeCd = 80 * sec
@@ -173,7 +146,6 @@ var armCd = 39 * sec
 var taliCd = 5 * sec
 var cindCd = 90 * sec
 
-
 var bardCd = 30 * sec
 var hammCd = 22 * sec
 var mindCd = 12 * sec // currently not in use
@@ -181,10 +153,8 @@ var qstaffCd = 5 * sec + 15 // 5,5s
 var dashCd = sec + 15 // 1,5s
 var bashCd = 9 * sec
 
-
 // Cast times
 var castTime = sec
-
 
 // Delays
 var bladeDelay = 0
@@ -193,14 +163,12 @@ var armDelay = 0
 var taliDelay = 0
 var cindDelay = 0
 
-
 var bardDelay = 0
 var hammDelay = 0
 var mindDelay = 0 // currently not in use
 var qstaffDelay = 0
 var dashDelay = 0
 var bashDelay = 0
-
 
 ?tt < 3
   lb = loc.begin
@@ -209,13 +177,11 @@ var bashDelay = 0
   lavg = loc.averageTime
   lbt = loc.bestTime
 
-
   bladeDelay = 0
   maskDelay = 0
   armDelay = 0
   taliDelay = 0
   cindDelay = 0
-
 
   bardDelay = 0
   hammDelay = 0
@@ -224,25 +190,16 @@ var bashDelay = 0
   dashDelay = 0
   bashDelay = 0
 
-
 // *******************************************************
 //               END OF "performanceV2.txt"               
 // *******************************************************
-
 
 // *******************************************************
 //                    MyBetterInfo.txt                    
 // *******************************************************
 
 
-
-
 // FUNCTIONS
-
-
-
-
-
 
 func colorToHex(colorName)
   ?colorName = "red"
@@ -285,27 +242,20 @@ func colorToHex(colorName)
     >c-20,0,#red,ERROR: colorToHex() got unexisting color: @colorName@
 
 
-
-
 func makeTextbox(x,y,w,h,txtStr,colorName,styleID)
-
 
   //declarations:
   var panel
   var txt
-
 
   //assignations:
   panel = ui.AddPanel()
   txt = ui.AddText(txtStr)
 
 
-
-
   //adding style and text to the panel:
   panel.style = styleID
   panel.Add(txt)
-
 
   //adding alignment
   panel.anchor = top_left
@@ -313,49 +263,38 @@ func makeTextbox(x,y,w,h,txtStr,colorName,styleID)
   txt.anchor = top_left
   txt.dock = top_left
 
-
   //adding color
   ?colorName
     txt.color = colorToHex(colorName)
     panel.color = colorToHex(colorName)
 
-
   //adding position
   panel.x = x
   panel.y = y
-
 
   txt.x = 1
   txt.y = 1
   txt.w = w
   txt.h = h
 
-
   //adding wide and height
   panel.w = txt.w + 1
   panel.h = txt.h + 1
 
-
   return panel
-
 
 func makeButton(x,y,w,h,anchor,dock,txtStr,colorName,styleID,actionFunc)
   var btn
 
-
   btn = ui.AddButton()
-
 
   btn.x = x
   btn.y = y
 
-
   btn.text = txtStr
-
 
   btn.w = string.Size(btn.text) + w
   btn.h = h
-
 
   ?anchor
     btn.anchor = anchor
@@ -363,11 +302,8 @@ func makeButton(x,y,w,h,anchor,dock,txtStr,colorName,styleID,actionFunc)
     btn.dock = dock
 
 
-
-
   ?styleID
     btn.style = styleID
-
 
   ?colorName
     var colorID = colorToHex(colorName)
@@ -377,120 +313,7 @@ func makeButton(x,y,w,h,anchor,dock,txtStr,colorName,styleID,actionFunc)
   
   btn.SetPressed(actionFunc)
 
-
   return btn
-
-
-
-
-func showDebuffs(inFoe,x,y,colorName)
-  ?(inFoe & fds)
-  ^|(!inFoe & ds)
-    var arrDebuffs
-
-
-    ?inFoe
-      arrDebuffs = string.Split(fds,",", true)
-    :
-      arrDebuffs = string.Split(ds,",",true)
-
-
-    ?arrDebuffs
-      >`@x@,@y@,@colorToHex(colorName)@,Debuffs:
-      var i = 0
-      for debuff : arrDebuffs
-        var arrInfo = string.Split(debuff,":",true)
-
-
-        >`@x@,@y+1 + i@,@colorToHex(colorName)@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
-        i++
-
-
-  return
-
-
-func showBuffs(inFoe,x,y,colorName)
-  ?(inFoe & fbs)
-  ^|(!inFoe & bs)
-    var arrBuffs
-
-
-    ?inFoe
-      arrBuffs = string.Split(fbs,",", true)
-    :
-      arrBuffs = string.Split(bs,",",true)
-
-
-    ?arrBuffs
-      >`@x@,@y@,@colorToHex(colorName)@,Buffs:
-      var i = 0
-      for buff : arrBuffs
-        var arrInfo = string.Split(buff,":",true)
-
-
-        >`@x@,@y+1 + i@,@colorToHex(colorName)@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
-        ^ (@myFormatDigital(int.Parse(arrInfo[3]))@)
-        i++
-
-
-  return
-
-
-
-
-func showBigStrUI(str,maxwidth,x,y,colorID)
-
-
-  //declarations:
-  var panel
-  var txt
-
-
-  //assignations:
-  panel = ui.AddPanel()
-  txt = ui.AddText(str)
-
-
-
-
-  //adding style and text to the panel:
-  panel.style = -1
-  panel.Add(txt)
-
-
-  //adding alignment
-  panel.anchor = top_left
-  panel.dock = top_left
-  txt.anchor = top_left
-  txt.dock = top_left
-
-
-  //adding color
-  ?colorID
-    txt.color = colorToHex(colorID)
-    panel.color = colorToHex(colorID)
-
-
-  //adding position
-  panel.x = x
-  panel.y = y
-
-
-  txt.x = 1
-  txt.y = 1
-
-
-  txt.w = maxwidth
-
-
-  //adding wide and height
-  panel.w = txt.w + 2
-  panel.h = txt.h + 2
-
-
-  return panel
-
-
 
 
 func showStrCentered(str,y,maxW,colorName)
@@ -502,45 +325,31 @@ func showStrCentered(str,y,maxW,colorName)
       for i = 0 .. arrStr.Count() - 1
         >c@-(string.Size(str)-1)/2@,@y-((arrStr.Count()-1))/2+i@,@colorToHex(colorName)@,@arrStr[i]@
 
-
   return
-
 
 // *******************************************************
 //               END OF "MyBetterInfo.txt"                
 // *******************************************************
 
-
 // *******************************************************
 //                       Combat.txt                       
 // *******************************************************
 
-
 // VARIABLES
 
 
-
-
 // Status
-
 
 var midhp = maxhp / 2
 var lowhp = maxhp / 3
 var hihp = (4 * maxhp) / 5
 
 
-
-
 // FUNCTIONS
 
 
 
-
-
-
 // Stats
-
-
 
 
 /* - arrInfo[0] is symbol
@@ -553,7 +362,6 @@ func getBuffInfo(nameid,inFoe,infoIndex)
   var buffFound
   var arrBuffs
 
-
   ?inFoe
     arrBuffs = string.Split(fbs,",", true)
   :
@@ -564,19 +372,15 @@ func getBuffInfo(nameid,inFoe,infoIndex)
       ?buff = nameid
         var arrInfo = string.Split(buff,":",true)
 
-
         ?0 <= infoIndex & infoIndex <= 3
           info = int.Parse(arrInfo[infoIndex])
 
-
         buffFound = true
-
 
     ?buffFound = true
       return info
     :
       return 0
-
 
 /* - arrInfo[0] is symbol
    - arrInfo[1] is id
@@ -588,22 +392,18 @@ func getDebuffLvl(nameid,inFoe)
   var debuffFound
   var arrDebuffs
 
-
   ?inFoe
     arrDebuffs = string.Split(fds,",", true)
   :
     arrDebuffs = string.Split(ds,",", true)
-
 
   ?arrDebuffs & !debuffFound
     for debuff : arrDebuffs
       ?debuff = nameid
         var arrInfo = string.Split(debuff,":",true)
 
-
         lvl = int.Parse(arrInfo[2])
         debuffFound = true
-
 
     ?debuffFound = true
       return lvl
@@ -611,36 +411,25 @@ func getDebuffLvl(nameid,inFoe)
       return 0
 
 
-
-
 func getFoeTotalHP()
   return fhp + fa
-
-
-
 
 
 
 // Lost items
 
 
-
-
 func canUseBlade()
   return tt >= bladeDelay & canAct
-
 
 // cannot be interrupted, doesn't need a cooldown check
 func useBlade()
   equip blade
   activate R
 
-
   bladeDelay = tt + bladeCd
 
-
   return
-
 
 /* Checks if Blade of the Fallen God
 can be used in 2 screens of distance,
@@ -648,7 +437,6 @@ according to a certain screen index. */
 func canUseBladeDS(nScreen)
   return canUseBlade()
   ^& si = nScreen
-
 
 var slideCount = 0 // counter to give screen.Next() time to slide
 func useBladeDS()
@@ -665,47 +453,35 @@ func useBladeDS()
       return
 
 
-
-
 func canUseArm()
   return tt >= armDelay &
   ^3 < fd & fd < 7
   ^& canAct
 
-
 func useArm()
   equip arm
   activate R
 
-
   armDelay = tt + armCd
-
 
   return
 
 
-
-
 func canUseMask()
   return tt >= maskDelay & canAct
-
 
 func useMask()
   equipL triskelion
   equipR mask
   activate R
 
-
   maskDelay = tt + maskCd
 
-
   return
-
 
 func canUseMaskDS(nScreen)
   return canUseMask()
   ^& si = nScreen
-
 
 func useMaskDS()
   ?slideCount = 0
@@ -722,9 +498,6 @@ func useMaskDS()
 
 
 
-
-
-
 func canUseTali()
   return summon.count = 0 &
   ^tt >= taliDelay &
@@ -732,6 +505,12 @@ func canUseTali()
   ^(il = talisman & ils = 2) |
   ^(ir = talisman & irs = 2)
 
+func canHideTali()
+  return summon.count > 0 & summon.GetId() = "cinderwisp"
+  ^& tt >= taliDelay
+  ^& canAct |
+  ^(il = talisman & ils = 2) |
+  ^(ir = talisman & irs = 2)
 
 func useTali(hand)
   ?hand = "l"
@@ -741,12 +520,9 @@ func useTali(hand)
     equipR talisman
     activate R
 
-
   taliDelay = tt + taliCd + castTime
 
-
   return
-
 
 /* Checks if you can use the cinderwisp's "devour"
 ability. */
@@ -754,7 +530,6 @@ func canUseCind()
   return summon.count >= 1
   ^& summon.GetId() = "cinderwisp"
   ^& tt >= cindDelay & canAct
-
 
 /* Checks if the estimated damage of
 cinderwisp's "devour" ability will kill the foe,
@@ -770,13 +545,10 @@ leaving a damage margin.
 func canKillCind(cindDmg,margin)
   return getFoeTotalHP() <= (getDebuffLvl(ignition,true) * cindDmg) + margin
 
-
 func useCind()
   activate cinderwisp
   cindDelay = tt + cindCd + castTime
   return
-
-
 
 
 /* Checks if you can use the
@@ -786,20 +558,13 @@ func canBash()
   ^& 11 <= fd & fd <= 15
   ^& canAct
 
-
 func bash(lItem)
   equipL @lItem@
   equipR bashing shield
 
-
   bashDelay = tt + bashCd
 
-
   return
-
-
-
-
 
 
 
@@ -807,14 +572,11 @@ func bash(lItem)
 // Special Weapons
 
 
-
-
 func canUseHamm()
   return tt >= hammDelay &
   ^canAct |
   ^(ir = heavy hammer &
   ^irs = 2)
-
 
 var hammCdSlower
 func canUseHamm2()
@@ -824,18 +586,13 @@ func canUseHamm2()
   ^(ir = "heavy hammer" &
   ^irs = 2)
 
-
 func useHamm()
   equip heavy hammer
   activate R
 
-
   hammDelay = tt + hammCd + castTime
 
-
   return
-
-
 
 
 func canUseBard()
@@ -843,7 +600,6 @@ func canUseBard()
   ^canAct |
   ^(ir = bardiche &
   ^irs = 2)
-
 
 var bardCdSlower
 func canUseBard2()
@@ -853,19 +609,14 @@ func canUseBard2()
   ^(ir = "bardiche" &
   ^irs = 2)
 
-
 func useBard(yourBard)
   ?fd < 10
     equip @yourBard@
     activate R
 
-
     bardDelay = tt + bardCd + castTime
 
-
   return
-
-
 
 
 /* Checks if you can use the
@@ -875,23 +626,17 @@ func canDash()
   ^& 11 <= fd & fd <= 15
   ^& canAct
 
-
 func dash(lItem,yourDshield)
   equipL @lItem@
   equipR @yourDshield@
 
-
   dashDelay = tt + dashCd
-
 
   return
 
 
-
-
 func canUseQstaff()
   ?tt >= qstaffDelay
-
 
     return canAct |
     ^(ir = quarterstaff
@@ -899,18 +644,14 @@ func canUseQstaff()
   :
     return false
 
-
 // recieves a string
 func useQstaff(yourQstaff)
   equip @yourQstaff@
   activate R
 
-
   qstaffDelay = tt + qstaffCd
 
-
   return
-
 
 func canUseMind()
   return item.GetCooldown("mind") <= 0 & canAct
@@ -918,6 +659,18 @@ func canUseMind()
 
 
 
+// Tools
+
+
+func canUseHatchet()
+  return item.GetCooldown("hatchet") <= 0
+  ^& canAct
+  ^& harvest.distance < 5
+  ^& ir = hatchet
+
+func useHatchet()
+  activate R
+  return
 
 
 
@@ -925,11 +678,8 @@ func canUseMind()
 // Potions
 
 
-
-
 func canUsePot()
   return ip ! empty & canAct
-
 
 /* Determines if a damage buff potion
 is brewed. Generally used for bosses.
@@ -943,13 +693,7 @@ func canUsePotDmg()
 
 
 
-
-
-
-
 // Others
-
-
 
 
 var moonTimer = 0
@@ -958,7 +702,6 @@ func doMoondial(weapon1, weapon2, mode)
   ?mode = 0 // Normal moondialing
     moonTimer++
     moonFrame = moonTimer % 3
-
 
     ?moonFrame = 1
       equipL moon
@@ -970,13 +713,11 @@ func doMoondial(weapon1, weapon2, mode)
       equipL @weapon1@
       equipR @weapon2@
 
-
   :?mode = 1
     /* Berserk Moondialing (For non-speed enchanted *max
     swords) */
     moonTimer++
     moonFrame = moonTimer % 4
-
 
     ?moonFrame = 1
       equipL @weapon2@ // on cooldown
@@ -997,7 +738,6 @@ func doMoondial(weapon1, weapon2, mode)
     equipL @weapon2@
     equipR @weapon1@
 
-
   :?mode = 3
     /* For when you have just 1 +21 sword (weapon2 can be
     anything, it will not be used) */
@@ -1008,33 +748,24 @@ func doMoondial(weapon1, weapon2, mode)
     equipR @weapon1@
 
 
-
-
   return
-
 
 // *******************************************************
 //                  END OF "Combat.txt"                   
 // *******************************************************
 
-
 // *******************************************************
 //                     MyArsenal.txt                      
 // *******************************************************
 
-
 // VARIABLES:
-
-
 
 
 /* renamed:
 
-
-Bifrost = ice sword D *max
-Glaciar = big ice sword dI *max
+Vantum Phoenix = fire sword D *max
+Speedy Hammer = stone hammer *max
 Kubikiribocho = bardiche *max (enchanted: crit) */
-
 
 //poison:
 var dPsword1 = "poison sword dP *max +13" // enchanted: speed
@@ -1044,47 +775,40 @@ var dPwand = "poison wand dP *max"
 var dLsword = "vigor sword dL *max"
 var ahShield = "vigor shield ah *max"
 var ahHammer = "vigor hammer ah *max"
+//aether:
+var dUsword1 = "aether sword dU *max +15 -big"
+var dUSWORD2 = "big aether sword dU *max +15"
 //fire:
 var dFsword = "fire sword dF *max"
+var fsword = "fire sword D *max"
 var dFwand = "fire wand dF *max"
 //ice:
 var dIsword = "ice sword dI *max -big"
-var dISWORD2 = "big ice sword dI *max"
-var isword = "ice sword D *max"
-var ishield = "ice shield A *max"
 var dIwand1 = "ice wand dI *max +16"
-var dIwand2 = "ice wand dI *max +0"
 //special weapons:
 var dshield = "dashing shield *max"
 var myqstaff = "quarterstaff golden"
 var fastBard = "bardiche *max" // enchanted: speed
 var cshield1 = "compound shield *max shiny"
 var cshield2 = "compound shield *max -shiny"
-
-
-
+var rbow = "repeating crossbow *max"
 
 
 
 // Weapons damage
 
-
 var bladeDmg = 310
 var bladeRDmg = 93
 var smiteMult = 7.6 // mult = multiplier
-
 
 var armDmg = 44
 var armRDmg = armDmg / 2
 var maxArmBuffs = 3
 
-
 var taliRDmg = 32 // multiplied by the amount of Ignition buffs
-var maxIgnitions = 10
-
+var maxIgnitions = 15
 
 var hammDmg = 123
-
 
 /* WARNING: These stats are for 
 "Kubikiribocho" only, not for the
@@ -1093,28 +817,21 @@ var bardDmg = 52
 var bardRDmg = bardDmg * 10.8
 
 
-
-
 // *******************************************************
 //                 END OF "MyArsenal.txt"                 
 // *******************************************************
-
 
 // *******************************************************
 //                    Speed_O_Meter.txt                   
 // *******************************************************
 
 
-
-
 // VARIABLES
-
 
 // Times in seconds:
 var ttDigital = myFormatDigital(tt)
 var pb = myFormatDigital(lbt)
 var avg = myFormatDigital(lavg)
-
 
 // Variable updating frequency:
 ?tt % 30 = 0
@@ -1125,11 +842,7 @@ var avg = myFormatDigital(lavg)
 
 
 
-
-
-
 // FUNCTIONS
-
 
 func speedOmeterUpdate(isSpeedrun)
   ?isSpeedrun
@@ -1137,10 +850,8 @@ func speedOmeterUpdate(isSpeedrun)
   :
     return tt % 30 = 0
 
-
 func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
   var txt
-
 
   ?isSpeedrun
     txt = ui.AddText(
@@ -1150,7 +861,6 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
     ^" PB  " + pb + " (" + lbt + "f)" + "\n" +
     ^" AVG " + avg + " (" + lavg + "f)"               )
 
-
   :
     txt = ui.AddText(
     ^"SPEED-O-METER" + "\n" +
@@ -1159,14 +869,11 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
     ^"  PB  " + pb + "\n" +
     ^"  AVG " + avg              )
 
-
   txt.anchor = top_left
   txt.dock = top_left
 
-
   txt.x = 1
   txt.y = 1
-
 
   ?isSpeedrun
     txt.w = 19
@@ -1176,11 +883,7 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
 
 
 
-
-
-
   var panel
-
 
   panel = ui.AddPanel()
   panel.Add(txt)
@@ -1196,115 +899,40 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
   panel.w = txt.w + 2
   panel.h = txt.h + 2
 
-
   ?colorStr
     txt.color = colorStr
     panel.color = colorStr
 
-
   return panel
-
 
 // *******************************************************
 //               END OF "Speed_O_Meter.txt"               
 // *******************************************************
 
+?l = "Deadwood"
 
-?l = "Caves"
   // VARIABLES
 
-
-  var runCount = 0
   var keepMask = true
-  var smiteScr
-  //var maskScr
+  var smiteScr = 1
 
-
-  ?ll | ls <= 5
+  ?ll
     keepMask = false
-    ?tt = 1
-      runCount++
-
-
-  ?!smiteScr
-    ?ls <= 5
-      smiteScr = 1
-    :
-      smiteScr = 2
-  :?ll & tt = 1 & ls > 5 &
-  ^smiteScr ! 4
-    smiteScr++
-
-
-  /*?!maskScr
-    ?ls <= 5
-      maskScr = 3
-    :
-      maskScr = 6*/
-
-
-
-
 
 
   // FUNCTIONS:
 
-
-  func Fight1v1()
-    fds = foe.debuffs.string
-    php = hp
-    pmhp = maxhp
-    bs = buffs.string
-
-
-    ?keepMask
-      //Left hand:
-      ?fds ! "chill:6"
-        equipL @dIsword@
-      :?fds ! "damage"
-        equipL @dPsword1@
-      :?fds ! "dot"
-        equipL @dFsword@
-      :?php ! pmhp
-        equipL @dLsword@
-      :
-        equipL Bifrost
-    :
-      ?(fds ! "chill:6" |
-      ^ fds ! "damage" |
-      ^ fds ! "dot" |
-      ^php ! pmhp)
-        //Left hand:
-        ?fds ! "chill:6"
-          equipL @dIsword@
-        :?php ! pmhp
-          equipL @dLsword@
-        :
-          equipL @isword@
-
-
-        //Right hand:
-        ?fds ! "damage"
-          equipR @dPsword1@
-        :?fds ! "dot"
-          equipR @dFsword@
-        :
-          equipR Bifrost
-      :
-        ?bs = "berserk"
-          doMoondial(Bifrost, isword, 2)
-        :
-          doMoondial(Bifrost, isword, 3)
+  func harvFunc(btn)
+    btnPressed = true
+    ?btn = yesBtn
+      choice = true
+    : // btn = noBtn
+      choice = false
     
     return
 
-
-
-
-  // LOADOUTS:
-
-
   func ldtF(mode)
+
     ?mode = "default"
       equipL triskelion
       ?!keepMask
@@ -1313,73 +941,115 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
       equipL triskelion
       ?!keepMask
         equipR @cshield2@
-    :?mode = "engage"
-      equipL triskelion
-      ?!keepMask
-        equipR @ishield@
     :?mode = "escape"
       equipL mind
       ?!keepMask
-        equipR @ishield@
+        equipR @cshield1@
     :?mode = "magnet"
       equipL star
       ?!keepMask
         equipR triskelion
 
+    :?mode = "harv"
+      ?!keepMask
+        equipL moon
+        equipR hatchet
+      :
+        equipL triskelion
 
-    :?mode = "extend"
-      equipL triskelion
-      equipR mask
+    :?mode = "aidPassive"
+      equipL ouroboros
+      ?!keepMask
+        equipR triskelion
+    :?mode = "aidActive"
+      equipL @vhammer3@
+      ?!keepMask
+        equipR @vshield2@
 
 
+    :?mode = "unmkDmg"
+      ?keepMask & fc > 1
+        equipL @dUSWORD2@
+      :
+        equipL @dUsword1@
+      ?!keepMask
+        equipR @dUSWORD2@
 
+    :?mode = "poenaStun"
+      ?!keepMask
+        equipL Speedy Hammer
+        equipR Vantum Phoenix
+      :
+        equipL Speedy Hammer
 
     :?mode = "magic"
       ?keepMask
-        ?fds ! "chill:6" &
-        ^f ! "immune_to_debuff_chill"
-          equipL @dIwand1@
-        :?fds ! "damage" &
-        ^f ! "immune_to_debuff_damage"
-          equipL @dPwand@
-        :?fds ! "dot" &
-        ^f ! "immune_to_debuff_dot"
-          equipL @dFwand@
-        :
-          equipL @dIwand1@
+        equipL @dIwand1@
       :
-        ?fds ! "damage" &
-        ^f ! "immune_to_debuff_damage"
+        ?fds ! "damage"
           equipL @dPwand@
-        :?fds ! "dot" &
-        ^f ! "immune_to_debuff_dot"
-          equipL @dFwand@
         :
-          equipL @dIwand2@
+          equipL @dFwand@
         equipR @dIwand1@
 
+    :?mode = "rangedDmg"
+      equip @rbow@
 
     :
       >c-10,0,#red,
       ^ERROR: ldtF() recieved incorrect mode: @mode@
 
-
     return
-
-
 
 
   // PROCEDURE:
 
-
-  var somui = som.showSpeedOmeterUI(1,6,colorToHex("pink"),true)
-  ?som.speedOmeterUpdate(true)
-    som.showSpeedOmeterUI(1,6,colorToHex("pink"),true)
-  ?somui
-    somui.Recycle()
-    somui = null
+  var somui = showSpeedOmeterUI(1,6,colorToHex("pink"),false)
+  ?speedOmeterUpdate(false)
+    showSpeedOmeterUI(1,6,colorToHex("pink"),false)
 
 
+  var choice = false
+  var btnPressed = false
+
+  var yesBtn
+  var noBtn
+
+  var dontShowAgain = false
+
+
+  ?!btnPressed
+    ?!yesBtn
+      yesBtn = makeButton(
+      ^-5,9,4,4,null,null,
+      ^"Yes",green,-5,harvFunc)
+    ?!noBtn
+      noBtn = makeButton(
+      ^5,9,5,4,null,null,
+      ^"No",red,-5,harvFunc)
+
+    showStrCentered("Harvest trees?",6,30,yellow)
+
+  :
+    ?yesBtn
+      yesBtn.Recycle()
+      yesBtn = null
+    ?noBtn
+      noBtn.Recycle()
+      noBtn = null
+
+    ?!dontShowAgain
+      var aux = tt + 3*sec
+      ?tt < aux
+        ?choice
+          showStrCentered("Harvest trees is enabled",6,30,"green")
+          ?keepMask
+            showStrCentered("(Will start harvesting in the next run!)",7,40,"green")
+        :
+          showStrCentered("Harvest trees is disabled",6,30,"red")
+      :
+        ?!dontShowAgain
+          dontShowAgain = true
 
 
   ?ils = 3
@@ -1389,160 +1059,207 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
     equipR @cshield1@
     equipR @ir@
 
-
-  ?(hp < maxhp) & runCount > 1
-    loc.Leave()
-
-
   ?lb
     rs = res.stone
     rw = res.wood
     rb = res.bronze
 
-
     ?rb >= 10
-      ?rs >= 10
-        ?ip ! "lucky"
-          brew stone + bronze
-      :?rw >= 10
+      ?rw >= 10
         ?ip ! "berserk"
           brew wood + bronze
+      :?rs >= 10
+        ?ip ! "lucky"
+          brew stone + bronze
       :
         loc.Leave()
     :
       loc.Leave()
 
-
   ?keepMask
     equipR mask
-
 
   ?lb | ll
     equipL triskelion
     equipR @cshield1@
 
-
-  :?canUseTali()
+  :?f ! "poena" & canUseTali()
     equipL triskelion
     useTali("r")
-    
-  :?canUsePot() & (keepMask
-  ^| (ls <= 5 & tt < 60 & ip = "berserk"))
+
+  :?canUsePotDmg() & keepMask
     activate potion
 
+  :?choice & harvest.distance < 5
+    ldtF("harv")
+    ?canUseHatchet() & !keepMask
+      useHatchet()
 
   :?pickup.distance < 15
     ldtF("magnet")
 
-
   :
     fd = foe.distance
     aiE = ai.enabled
-    si = screen.i
 
+    ?canUseQstaff()
+      ?aiE & ir ! "hatchet"
+      ^& ir ! "heavy hammer"
+      ^& ir ! "bardiche"
+      ^& ir ! Kubikiribocho
+      ^& ((!canBash() & !canDash())
+      ^| (fd < 11 | fd > 15))
+        useQstaff(myqstaff)
 
     ?canUseBladeDS(smiteScr)
-      bs = buffs.string
+      useBladeDS()
 
-
-      ?fd <= 33 & getBuffInfo("smite",false,2) ! 30 & ls > 5
-        useBladeDS()
-
-
-    ?canUseMaskDS(maskScr)
-      useMaskDS()
-
-
-    ?canUseQstaff() & aiE &
-    ^ir ! "bardiche" & ir ! Kubikiribocho &
-    ^ir ! "heavy hammer" & (
-    ^((canBash() | canDash()) & fd > 15)
-    ^| !(canBash() | canDash()))
-      useQstaff(myqstaff)
-
-
-    :?fd > 35
-      pa = armor
-      ?14 <= pa & pa <= 29
-        ldtF("default")
-      :?pa < 14
-        ldtF("armorRegen")
+    ?(f ! "tree_boss" & f ! "poena" & fd > 22)
+    ^|(fd > 15)
+      ?hp ! maxhp
+        ldtF("aidPassive")
       :
-        ldtF("extend")
-
-
-    :?fd > 15
-      aiE = ai.enabled
-      ?!aiI & aiE
-        ldtF("engage")
-        ?keepMask & fd <= 17
-          equipR @ishield@
-      :
-        ldtF("extend")
-
+        pa = armor
+        ?14 <= pa & pa <= 29
+          ldtF("default")
+        :?pa < 14
+          ldtF("armorRegen")
+        :
+          equipL triskelion
+          equipR mask
 
     :
-      fs = foe.state
-      ft = foe.time
+      ?f = "wasp" | f = "wasp_nest"
+        fds = foe.debuffs.string
 
+        ?fd <= 10 & canUseHamm()
+          useHamm()
 
-      ?(f = "cool_bat" & fs = 33 & ft > 27) |
-      ^(f = "spider_boss_harder" & fs = 142 & ft > 57)
-        ?canUseMind()
-          ldtF("escape")
+        :?fds ! "chill:6"
+          ldtF("magic")
         :
-          ?fd > 7
-            ldtF("magic")
-          :
-            ldtF("meleeDef")
-
+          ldtF("rangedDmg")
 
       :?canBash()
-        bash(isword)
+        bash(dLsword)
       :?canDash()
-        dash(isword,dshield)
-
+        dash(dLsword,dshield)
 
       :
-        ?f = "cool_bat"
-          Fight1v1()
+        fc = foe.GetCount(10)
 
+        ?f ! "tree_boss" & f ! "poena"
 
-        :?f ! "spider_boss_harder"
-          fc = foe.count
-
-
-          ?fc = 1
-            doMoondial(Bifrost, isword, 3)
-
-
-          :?fc >= 5 & canUseHamm()
-          ^& !canUseBlade() &
-          ^ls > 5
+          ?fc >= 5 & !canUseBlade()
+          ^& canUseHamm()
             useHamm()
-          :
+
+          :?f ! "immune_to_ranged"
             ldtF("magic")
-
-
-        :?f = "spider_boss_harder"
-        ^& fs ! 4 // dying
-          ?canUsePotDmg()
-            activate potion
-          :?canUseMask()
-            useMask()
-
-
-          :?fd < 11
-            fmhp = foe.maxhp
-
-
-            ?canUseBard() &
-            ^(keepMask | fmhp <= bardRDmg)
-              useBard(Kubikiribocho)
+          :
+            ?fc > 1
+              ldtF("unmkDmg")
             :
-              Fight1v1()
+              ?keepMask
+                ?fds ! "chill:6"
+                  equipL @dIsword@
+                :?fds ! "damage"
+                  equipL @dPsword1@
+                :?fds ! "dot"
+                  equipL @dFsword@
+                :
+                  equipL @fsword@
+              :
+                ?fds ! "chill:6" |
+                ^fds ! "damage" |
+                ^fds ! "dot"
+                  // Left hand:
+                  ?fds ! "chill:6"
+                    equipL @dIsword@
+                  :
+                    equipL @fsword@
 
+                  // Right hand:
+                  ?fds ! "damage"
+                    equipR @dPsword1@
+                  :?fds ! "dot"
+                    equipR @dFsword@
+                  :
+                    equipR Vantum Phoenix
+                :
+                  bs = buffs.string
+                  ?bs = "berserk"
+                    doMoondial(Vantum Phoenix, fsword, 2)
+                  :?bs = "lucky"
+                    doMoondial(Vantum Phoenix, fsword, 0)
+
+        : // ?foe = "tree_boss" | foe = "poena"
+          ?ls > 5 & canUsePotDmg()
+            activate potion
+
+          :
+            ?f = "phase1" // = "Xyloalgia"
+              fds = foe.debuffs.string
+
+              ?canUseMask()
+                useMask()
+              :?ls <= 5 & canUseBard()
+                useBard(fastBard)
+
+              :
+                ?keepMask
+                  ?fds ! "chill:6"
+                    equipL @dIsword@
+                  :?fds ! "damage"
+                    equipL @dPsword1@
+                  :?fds ! "dot"
+                    equipL @dFsword@
+                  :
+                    equipL @fsword@
+                :
+                  ?fds ! "chill:6" |
+                  ^fds ! "damage" |
+                  ^fds ! "dot"
+                    // Left hand:
+                    ?fds ! "chill:6"
+                      equipL @dIsword@
+                    :
+                      equipL @fsword@
+
+                    // Right hand:
+                    ?fds ! "damage"
+                      equipR @dPsword1@
+                    :?fds ! "dot"
+                      equipR @dFsword@
+                    :
+                      equipR Vantum Phoenix
+                  :
+                    bs = buffs.string
+                    ?bs = "berserk"
+                      doMoondial(Vantum Phoenix, fsword, 2)
+                    :?bs = "lucky"
+                      doMoondial(Vantum Phoenix, fsword, 0)
+
+            : // foe = "phase2" (poena)
+
+              /* hide cinderwisp to avoid
+              getting ignition debuff reflected */
+              ?canHideTali()
+                useTali("l")
+              :
+                fhp = foe.hp
+                bs = buffs.string
+
+                ?canUseBard() & fhp <= bardRDmg
+                  useBard(Kubikiribocho)
+                :
+                  ?canUseHamm() &
+                  ^fhp <= hammDmg +
+                  ^(smiteMult * getBuffInfo("smite",false,2))
+                    useHamm()
+                  :
+                    ldtF("poenaStun")
 
 // *******************************************************
-//                  END OF "3-Caves.txt"                  
+//                 END OF "2-Deadwood.txt"                
 // *******************************************************

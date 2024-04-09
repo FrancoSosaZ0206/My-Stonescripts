@@ -2,10 +2,11 @@
 //                 DPS_Meter_MODIFIED.txt                 
 // *******************************************************
 
+
 /* FILE INFO
   Made by: Pikarizard Charikachu xD
   Modified by: MetalEagle26 (Tom Crow)
-
+  
   Current version: v1.6 */
 
 
@@ -205,7 +206,7 @@ func uiDPSMeter(x,y,colorStr,mode)
       txt.h = 8
 
     :?mode = 2
-      txt.w = 11
+      txt.w = string.Size(dpsStr)
       txt.h = 1
 
 

@@ -3,21 +3,27 @@
 // *******************************************************
 
 
+
 /* FILE INFO
   Performance library (version 2)
   Made by MetalEagle26 (Tom Crow)
 
-This library provides some custom
-variables to help improve the
-performance of your scripts
-and reduce lag!
 
-- How to use:
+DESCRIPTION
+  This library provides some custom
+  variables to help improve the
+  performance of your scripts
+  and reduce lag!
+
+
+HOW TO IMPORT
   var p
-  p = import MyScripts/Imports/PC/PerformanceV2
+  p = import PerformanceV2
 
-- Use the variables that you need like this:
+
+HOW TO USE
   ?p.bardDelay // example */
+
 
 
 // IMPORTS

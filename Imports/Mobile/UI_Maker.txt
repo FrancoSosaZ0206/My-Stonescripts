@@ -3,30 +3,6 @@
 // *******************************************************
 
 
-/* FILE INFO
-  UI component maker functions library
-  Made by MetalEagle26 (Tom Crow)
-
-This library offers a new, simple way to create
-UI components.
-
-It is recommended to know read and understand
-what the functions do in order to make a good
-usage of them.
-
-- How to use:
-  var uimkr = import UI_Maker
-
-- Use the functions that you need like this:
-  var btn = uimkr.mkBtn([...parameters...]) // example */
-
-
-
-// IMPORTS
-
-var u = import MyScripts/Imports/PC/Utilities
-
-
 
 // FUNCTIONS
 
@@ -132,7 +108,7 @@ func mkTxtbox(x,y,w,h, anchor,dock, txt, align, col)
   ?w
     txtbox.w = w
   :
-    txtbox.w = string.Size(u.getLargestStr(txtbox.lines))
+    txtbox.w = string.Size(getLargestStr(txtbox.lines))
   ?h
     txtbox.h = h
   :

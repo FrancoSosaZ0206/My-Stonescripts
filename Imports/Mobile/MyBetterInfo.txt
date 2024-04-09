@@ -3,175 +3,378 @@
 // *******************************************************
 
 
+
 // FUNCTIONS
 
+// Helper functions
 
-
-func colorToHex(colorName)
-  ?colorName = "red"
+func colToHex(colName)
+  ?colName = "red"
     return #FF0000
-  :?colorName = "orange"
+  :?colName = "orange"
     return #FF7518
-  :?colorName = "yellow"
+  :?colName = "yellow"
     return #FFFF00
-  :?colorName = "gold"
+  :?colName = "gold"
     return #E49B0F
-  :?colorName = "blue"
+  :?colName = "blue"
     return #0000FF
-  :?colorName = "cyan"
+  :?colName = "cyan"
     return #00FFFF
-  :?colorName = "magenta"
+  :?colName = "magenta"
     return #FF00FF
-  :?colorName = "pink"
+  :?colName = "pink"
     return #E0115F
-  :?colorName = "purple"
+  :?colName = "purple"
     return #800080
-  :?colorName = "violet"
+  :?colName = "violet"
     return #7F00FF
-  :?colorName = "green"
+  :?colName = "green"
     return #008000
-  :?colorName = "darkGreen"
+  :?colName = "darkGreen"
     return #023020
-  :?colorName = "white"
+  :?colName = "white"
     return #FFFFFF
-  :?colorName = "gray"
+  :?colName = "gray"
     return #808080
-  :?colorName = "black"
+  :?colName = "black"
     return #000000
-  :?colorName = "brown"
+  :?colName = "brown"
     return #7B3F00
-  :?colorName = "turquoise" | colorName = "turquesa"
+  :?colName = "turquoise" | colName = "turquesa"
     return #40E0D0
-  :?colorName = "rainbow" | colorName = "rgb"
+  :?colName = "rainbow" | colName = "rgb"
     return #rainbow
   :
-    >c-20,0,#red,ERROR: colorToHex() got unexisting color: @colorName@
+    >c-20,0,#red,ERROR: colToHex() got unexisting color: @colName@
 
 
-func makeTextbox(x,y,w,h,txtStr,colorName,styleID)
 
-  //declarations:
-  var panel
-  var txt
+// Stats
 
-  //assignations:
-  panel = ui.AddPanel()
-  txt = ui.AddText(txtStr)
-
-
-  //adding style and text to the panel:
-  panel.style = styleID
-  panel.Add(txt)
-
-  //adding alignment
-  panel.anchor = top_left
-  panel.dock = top_left
-  txt.anchor = top_left
-  txt.dock = top_left
-
-  //adding color
-  ?colorName
-    txt.color = colorToHex(colorName)
-    panel.color = colorToHex(colorName)
-
-  //adding position
-  panel.x = x
-  panel.y = y
-
-  txt.x = 1
-  txt.y = 1
-
-  //adding wide and height
-  panel.w = txt.w + w
-  panel.h = txt.h + h
-
-  return panel
-
-func makeButton(x,y,w,h,anchor,dock,txtStr,colorName,styleID,actionFunc)
-  var btn
-
-  btn = ui.AddButton()
-
-  btn.x = x
-  btn.y = y
-
-  btn.text = txtStr
-
-  btn.w = string.Size(btn.text) + w
-  btn.h = h
-
-  ?anchor
-    btn.anchor = anchor
-  ?dock
-    btn.dock = dock
+/* Gets buff information
+nameid = name of the buff
+inFoe - buff precedence:
+  true = get buff from foe.
+  false = get buff from player.
+infoIndex - tyoe of information to get:
+  0 = symbol (Unicode).
+  1 = id (buff name).
+  2 = stack count (buffs accumulated).
+  3 = remaining duration on first stack.
+RETURNS: buff info if found, 0 otherwise. */
+func getBuffInfo(nameid,inFoe,infoIndex)
+// if inFoe = true, checks foe's buffs, else, player's buffs
+  var info
+  var buffFound
+  var arrBuffs
 
 
-  ?styleID
-    btn.style = styleID
-
-  ?colorName
-    var colorID = colorToHex(colorName)
-    btn.tcolor = colorID
-    btn.bcolor = colorID
-    btn.hcolor = colorID
-  
-  btn.SetPressed(actionFunc)
-
-  return btn
-
-
-func showBigStrUI(str,maxwidth,x,y,colorID)
-
-  //declarations:
-  var panel
-  var txt
-
-  //assignations:
-  panel = ui.AddPanel()
-  txt = ui.AddText(str)
-
-
-  //adding style and text to the panel:
-  panel.style = -1
-  panel.Add(txt)
-
-  //adding alignment
-  panel.anchor = top_left
-  panel.dock = top_left
-  txt.anchor = top_left
-  txt.dock = top_left
-
-  //adding color
-  ?colorID
-    txt.color = colorToHex(colorID)
-    panel.color = colorToHex(colorID)
-
-  //adding position
-  panel.x = x
-  panel.y = y
-
-  txt.x = 1
-  txt.y = 1
-
-  txt.w = maxwidth
-
-  //adding wide and height
-  panel.w = txt.w + 2
-  panel.h = txt.h + 2
-
-  return panel
-
-
-func showStrCentered(str,y,maxW,colorName)
-  ?string.Size(str) <= maxW
-    >c@-(string.Size(str)-1)/2@,@y@,@colorToHex(colorName)@,@str@
+  ?inFoe
+    arrBuffs = string.Split(fbs,",", true)
   :
-    var arrStr = string.Break(str,maxW)
-    ?arrStr
-      for i = 0 .. arrStr.Count() - 1
-        >c@-(string.Size(str)-1)/2@,@y-((arrStr.Count()-1))/2+i@,@colorToHex(colorName)@,@arrStr[i]@
+    arrBuffs = string.Split(bs,",", true)
+    
+  ?arrBuffs & !buffFound
+    for buff : arrBuffs
+      ?buff = nameid
+        var arrInfo = string.Split(buff,":",true)
 
-  return
+
+        ?0 <= infoIndex & infoIndex <= 3
+          info = int.Parse(arrInfo[infoIndex])
+
+
+        buffFound = true
+
+
+    ?buffFound = true
+      return info
+    :
+      return 0
+
+/* - arrInfo[0] is symbol
+   - arrInfo[1] is id
+   - arrInfo[2] is stack count
+   - arrInfo[3] is remaining duration on first stack */
+func getDebuffLvl(nameid,inFoe)
+// if inFoe = true, checks foe's debuffs, else, player's debuffs
+  var lvl
+  var debuffFound
+  var arrDebuffs
+
+
+  ?inFoe
+    arrDebuffs = string.Split(fds,",", true)
+  :
+    arrDebuffs = string.Split(ds,",", true)
+
+
+  ?arrDebuffs & !debuffFound
+    for debuff : arrDebuffs
+      ?debuff = nameid
+        var arrInfo = string.Split(debuff,":",true)
+
+
+        lvl = int.Parse(arrInfo[2])
+        debuffFound = true
+
+
+    ?debuffFound = true
+      return lvl
+    :
+      return 0
+
+
+/* Shows a list of debuffs.
+PARAMETERS:
+  - inFoe:
+    true = debuffs from foe
+    false = player debuffs
+  - col = color to show the debuffs list
+  - isUI:
+    true = returns an UI panel containing
+           an UI textbox with the debuffs list
+    false = directly prints out the debuffs
+            list into the screen
+
+RETURNS: 
+  if there are debuffs in the target entity (inFoe),
+    UI panel if isUI = true, nothing otherwise.
+  else, returns nothing. */
+func showDebuffs(inFoe,x,y,col,isUI)
+  ?(inFoe & fds)
+  ^|(!inFoe & ds)
+    var arrDebuffs
+
+
+    ?inFoe
+      arrDebuffs = string.Split(fds,",", true)
+    :
+      arrDebuffs = string.Split(ds,",",true)
+
+
+    ?arrDebuffs
+      ?isUI
+        var debuffsTxtbox
+        var debuffsPanel
+        var debuffsStr = "Debuffs:\n"
+
+        for debuff : arrDebuffs
+          var arrInfo = string.Split(debuff,":",true)
+
+          debuffsStr += arrInfo[0] + "(" + arrInfo[1] + ") = " + arrInfo[2] + "\n"
+        
+        debuffsTxtbox = mkTxtbox(
+          ^1,1,null,null, // x,y,w,h
+          ^top_left,top_left, // anchor, dock
+          ^debuffsStr, // txt
+          ^null,col // align, col
+        )
+
+        debuffsPanel = mkPanel(
+        ^x,y,
+        ^debuffsTxtbox.w + 1, // w
+        ^debuffsTxtbox.h + 1, // h
+        ^top_left,top_left, // anchor, dock
+        ^col,1, // col, style
+        ^debuffsTxtbox) // child
+
+        return debuffsPanel
+
+      :
+        >`@x@,@y@,@col@,Debuffs:
+        var i = 0
+        for debuff : arrDebuffs
+          var arrInfo = string.Split(debuff,":",true)
+
+
+          >`@x@,@y+1 + i@,@col@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+          i++
+        
+        return
+
+  :
+    return
+
+/* Shows a list of buffs.
+PARAMETERS:
+  - inFoe:
+    true = buffs from foe
+    false = player buffs
+  - col = color to show the buffs list
+  - isUI:
+    true = returns an UI panel containing
+           an UI textbox with the buffs list
+    false = directly prints out the buffs
+            list into the screen
+
+RETURNS: 
+  if there are buffs in the target entity (inFoe),
+    UI panel if isUI = true, nothing otherwise.
+  else, returns nothing. */
+func showBuffs(inFoe,x,y,col,isUI)
+  ?(inFoe & fbs)
+  ^|(!inFoe & bs)
+    var arrBuffs
+
+
+    ?inFoe
+      arrBuffs = string.Split(fbs,",", true)
+    :
+      arrBuffs = string.Split(bs,",",true)
+
+
+    ?arrBuffs
+      ?isUI
+        var buffsTxtbox
+        var buffsPanel
+        var buffsStr = "Buffs:\n"
+
+        for buff : arrBuffs
+          var arrInfo = string.Split(buff,":",true)
+
+          buffsStr += arrInfo[0] + "(" + arrInfo[1] + ") = " + arrInfo[2] + "\n"
+        
+        buffsTxtbox = mkTxtbox(
+          ^1,1,null,null, // x,y,w,h
+          ^top_left,top_left, // anchor, dock
+          ^buffsStr, // txt
+          ^null,col // align, col
+        )
+
+        buffsPanel = mkPanel(
+        ^x,y,
+        ^buffsTxtbox.w + 1, // w
+        ^buffsTxtbox.h + 1, // h
+        ^top_left,top_left, // anchor, dock
+        ^col,1, // col, style
+        ^buffsTxtbox) // child
+
+        return buffsPanel
+
+      :
+        >`@x@,@y@,@col@,Buffs:
+        var i = 0
+        for buff : arrBuffs
+          var arrInfo = string.Split(buff,":",true)
+
+
+          >`@x@,@y+1 + i@,@col@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+          i++
+        
+        return
+
+  :
+    return
+
+func showEffects(isBuff,inFoe,x,y,col,isUI)
+  ?isBuff
+    ?isUI
+      return showBuffs(inFoe,x,y,col,true)
+    :
+      showBuffs(inFoe,x,y,col,false)
+      return
+  :
+    ?isUI
+      return showDebuffs(inFoe,x,y,col,true)
+    :
+      showDebuffs(inFoe,x,y,col,false)
+      return
+
+
+func getFoeTotalHP()
+  return fhp + fa
+
+
+
+// Strings
+
+/* shows a big string, broken down into several lines.
+PARAMETERS:
+  - str = the string in question
+  - x
+  - y
+  - maxW = maximum width to show the string
+  - col (optional) = resulting text's color
+  - isUI:
+    - true = returns an UI component with the string
+    - false = prints out the broken down string directly.
+              DOES NOT RETURN ANYTHING. */
+func showBigStr(x,y,maxW,str,col,isUI)
+
+  ?isUI
+    var txtbox
+    var panel
+
+    txtbox = mkTxtbox(1,1,maxW,null,
+    ^top_left,top_left,
+    ^str,null,col)
+
+    panel = mkPanel(x,y,
+    ^txtbox.w + 2,
+    ^txtbox.h + 2,
+    ^top_left,top_left,
+    ^col,-1,txtbox)
+    
+    return panel
+  
+  :
+    var a = string.Break(str, maxW)
+
+    for i = 0 .. a.Count()-1
+      ?col
+        >`@x@,@y + i@,@col@,@a[i]@
+      :
+        >`@x@,@y + i@,@a[i]@
+
+    return
+
+/* Shows a string centered in the screen,
+   breaking it down into several lines if necessary.
+PARAMETERS:
+  - y
+  - maxW = maximum width to show the string
+  - str = the string in question
+  - col = output color of the string
+  - isUI:
+    - true = returns an UI component with the string
+    - false = prints out the centered, broken down
+              string directly.
+              DOES NOT RETURN ANYTHING. */
+func showStrCtr(y,maxW,str,col,isUI)
+
+  ?isUI
+    var txtbox
+    var panel
+
+    txtbox = mkTxtbox(1,1,maxW,null,
+    ^top_left,top_left,
+    ^str,center,col)
+
+    panel = mkPanel(
+    ^- (txtbox.w / 2),y,
+    ^txtbox.w + 2,
+    ^txtbox.h + 2,
+    ^center_center,center_centere,
+    ^col,-1,txtbox)
+    
+    return panel
+
+  :
+
+    var a = string.Break(str, maxW)
+
+    for i = 0 .. a.Count()-1
+      var x
+      x = - ( string.Size(a[i]) - 1 ) / 2
+      ?col
+        >c@x@,@y + i@,@col@,@a[i]@
+      :
+        >c@x@,@y + i@,@a[i]@
+
+    return
+
 
 
 // *******************************************************

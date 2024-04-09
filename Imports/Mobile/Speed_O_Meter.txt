@@ -3,84 +3,198 @@
 // *******************************************************
 
 
-// VARIABLES
 
-// Times (in seconds):
+// PRIVATE FUNCTIONS:
+
+func myFormatDigital(frames)
+  ?frames <= 0
+    return "00:00"
+  :
+    var timeStr
+    var secs
+    var mins
+    var secStr
+    var minStr
+
+    secs = frames/30
+    mins = (frames/30)/60
+
+    secs -= mins*60
+
+    ?mins < 10
+      minStr = "0" + mins
+    :
+      minStr = mins
+      
+    ?secs < 10
+      secStr = "0" + secs
+    :
+      secStr = secs
+    
+    return minStr + ":" + secStr
+
+/* returns time in a similar format to time.FormatDigital,
+   but with frame presition. */
+func formatSpeedrun(frames)
+
+  var timeStr = "00:00 0f"
+
+  ?frames > 0
+
+    var frms
+    var secs
+    var mins
+    var frmStr
+    var secStr
+    var minStr
+
+    frms = frames % 30 // the rest of the division is the added frames between each second
+    secs = frames/30
+    mins = (frames/30)/60
+
+    secs -= mins*60
+
+    frmStr = frms + "f"
+
+    ?secs < 10
+      secStr = "0" + secs
+    :
+      secStr = secs
+      
+    ?mins < 10
+      minStr = "0" + mins
+    :
+      minStr = mins
+
+    timeStr = minStr + ":" + secStr + " " + frmStr
+    
+  return 
+
+
+
+// VARIABLES:
+
+var sec = 30 // frames
+
+// Times in frames:
+var tt = totaltime
+var lbt
+var lavg
+
+tt = totaltime
+?tt <= 1
+  lbt = loc.bestTime
+  lavg = loc.averageTime
+
+// Times in seconds:
 var ttDigital = myFormatDigital(tt)
 var pb = myFormatDigital(lbt)
 var avg = myFormatDigital(lavg)
 
+// Times in seconds and frames:
+var ttSpeedrun = formatSpeedrun(tt)
+var pbSpeedrun = formatSpeedrun(lbt)
+var avgSpeedrun = formatSpeedrun(lavg)
+
+
 // Variable updating frequency:
 ?tt % 30 = 0
   ttDigital = myFormatDigital(tt)
-?ll
+
+  ttSpeedrun = formatSpeedrun(tt)
+
+?loc.loop
   pb = myFormatDigital(lbt)
   avg = myFormatDigital(lavg)
 
+  pbSpeedrun = formatSpeedrun(lbt)
+  avgSpeedrun = formatSpeedrun(lavg)
 
 
-// Public:
 
-// FUNCTIONS
+// PUBLIC FUNCTIONS
 
 func speedOmeterUpdate(isSpeedrun)
   ?isSpeedrun
     return true
   :
-    return tt % 30 = 0
+    return loc.begin | loc.loop | tt % 30 = 0
 
-func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
+func speedOmeterToStr(isSlim, isSpeedrun)
+
+  ?isSlim
+    ?isSpeedrun
+      return
+      ^"☆ " + pbSpeedrun   // ☆ = PB
+      ^" ≈ " + avgSpeedrun  // ☆ = AVG
+      ^" ▶ " + ttSpeedrun  // ☆ = CURR
+
+    :
+      return
+      ^"☆ " + pb         // ☆ = PB
+      ^" ≈ " + avg        // ☆ = AVG
+      ^" ▶ " + ttDigital // ☆ = CURR
+
+  :
+    ?isSpeedrun
+      return
+      ^"    SPEED-O-METER" + "\n" +
+      ^"·····················" + "\n" +
+      ^" CUR " + ttSpedrun + " (" + tt + "f)" + "\n" +
+      ^" PB  " + pbSpedrun + " (" + lbt + "f)" + "\n" +
+      ^" AVG " + avgSpedrun + " (" + lavg + "f)"
+
+    :
+      return
+      ^"SPEED-O-METER" + "\n" +
+      ^"·············" + "\n" +
+      ^" CUR " + ttDigital + "\n" +
+      ^" PB  " + pb + "\n" +
+      ^" AVG " + avg
+
+func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
+
+  >`@x@,@y@,@col@,@speedOmeterToStr(isSlim, isSpeedrun)@
+
+  return
+
+func asciiPrintSpeedOmeter(x, y, col, isSlim, isSpeedrun)
+
+  >`@x@,@y@,@col@,ascii
+@replaceInStr(speedOmeterToStr(isSlim, isSpeedrun), " ", "#")@
+asciiend
+
+  return
+
+func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
+
   var txt
-
-  ?isSpeedrun
-    txt = ui.AddText(
-    ^"   SPEED-O-METER" + "\n" +
-    ^"···················" + "\n" +
-    ^" CUR " + ttDigital + " (" + tt + "f)" + "\n" +
-    ^" PB  " + pb + " (" + lbt + "f)" + "\n" +
-    ^" AVG " + avg + " (" + lavg + "f)"               )
-
-  :
-    txt = ui.AddText(
-    ^"SPEED-O-METER" + "\n" +
-    ^"·············" + "\n" +
-    ^"  CUR " + ttDigital + "\n" +
-    ^"  PB  " + pb + "\n" +
-    ^"  AVG " + avg              )
-
-  txt.anchor = top_left
-  txt.dock = top_left
-
-  txt.x = 1
-  txt.y = 1
-
-  ?isSpeedrun
-    txt.w = 19
-  :
-    txt.w = 13
-  txt.h = 5
-
-
-
   var panel
 
-  panel = ui.AddPanel()
-  panel.Add(txt)
+  // For the panel:
+  var anchor
+  var dock
+  var style
   
-  panel.style = -2
-  
-  panel.anchor = top_left
-  panel.dock = top_left
-  
-  panel.x = x
-  panel.y = y
-  
-  panel.w = txt.w + 2
-  panel.h = txt.h + 2
+  ?isSlim
+    anchor = top_center
+    dock = top_center
+    style = -1
+  :
+    anchor = top_left
+    dock = top_left
+    style = -2
 
-  ?colorStr
-    txt.color = colorStr
-    panel.color = colorStr
+  txt = mkTxtbox(
+    ^1, 1, null, null, // x, y, w, h,
+    ^top_left, top_left, // anchor, dock,
+    ^speedOmeterToStr(isSlim, isSpeedrun), // txt
+    ^null, col) // align, col
+
+  panel = mkPanel(
+    ^x, y, txt.w + 2, txt.h + 2, // x, y, w, h,
+    ^anchor, dock, // anchor, dock,
+    ^col, style, txt) // col, style, child
 
   return panel
 

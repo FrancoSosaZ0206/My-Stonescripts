@@ -7,16 +7,32 @@ x = to do
 ✔ Add UI to the functions at MyBetterInfo
 ✔ Move UI component function makers into new file:
     "UIMaker.txt"
-✔ Add function to get the largest string out of a string
-    array
-✔ Update MyArsenal
+✔ Update PC scripts
+    ✔ Update Utilities
+        ✔ Utilities.txt: Add function to get the largest string out of a string
+            array
+        ✔ Utilities.txt: Add function to replace all occurences
+                        of a character for another inside a string
+    ✔ Update MyArsenal
+    ✔ Update Speed_O_Meter
+    ✔ Update PerformanceV2
+    ✔ Update Combat
+    ✔ Update DPS_Meter
+
+✔ Update mobile imports
+    ✔ Combat
+    ✔ DPS_Meter_MODIFIED
+    ✔ MyArsenal
+    ✔ MyBetterInfo
+    ✔ PerformanceV2
+    ✔ Speed_O_Meter
+    ✔ Utilities
+    ✔ UI_Maker
 
 
-x Update mobile imports and add the new ones
 x Test & Debug
 x Upload and backup everything
 
 
-... Update PC scripts
 ... Update PC location scripts
     ... Check and replace old functions with the new ones

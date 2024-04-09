@@ -3,61 +3,84 @@
 // *******************************************************
 
 
-/* Time Display Utility
+/* FILE INFO
+  Time Display Utility
   Made by MetalEagle26 (Tom Crow)
 
+  current version: 1.5
 
+
+DESCRIPTION
   This library provides functions to display your times on
     your runs!
   Includes some speedrunning versions to submit your times
     in frames ;)
 
 
-- How to use:
+HOW TO IMPORT
   PC:
-    Put this file in C:/.../Stonescript/UI or your folder
-    of preference
+    Put this file in C:/.../Stonescript/UI or your
+    folder of preference
     and in your mindstone/ main script, do this:
-
 
     var speedOmeter
     speedOmeter = import UI/Speed_O_Meter
-
 
   Mobile:
     Copy-Paste this into your mindstone/script.
 
 
-- Use the functions that you need like this:
-  
+HOW TO USE
   Example for PC:
     ?speedOmeter.speedOmeterUpdate()
-      speedOmeter.showSpeedOmeter(x,y,colorStr)
-
+      speedOmeter.showSpeedOmeter(x,y,col)
 
   Example for Mobile (Recommended):
     var SOMPanel
     ?speedOmeterUpdate()
-      SOMPanel = showSpeedOmeterUI(x,y,colorStr)
+      SOMPanel = showSpeedOmeterUI(x,y,col)
+
+······················································
+
+CHANGELOG:
+  v1.2:
+    - Now you can choose a slim version
+      of the meter in all functions.
+  v1.3:
+    - showSpeedOmeterUI() renamed to "speedOmeterUI".
+    - added import: UI_Maker.txt
+    - speedOmeterUI now uses functions from
+      the import "UI_Maker.txt".
+  v1.4:
+    - Fixed bug that prevented displaying
+      the meter before the first
+      second of each run.
+  v1.5:
+    - Now all functions that show the meter
+      depend on speedOmeterToStr().
 
 
-  ······················································
+······················································
 
-
-  Tip: keep in mind that speedrunning functions need to
-    update constantly to show the frames, which may cause
-    some lag.
-    Also, remember to use ".Recycle()" function and assign
-    to "null" after using UI functions!
+Tip: keep in mind that speedrunning functions need to
+  update constantly to show the frames, which may cause
+  some lag.
+  Also, remember to use ".Recycle()" function and assign
+  to "null" after using UI functions!
 
 
 Enjoy! */
 
 
 
+// IMPORTS:
 
-// Private (do not use!):
+var u = import MyScripts/Imports/PC/Utilities
+var uimkr = import MyScripts/Imports/PC/UI_Maker
 
+
+
+// PRIVATE FUNCTIONS:
 
 func myFormatDigital(frames)
   ?frames <= 0
@@ -69,13 +92,10 @@ func myFormatDigital(frames)
     var secStr
     var minStr
 
-
     secs = frames/30
     mins = (frames/30)/60
 
-
     secs -= mins*60
-
 
     ?mins < 10
       minStr = "0" + mins
@@ -89,193 +109,170 @@ func myFormatDigital(frames)
     
     return minStr + ":" + secStr
 
+/* returns time in a similar format to time.FormatDigital,
+   but with frame presition. */
+func formatSpeedrun(frames)
 
+  var timeStr = "00:00 0f"
 
+  ?frames > 0
+
+    var frms
+    var secs
+    var mins
+    var frmStr
+    var secStr
+    var minStr
+
+    frms = frames % 30 // the rest of the division is the added frames between each second
+    secs = frames/30
+    mins = (frames/30)/60
+
+    secs -= mins*60
+
+    frmStr = frms + "f"
+
+    ?secs < 10
+      secStr = "0" + secs
+    :
+      secStr = secs
+      
+    ?mins < 10
+      minStr = "0" + mins
+    :
+      minStr = mins
+
+    timeStr = minStr + ":" + secStr + " " + frmStr
+    
+  return 
 
 
 
 // VARIABLES:
 
-
 var sec = 30 // frames
 
-
 // Times in frames:
-var tt
+var tt = totaltime
 var lbt
 var lavg
-
 
 tt = totaltime
 ?tt <= 1
   lbt = loc.bestTime
   lavg = loc.averageTime
 
-
 // Times in seconds:
 var ttDigital = myFormatDigital(tt)
 var pb = myFormatDigital(lbt)
 var avg = myFormatDigital(lavg)
 
+// Times in seconds and frames:
+var ttSpeedrun = formatSpeedrun(tt)
+var pbSpeedrun = formatSpeedrun(lbt)
+var avgSpeedrun = formatSpeedrun(lavg)
+
 
 // Variable updating frequency:
 ?tt % 30 = 0
   ttDigital = myFormatDigital(tt)
+
+  ttSpeedrun = formatSpeedrun(tt)
+
 ?loc.loop
   pb = myFormatDigital(lbt)
   avg = myFormatDigital(lavg)
 
+  pbSpeedrun = formatSpeedrun(lbt)
+  avgSpeedrun = formatSpeedrun(lavg)
 
 
 
-
-
-// Public:
-
-
-
-
-// FUNCTIONS
-
+// PUBLIC FUNCTIONS
 
 func speedOmeterUpdate(isSpeedrun)
   ?isSpeedrun
     return true
   :
-    return tt % 30 = 0
+    return loc.begin | loc.loop | tt % 30 = 0
 
+func speedOmeterToStr(isSlim, isSpeedrun)
 
-func speedOmeterToStr(isSpeedrun)
-  ?isSpeedrun
-    return
-    ^"   SPEED-O-METER" + "\n" +
-    ^"···················" + "\n" +
-    ^" CUR " + ttDigital + " (" + tt + "f)" + "\n" +
-    ^" PB  " + pb + " (" + lbt + "f)" + "\n" +
-    ^" AVG " + avg + " (" + lavg + "f)"
+  ?isSlim
+    ?isSpeedrun
+      return
+      ^"☆ " + pbSpeedrun   // ☆ = PB
+      ^" ≈ " + avgSpeedrun  // ☆ = AVG
+      ^" ▶ " + ttSpeedrun  // ☆ = CURR
 
+    :
+      return
+      ^"☆ " + pb         // ☆ = PB
+      ^" ≈ " + avg        // ☆ = AVG
+      ^" ▶ " + ttDigital // ☆ = CURR
 
   :
-    return
-    ^"SPEED-O-METER" + "\n" +
-    ^"·············" + "\n" +
-    ^" CUR " + ttDigital + "\n" +
-    ^" PB  " + pb + "\n" +
-    ^" AVG " + avg
+    ?isSpeedrun
+      return
+      ^"    SPEED-O-METER" + "\n" +
+      ^"·····················" + "\n" +
+      ^" CUR " + ttSpedrun + " (" + tt + "f)" + "\n" +
+      ^" PB  " + pbSpedrun + " (" + lbt + "f)" + "\n" +
+      ^" AVG " + avgSpedrun + " (" + lavg + "f)"
 
+    :
+      return
+      ^"SPEED-O-METER" + "\n" +
+      ^"·············" + "\n" +
+      ^" CUR " + ttDigital + "\n" +
+      ^" PB  " + pb + "\n" +
+      ^" AVG " + avg
 
-func printSpeedOmeter(x,y,colorStr,isSpeedrun)
-  ?isSpeedrun
-    >`@x@,@y@,@colorStr@,
-    ^   SPEED-O-METER\n
-    ^···················\n
-    ^ CUR @ttDigital@ (@tt@f)\n
-    ^ PB  @pb@ (@lbt@f)\n
-    ^ AVG @avg@ (@lavg@f)
-  :
-    >`@x@,@y@,@colorStr@,
-    ^SPEED-O-METER\n
-    ^·············\n
-    ^ CUR @ttDigital@\n
-    ^ PB  @pb@\n
-    ^ AVG @avg@
+func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 
+  >`@x@,@y@,@col@,@speedOmeterToStr(isSlim, isSpeedrun)@
 
   return
 
+func asciiPrintSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 
-func asciiPrintSpeedOmeter(x,y,colorStr,isSpeedrun)
-  ?isSpeedrun
-    >`@x@,@y@,@colorStr@,ascii
-###SPEED-O-METER###\n
-···················\n
-#CUR#@ttDigital@#(@tt@f)\n
-#PB##@pb@#(@lbt@f)\n
-#AVG#@avg@#(@lavg@f)
+  >`@x@,@y@,@col@,ascii
+@u.replaceInStr(speedOmeterToStr(isSlim, isSpeedrun), " ", "#")@
 asciiend
-
-
-  :
-  >`@x@,@y@,@colorStr@,ascii
-SPEED-O-METER
-·············
-#CUR#@ttDigital@
-#PB##@pb@
-#AVG#@avg@
-asciiend
-
 
   return
 
+func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
 
-func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
   var txt
-
-
-  ?isSpeedrun
-    txt = ui.AddText(
-    ^"   SPEED-O-METER" + "\n" +
-    ^"···················" + "\n" +
-    ^" CUR " + ttDigital + " (" + tt + "f)" + "\n" +
-    ^" PB  " + pb + " (" + lbt + "f)" + "\n" +
-    ^" AVG " + avg + " (" + lavg + "f)"               )
-
-
-  :
-    txt = ui.AddText(
-    ^"SPEED-O-METER" + "\n" +
-    ^"·············" + "\n" +
-    ^" CUR " + ttDigital + "\n" +
-    ^" PB  " + pb + "\n" +
-    ^" AVG " + avg              )
-
-
-  txt.anchor = top_left
-  txt.dock = top_left
-
-
-  txt.x = 1
-  txt.y = 1
-
-
-  ?isSpeedrun
-    txt.w = 19
-  :
-    txt.w = 11
-  txt.h = 5
-
-
-
-
-
-
   var panel
 
-
-  panel = ui.AddPanel()
-  panel.Add(txt)
+  // For the panel:
+  var anchor
+  var dock
+  var style
   
-  panel.style = -2
-  
-  panel.anchor = top_left
-  panel.dock = top_left
-  
-  panel.x = x
-  panel.y = y
-  
-  panel.w = txt.w + 2
-  panel.h = txt.h + 2
+  ?isSlim
+    anchor = top_center
+    dock = top_center
+    style = -1
+  :
+    anchor = top_left
+    dock = top_left
+    style = -2
 
+  txt = uimkr.mkTxtbox(
+    ^1, 1, null, null, // x, y, w, h,
+    ^top_left, top_left, // anchor, dock,
+    ^speedOmeterToStr(isSlim, isSpeedrun), // txt
+    ^null, col) // align, col
 
-  ?colorStr
-    txt.color = colorStr
-    panel.color = colorStr
-
+  panel = uimkr.mkPanel(
+    ^x, y, txt.w + 2, txt.h + 2, // x, y, w, h,
+    ^anchor, dock, // anchor, dock,
+    ^col, style, txt) // col, style, child
 
   return panel
-
-
-
 
 
 

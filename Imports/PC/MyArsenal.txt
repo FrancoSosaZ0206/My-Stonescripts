@@ -3,20 +3,23 @@
 // *******************************************************
 
 
+
 /* FILE INFO
   Library with my current arsenal
   Made by MetalEagle26 (Tom Crow)
 
+
+DESCRIPTION
 This library just has some variables
   that minimalize the usage of my
   current arsenal and provide some
   info on their damage.
 
-- How to use:
-  var a = import MyScripts/Imports/PC/MyArsenal
+HOW TO IMPORT
+  var a = import MyArsenal
 
-- Use the functions that you need like this:
-  ?c.useBlade() // example
+HOW TO USE
+  ?foe.debuffs.count = a.maxIgnitions // example
 
 - There are constant variables that are subject to changes
 depending on the level or state of your arsenal
@@ -27,7 +30,6 @@ to work as intended. */
 
 
 // VARIABLES:
-
 
 /* Renamed:
 
@@ -97,8 +99,7 @@ var tshield = "towering shield *max golden"
 
 
 
-// Weapons damage
-
+// Weapons damage and stats
 
 var bladeDmg = 310
 var bladeRDmg = 95
@@ -123,7 +124,6 @@ other bardiche! */
 var bardDmg = 52
 var bardCrit = 10.8
 var bardRDmg = (bardDmg + 17) * bardCrit
-
 
 
 

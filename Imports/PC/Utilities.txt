@@ -3,19 +3,21 @@
 // *******************************************************
 
 
+
 /* FILE INFO
   Library of utilities
   Made by MetalEagle26 (Tom Crow)
 
+DESCRIPTION
 This library provides a pack of useful
   general purpose variables and
   functions to make your script-making
   tasks easier!
 
-- How to use:
-  var u = import MyScripts/Imports/PC/Utilities
+HOW TO IMPORT
+  var u = import Utilities
 
-- Use the variables that you need like this:
+HOW TO USE
   ?u.sec // example */
 
 
@@ -77,6 +79,13 @@ func getLargestStr(arrStr)
       maxStr = str
 
   return maxStr
+
+func replaceInStr(str,charOld,charNew)
+  for i = 0 .. str.Count() - 1
+    ?str[i] = charOld
+      str[i] = charNew
+
+  return str
 
 
 

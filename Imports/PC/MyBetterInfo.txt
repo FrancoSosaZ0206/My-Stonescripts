@@ -3,19 +3,22 @@
 // *******************************************************
 
 
+
 /* FILE INFO
   Better information functions library
   Made by MetalEagle26 (Tom Crow)
 
-This library focuses on displaying several
-kinds of information and game stats in a way
-that is easy to use and to comprehend.
+DESCRIPTION
+  This library focuses on displaying several
+  kinds of information and game stats in a way
+  that is easy to use and to comprehend.
 
-- How to use:
+HOW TO IMPORT
   var info = import MyBetterInfo
 
-- Use the functions that you need like this:
-  ?info.getDebuffLvl() // example */
+HOW TO USE
+  ?info.getDebuffLvl([...parameters...]) > 26 // example */
+
 
 
 // IMPORTS
@@ -23,6 +26,7 @@ that is easy to use and to comprehend.
 var uimkr = import MyScripts/Imports/PC/UI_Maker
 var p
 p = import MyScripts/Imports/PC/PerformanceV2
+
 
 
 // FUNCTIONS
@@ -68,7 +72,6 @@ func colToHex(colName)
     return #rainbow
   :
     >c-20,0,#red,ERROR: colToHex() got unexisting color: @colName@
-
 
 
 // Stats
@@ -306,7 +309,6 @@ func showEffects(isBuff,inFoe,x,y,col,isUI)
 
 func getFoeTotalHP()
   return p.fhp + p.fa
-
 
 
 // Strings

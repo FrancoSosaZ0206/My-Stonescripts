@@ -33,7 +33,6 @@ On mobile:
 To execute it:
   dpsMeter.PrintDPSMeter(x,y,colorStr)
 
-
     - x = x axis offset
     - y = y axis offset
     - colorStr = text color in string
@@ -272,7 +271,7 @@ func uiDPSMeter(x,y,colorStr,mode)
       txt.h = 8
 
     :?mode = 2
-      txt.w = 11
+      txt.w = string.Size(dpsStr)
       txt.h = 1
 
 

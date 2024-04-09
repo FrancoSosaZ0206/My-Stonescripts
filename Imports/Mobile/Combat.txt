@@ -2,6 +2,8 @@
 //                       Combat.txt                       
 // *******************************************************
 
+
+
 // VARIABLES
 
 // Status
@@ -27,9 +29,7 @@ func useBlade()
   equip blade
   activate R
 
-
   bladeDelay = tt + bladeCd
-
 
   return
 
@@ -64,9 +64,7 @@ func useArm()
   equip arm
   activate R
 
-
   armDelay = tt + armCd
-
 
   return
 
@@ -79,9 +77,7 @@ func useMask()
   equipR mask
   activate R
 
-
   maskDelay = tt + maskCd
-
 
   return
 
@@ -218,9 +214,7 @@ func bash(lItem)
   equipL @lItem@
   equipR bashing shield
 
-
   bashDelay = tt + bashCd
-
 
   return
 
@@ -245,9 +239,7 @@ func useHamm()
   equip heavy hammer
   activate R
 
-
   hammDelay = tt + hammCd + castTime
-
 
   return
 
@@ -261,6 +253,7 @@ func canUseBard()
 var bardCdSlower
 func canUseBard2()
   bardCdSlower = item.GetCooldown("bardiche") <= 0
+
   return bardCdSlower &
   ^canAct |
   ^(ir = "bardiche" &
@@ -270,7 +263,6 @@ func useBard(yourBard)
   ?fd < 10
     equip @yourBard@
     activate R
-
 
     bardDelay = tt + bardCd + castTime
 
@@ -289,20 +281,18 @@ func dash(lItem,yourDshield)
   equipL @lItem@
   equipR @yourDshield@
 
-
   dashDelay = tt + dashCd
-
 
   return
 
 
 func canUseQstaff()
+
   ?tt >= qstaffDelay
-
-
     return canAct |
     ^(ir = "quarterstaff"
     ^& irs = 2)
+
   :
     return false
 
@@ -311,9 +301,7 @@ func useQstaff(yourQstaff)
   equip @yourQstaff@
   activate R
 
-
   qstaffDelay = tt + qstaffCd
-
 
   return
 
@@ -352,7 +340,6 @@ func canUsePotHeal()
     ^ip = "vampiric"
       return hp < lowhp
 
-
     :?ip = "defensive"
       return hp < midhp
     
@@ -381,8 +368,8 @@ Valid potion types and conditions:
   - invisibility | NONE (will activate if foe = boss)
     + (send true as condition for this type) */
 func canUsePotSpecial(type,cond)
-  ?canUsePot()
 
+  ?canUsePot()
 
     ?ip = type
       ?ip = "cleansing"
@@ -393,22 +380,18 @@ func canUsePotSpecial(type,cond)
       :?ip = "strength"
         return foe.armor & foe.armor > cond
 
-
       :?ip = "lightning"
       ^|ip = "experience"
         return foe.count >= cond
 
-
       :?ip = "invisibility"
         return f = boss
-
 
       :
         >c-10,0,#red,
         ^func canUsePotSpecial() - Potion recieved\n
         ^does not belong to this function: "@type@"
         return false
-
 
     :
       >c-10,0,#red,
@@ -426,10 +409,10 @@ func canUsePotSpecial(type,cond)
 var moonTimer = 0
 var moonFrame
 func doMoondial(weapon1, weapon2, mode)
+
   ?mode = 0 // Normal moondialing
     moonTimer++
     moonFrame = moonTimer % 3
-
 
     ?moonFrame = 1
       equipL moon
@@ -441,13 +424,11 @@ func doMoondial(weapon1, weapon2, mode)
       equipL @weapon1@
       equipR @weapon2@
 
-
   :?mode = 1
     /* Berserk Moondialing (For non-speed enchanted *max
     swords) */
     moonTimer++
     moonFrame = moonTimer % 4
-
 
     ?moonFrame = 1
       equipL @weapon2@ // on cooldown
@@ -468,7 +449,6 @@ func doMoondial(weapon1, weapon2, mode)
     equipL @weapon2@
     equipR @weapon1@
 
-
   :?mode = 3
     /* For when you have just 1 +21 sword (weapon2 can be
     anything, it will not be used) */
@@ -477,8 +457,6 @@ func doMoondial(weapon1, weapon2, mode)
     :
       equipL @weapon2@
     equipR @weapon1@
-
-
 
 
   return

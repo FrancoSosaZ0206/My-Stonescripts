@@ -3,28 +3,6 @@
 // *******************************************************
 
 
-/* FILE INFO
-  Performance library (version 2)
-  Made by MetalEagle26 (Tom Crow)
-
-This library provides some custom
-variables to help improve the
-performance of your scripts
-and reduce lag!
-
-- How to use:
-  var p
-  p = import MyScripts/Imports/PC/PerformanceV2
-
-- Use the variables that you need like this:
-  ?p.bardDelay // example */
-
-
-// IMPORTS
-
-var u = import MyScripts/Imports/PC/Utilities
-
-
 
 // VARIABLES - definitions
 
@@ -104,23 +82,23 @@ var canAct
 canAct = item.CanActivate()
 
 // Cooldowns
-var bladeCd = 80 * u.sec
-var maskCd = 48 * u.sec
-var armCd = 39 * u.sec
+var bladeCd = 80 * sec
+var maskCd = 48 * sec
+var armCd = 39 * sec
 var fTaliCd = 5 * sec
 var aeTaliCd = 5 * sec
 var cindCd = 90 * sec
 var weavCd = 90 * sec
 
-var bardCd = 30 * u.sec
-var hammCd = 22 * u.sec
-// var mindCd = 12 * u.sec // currently not in use
-var qstaffCd = 5 * u.sec + 15 // 5,5s
-var dashCd = u.sec + 15 // 1,5s
-var bashCd = 9 * u.sec
+var bardCd = 30 * sec
+var hammCd = 22 * sec
+// var mindCd = 12 * sec // currently not in use
+var qstaffCd = 5 * sec + 15 // 5,5s
+var dashCd = sec + 15 // 1,5s
+var bashCd = 9 * sec
 
 // Cast times
-var castTime = u.sec
+var castTime = sec
 
 // Delays
 var bladeDelay = 0

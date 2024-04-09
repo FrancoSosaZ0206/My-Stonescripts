@@ -3,8 +3,8 @@
 // *******************************************************
 
 
-// VARIABLES:
 
+// VARIABLES:
 
 /* Renamed:
 
@@ -74,8 +74,7 @@ var tshield = "towering shield *max golden"
 
 
 
-// Weapons damage
-
+// Weapons damage and stats
 
 var bladeDmg = 310
 var bladeRDmg = 95
@@ -100,7 +99,6 @@ other bardiche! */
 var bardDmg = 52
 var bardCrit = 10.8
 var bardRDmg = (bardDmg + 17) * bardCrit
-
 
 
 

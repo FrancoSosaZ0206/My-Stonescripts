@@ -18,9 +18,11 @@ farming script easier.
   ?c.useBlade() // example */
 
 
+
 // IMPORTS
 
-var p = import MyScripts/Imports/PC/PerformanceV2
+var p
+p = import MyScripts/Imports/PC/PerformanceV2
 
 
 
@@ -49,9 +51,7 @@ func useBlade()
   equip blade
   activate R
 
-
   p.bladeDelay = p.tt + p.bladeCd
-
 
   return
 
@@ -86,9 +86,7 @@ func useArm()
   equip arm
   activate R
 
-
   p.armDelay = p.tt + p.armCd
-
 
   return
 
@@ -101,9 +99,7 @@ func useMask()
   equipR mask
   activate R
 
-
   p.maskDelay = p.tt + p.maskCd
-
 
   return
 
@@ -240,9 +236,7 @@ func bash(lItem)
   equipL @lItem@
   equipR bashing shield
 
-
   p.bashDelay = p.tt + p.bashCd
-
 
   return
 
@@ -267,9 +261,7 @@ func useHamm()
   equip heavy hammer
   activate R
 
-
   p.hammDelay = p.tt + p.hammCd + p.castTime
-
 
   return
 
@@ -293,9 +285,7 @@ func useBard(yourBard)
     equip @yourBard@
     activate R
 
-
     p.bardDelay = p.tt + p.bardCd + p.castTime
-
 
   return
 
@@ -311,20 +301,18 @@ func dash(lItem,yourDshield)
   equipL @lItem@
   equipR @yourDshield@
 
-
   p.dashDelay = p.tt + p.dashCd
-
 
   return
 
 
 func canUseQstaff()
+
   ?p.tt >= p.qstaffDelay
-
-
     return p.canAct |
     ^(p.ir = "quarterstaff"
     ^& p.irs = 2)
+
   :
     return false
 
@@ -333,9 +321,7 @@ func useQstaff(yourQstaff)
   equip @yourQstaff@
   activate R
 
-
   p.qstaffDelay = p.tt + p.qstaffCd
-
 
   return
 
@@ -374,7 +360,6 @@ func canUsePotHeal()
     ^p.ip = "vampiric"
       return hp < lowhp
 
-
     :?p.ip = "defensive"
       return hp < midhp
     
@@ -405,7 +390,6 @@ Valid potion types and conditions:
 func canUsePotSpecial(type,cond)
   ?canUsePot()
 
-
     ?p.ip = type
       ?p.ip = "cleansing"
         return hp < midhp &
@@ -415,15 +399,12 @@ func canUsePotSpecial(type,cond)
       :?p.ip = "strength"
         return foe.armor & foe.armor > cond
 
-
       :?p.ip = "lightning"
       ^|p.ip = "experience"
         return foe.count >= cond
 
-
       :?p.ip = "invisibility"
         return p.f = boss
-
 
       :
         >c-10,0,#red,
@@ -431,13 +412,11 @@ func canUsePotSpecial(type,cond)
         ^does not belong to this function: "@type@"
         return false
 
-
     :
       >c-10,0,#red,
       ^func canUsePotSpecial() - Potion recieved\n
       ^is not valid or equipped: "@type@"
       return false
-
 
   : // potion hasn't been brewed, it's been used,
     return false //or just can't be activated atm
@@ -448,10 +427,10 @@ func canUsePotSpecial(type,cond)
 var moonTimer = 0
 var moonFrame
 func doMoondial(weapon1, weapon2, mode)
+
   ?mode = 0 // Normal moondialing
     moonTimer++
     moonFrame = moonTimer % 3
-
 
     ?moonFrame = 1
       equipL moon
@@ -463,13 +442,11 @@ func doMoondial(weapon1, weapon2, mode)
       equipL @weapon1@
       equipR @weapon2@
 
-
   :?mode = 1
     /* Berserk Moondialing (For non-speed enchanted *max
     swords) */
     moonTimer++
     moonFrame = moonTimer % 4
-
 
     ?moonFrame = 1
       equipL @weapon2@ // on cooldown
@@ -490,7 +467,6 @@ func doMoondial(weapon1, weapon2, mode)
     equipL @weapon2@
     equipR @weapon1@
 
-
   :?mode = 3
     /* For when you have just 1 +21 sword (weapon2 can be
     anything, it will not be used) */
@@ -499,9 +475,6 @@ func doMoondial(weapon1, weapon2, mode)
     :
       equipL @weapon2@
     equipR @weapon1@
-
-
-
 
   return
 

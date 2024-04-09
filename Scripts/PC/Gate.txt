@@ -1,4 +1,4 @@
-﻿?loc = “Gate”
+﻿?loc = "Gate"
 
   import Cosmetics/PetStonehead
 

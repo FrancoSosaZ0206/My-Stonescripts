@@ -3,12 +3,7 @@
 // *******************************************************
 
 
-
-
 // FUNCTIONS
-
-
-
 
 
 
@@ -53,27 +48,20 @@ func colorToHex(colorName)
     >c-20,0,#red,ERROR: colorToHex() got unexisting color: @colorName@
 
 
-
-
 func makeTextbox(x,y,w,h,txtStr,colorName,styleID)
-
 
   //declarations:
   var panel
   var txt
-
 
   //assignations:
   panel = ui.AddPanel()
   txt = ui.AddText(txtStr)
 
 
-
-
   //adding style and text to the panel:
   panel.style = styleID
   panel.Add(txt)
-
 
   //adding alignment
   panel.anchor = top_left
@@ -81,49 +69,36 @@ func makeTextbox(x,y,w,h,txtStr,colorName,styleID)
   txt.anchor = top_left
   txt.dock = top_left
 
-
   //adding color
   ?colorName
     txt.color = colorToHex(colorName)
     panel.color = colorToHex(colorName)
 
-
   //adding position
   panel.x = x
   panel.y = y
 
-
   txt.x = 1
   txt.y = 1
-  txt.w = w
-  txt.h = h
-
 
   //adding wide and height
-  panel.w = txt.w + 1
-  panel.h = txt.h + 1
-
+  panel.w = txt.w + w
+  panel.h = txt.h + h
 
   return panel
-
 
 func makeButton(x,y,w,h,anchor,dock,txtStr,colorName,styleID,actionFunc)
   var btn
 
-
   btn = ui.AddButton()
-
 
   btn.x = x
   btn.y = y
 
-
   btn.text = txtStr
-
 
   btn.w = string.Size(btn.text) + w
   btn.h = h
-
 
   ?anchor
     btn.anchor = anchor
@@ -131,11 +106,8 @@ func makeButton(x,y,w,h,anchor,dock,txtStr,colorName,styleID,actionFunc)
     btn.dock = dock
 
 
-
-
   ?styleID
     btn.style = styleID
-
 
   ?colorName
     var colorID = colorToHex(colorName)
@@ -145,86 +117,23 @@ func makeButton(x,y,w,h,anchor,dock,txtStr,colorName,styleID,actionFunc)
   
   btn.SetPressed(actionFunc)
 
-
   return btn
-
-
-
-
-func showDebuffs(inFoe,x,y,colorName)
-  ?(inFoe & fds)
-  ^|(!inFoe & ds)
-    var arrDebuffs
-
-
-    ?inFoe
-      arrDebuffs = string.Split(fds,",", true)
-    :
-      arrDebuffs = string.Split(ds,",",true)
-
-
-    ?arrDebuffs
-      >`@x@,@y@,@colorToHex(colorName)@,Debuffs:
-      var i = 0
-      for debuff : arrDebuffs
-        var arrInfo = string.Split(debuff,":",true)
-
-
-        >`@x@,@y+1 + i@,@colorToHex(colorName)@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
-        i++
-
-
-  return
-
-
-func showBuffs(inFoe,x,y,colorName)
-  ?(inFoe & fbs)
-  ^|(!inFoe & bs)
-    var arrBuffs
-
-
-    ?inFoe
-      arrBuffs = string.Split(fbs,",", true)
-    :
-      arrBuffs = string.Split(bs,",",true)
-
-
-    ?arrBuffs
-      >`@x@,@y@,@colorToHex(colorName)@,Buffs:
-      var i = 0
-      for buff : arrBuffs
-        var arrInfo = string.Split(buff,":",true)
-
-
-        >`@x@,@y+1 + i@,@colorToHex(colorName)@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
-        ^ (@myFormatDigital(int.Parse(arrInfo[3]))@)
-        i++
-
-
-  return
-
-
 
 
 func showBigStrUI(str,maxwidth,x,y,colorID)
 
-
   //declarations:
   var panel
   var txt
-
 
   //assignations:
   panel = ui.AddPanel()
   txt = ui.AddText(str)
 
 
-
-
   //adding style and text to the panel:
   panel.style = -1
   panel.Add(txt)
-
 
   //adding alignment
   panel.anchor = top_left
@@ -232,33 +141,25 @@ func showBigStrUI(str,maxwidth,x,y,colorID)
   txt.anchor = top_left
   txt.dock = top_left
 
-
   //adding color
   ?colorID
     txt.color = colorToHex(colorID)
     panel.color = colorToHex(colorID)
 
-
   //adding position
   panel.x = x
   panel.y = y
 
-
   txt.x = 1
   txt.y = 1
 
-
   txt.w = maxwidth
-
 
   //adding wide and height
   panel.w = txt.w + 2
   panel.h = txt.h + 2
 
-
   return panel
-
-
 
 
 func showStrCentered(str,y,maxW,colorName)
@@ -269,7 +170,6 @@ func showStrCentered(str,y,maxW,colorName)
     ?arrStr
       for i = 0 .. arrStr.Count() - 1
         >c@-(string.Size(str)-1)/2@,@y-((arrStr.Count()-1))/2+i@,@colorToHex(colorName)@,@arrStr[i]@
-
 
   return
 

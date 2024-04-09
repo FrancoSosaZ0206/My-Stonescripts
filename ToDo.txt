@@ -1,0 +1,22 @@
+✔ = completed
+x = to do
+... = in progress
+
+-----------------------------------------------------------
+
+✔ Add UI to the functions at MyBetterInfo
+✔ Move UI component function makers into new file:
+    "UIMaker.txt"
+✔ Add function to get the largest string out of a string
+    array
+✔ Update MyArsenal
+
+
+x Update mobile imports and add the new ones
+x Test & Debug
+x Upload and backup everything
+
+
+... Update PC scripts
+... Update PC location scripts
+    ... Check and replace old functions with the new ones

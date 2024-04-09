@@ -1,0 +1,295 @@
+﻿// *******************************************************
+//                 DPS_Meter_MODIFIED.txt                 
+// *******************************************************
+
+
+/* ************* FILE INFO ************* *
+  Made by: Pikarizard Charikachu xD
+  Modified by: MetalEagle26 (Tom Crow)
+  
+  Current version: v1.6
+
+··········································
+
+DESCRIPTION
+
+Displays various stats to help you in 
+min-maxing your damage output. Only 
+works on bosses. Also coded so that it 
+only records stats the moment you 
+damage bosses. Neat right?
+
+··········································
+
+INSTRUCTIONS
+
+On PC:
+  var dpsMeter
+  dpsMeter = import DPS_Meter
+
+On mobile:
+  Copy paste this into your mindstone
+  
+To execute it:
+  dpsMeter.PrintDPSMeter(x,y,colorStr)
+
+
+    - x = x axis offset
+    - y = y axis offset
+    - colorStr = text color in string
+      format
+
+··········································
+
+Have fun!
+
+******************************************
+
+CHANGELOG
+
+v1.1:
+  - Removed unnecessary information
+    from the print command.
+  - Changed variable names for
+    major clarity.
+  - Added commentary explaining some
+    of the process.
+v1.2:
+  - Changed display mode to functional.
+    Now, to print the data, you need
+    to call a function.
+v1.3:
+  - Changed file name:
+    DPS Checker >>> DPS Meter.
+v1.4:
+  - Added UI and toString style functions.
+v1.5:
+  - Added "DPSMeterEnabled" global variable:
+    Now, to enable the functions and procedure,
+    this variable has to be set to [true].
+v1.6:
+  - changed dpsMeterUpdate() to public.
+  - uiDPSMeter() and dpsMeterUpdate() have
+    a new "mode" parameter, allowing to display
+    less information in a slim design if desired.
+
+*/
+
+
+// PUBLIC VARIABLES
+
+var DPSMeterEnabled = false
+
+
+// GLOBAL VARIABLES
+
+var dps_sec = 30  // 1 sec = 30 frames
+
+var dps_tt        // total time, on in-game frames
+var currhp = 0    // foe's current hitpoints (with armor)
+var nethp = 0     // foe's net maximum hitpoints (with armor)
+var dps_f         // foe
+
+dps_tt  = totaltime
+currhp = foe.hp + foe.armor
+nethp  = foe.maxhp + foe.maxarmor
+dps_f   = foe
+
+var hits      = 0 // hit counter
+var dmg       = 0 // current damage dealt
+var totalDmg  = 0 // total damage dealt
+var startTime = 0 // timestamp for the beginning of the fight
+var auxhp     = 0 // auxiliar variable to compare with currhp
+
+var FRM = "N/A" // frames elapsed from first hit
+var FPH = "N/A" // frames per hit >>> hit frequency | frames elapsed from each hit to the next
+var HPS = "N/A" // hits per second
+var DPF = "N/A" // damage per frame
+var DPS = "N/A" // damage per second
+
+
+
+// PROCEDURE
+
+// Calculate only when desired:
+?DPSMeterEnabled
+
+  ?dps_f = "boss" // only works when there's a boss
+
+    ?0 < currhp & currhp < nethp // boss lost hp/armor, but isn't dead
+
+      ?auxhp > currhp // if current hp updates
+        hits += 1 // we count a hit
+        dmg       = auxhp - currhp // we get the damage dealt from the difference
+        totalDmg  = totalDmg + dmg // and we accumulate it in this variable
+  
+    : // else, reset temporal variables
+      startTime = dps_tt
+      hits      = 0
+      dmg       = 0
+      totalDmg  = 0
+
+
+    FRM = dps_tt - startTime // total time minus the time the first hit was dealt
+    ?hits > 1
+      FPH = FRM      / (hits-1) // -1 is there to avoid stat flicking
+    :
+      FPH = "N/A"
+  
+    ?FPH ! "N/A"
+      HPS = dps_sec      / FPH
+    :
+      HPS = "N/A"
+      
+    ?FRM > 0
+      DPF = totalDmg / FRM // damage accumulated - no. frames elapsed
+    :
+      DPF = "N/A"
+
+    ?DPF ! "N/A"
+      DPS = DPF  * dps_sec
+    :
+      DPS = "N/A"
+
+
+
+// PRIVATE FUNCTIONS (do not use/modify!)
+
+func dpsUpdate()
+  ?DPSMeterEnabled
+    auxhp = currhp
+
+  return
+
+
+var hits_old
+var HPS_old
+var dmg_old
+var DPF_old
+var DPS_old
+
+
+
+// PUBLIC FUNCTIONS
+
+/* mode:
+  1 = updates the full version of the Meter.
+
+  2 = updates a smaller version of it,
+      containing less information. */
+func dpsMeterUpdate(mode)
+  var result = false
+
+  ?DPSMeterEnabled
+    ?dps_f = "boss"
+      
+      ?mode = 1
+        ?(hits_old ! hits | HPS_old ! HPS |
+        ^dmg_old ! dmg | DPF_old ! DPF |
+        ^DPS_old ! DPS)
+          ?hits_old ! hits
+            hits_old = hits
+          ?HPS_old ! HPS
+            HPS_old = HPS
+          ?dmg_old ! dmg
+            dmg_old = dmg
+          ?DPF_old ! DPF
+            DPF_old = DPF
+          ?DPS_old ! DPS
+            DPS_old = DPS
+
+          result = true
+
+
+      :?mode = 2 &
+      ^DPS_old ! DPS
+        DPS_old = DPS
+
+        result = true
+
+  return result
+
+
+/* Returns ui panel containing the DPS Meter.
+mode:
+  1 = returns the full version of the Meter.
+
+  2 = returns a smaller version of it,
+      containing less information. */
+func uiDPSMeter(x,y,colorStr,mode)
+  var panel
+  var txt
+  
+  ?DPSMeterEnabled & (mode = 1 | mode = 2)
+
+    panel = ui.AddPanel()
+
+    var dpsStr
+    ?mode = 1
+      dpsStr = "   DPS METER   "   + "\n" +
+      ^        "···············"   + "\n" +
+      ^        " hits     " + hits_old + "\n" +
+      ^        " hits/s   " + HPS_old  + "\n" +
+      ^        " dmg /hit " + dmg_old  + "\n" +
+      ^        " dmg /f   " + DPF_old  + "\n" +
+      ^        " dmg /s   " + DPS_old  + "\n" +
+      ^        "···············"
+
+    :?mode = 2
+      dpsStr = "DPS | " + DPS_old
+
+    txt = ui.AddText(dpsStr)
+
+
+    panel.style = 3
+    panel.Add(txt)
+    
+    ?mode = 1
+      panel.anchor = top_left
+      panel.dock = top_left
+      txt.anchor = top_left
+      txt.dock = top_left
+
+    :?mode = 2
+      panel.anchor = top_center
+      panel.dock = top_center
+      txt.anchor = top_left
+      txt.dock = top_left
+      
+    
+    panel.color = colorStr
+    txt.color = colorStr
+
+
+    panel.x = x
+    panel.y = y
+    
+    txt.x = 1
+    txt.y = 1
+    
+    ?mode = 1
+      txt.w = 15
+      txt.h = 8
+
+    :?mode = 2
+      txt.w = 11
+      txt.h = 1
+
+
+    panel.w = txt.w + 2
+    panel.h = txt.h + 2
+
+
+    dpsUpdate()
+
+
+  ?mode ! 1 & mode ! 2
+    >c0,0,#red,func uiDPSMeter() - incorrect mode: @mode@
+
+  return panel
+
+
+
+// *******************************************************
+//             END OF "DPS_Meter_MODIFIED.txt"            
+// *******************************************************

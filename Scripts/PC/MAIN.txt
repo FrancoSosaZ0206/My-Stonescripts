@@ -23,23 +23,23 @@ var l = loc
 
 
 ?l = "Rocky"
-  import MyScripts/PC/1-Rocky
+  import MyScripts/Scripts/PC/1-Rocky
 :?l = "Deadwood"
-  import MyScripts/PC/2-Deadwood
+  import MyScripts/Scripts/PC/2-Deadwood
 :?l = "Caves"
-  import MyScripts/PC/3-Caves
+  import MyScripts/Scripts/PC/3-Caves
 :?l = "Mushroom"
-  import MyScripts/PC/4-Mushroom
+  import MyScripts/Scripts/PC/4-Mushroom
 :?l = "Halls"
-  import MyScripts/PC/5-Halls
+  import MyScripts/Scripts/PC/5-Halls
 :?l = "Gate"
-  import MyScripts/PC/Gate
+  import MyScripts/Scripts/PC/Gate
 :?l = "Mine"
-  import MyScripts/PC/6-Mine
+  import MyScripts/Scripts/PC/6-Mine
 :?l = "Ridge"
-  import MyScripts/PC/7-Ridge
+  import MyScripts/Scripts/PC/7-Ridge
 :?l = "Temple"
-  import MyScripts/PC/8-Temple
+  import MyScripts/Scripts/PC/8-Temple
 
 
 // *******************************************************

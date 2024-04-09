@@ -3,16 +3,12 @@
 // *******************************************************
 
 
-
-
 // VARIABLES
 
-
-// Times in seconds:
+// Times (in seconds):
 var ttDigital = myFormatDigital(tt)
 var pb = myFormatDigital(lbt)
 var avg = myFormatDigital(lavg)
-
 
 // Variable updating frequency:
 ?tt % 30 = 0
@@ -23,11 +19,9 @@ var avg = myFormatDigital(lavg)
 
 
 
-
-
+// Public:
 
 // FUNCTIONS
-
 
 func speedOmeterUpdate(isSpeedrun)
   ?isSpeedrun
@@ -35,10 +29,8 @@ func speedOmeterUpdate(isSpeedrun)
   :
     return tt % 30 = 0
 
-
 func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
   var txt
-
 
   ?isSpeedrun
     txt = ui.AddText(
@@ -48,7 +40,6 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
     ^" PB  " + pb + " (" + lbt + "f)" + "\n" +
     ^" AVG " + avg + " (" + lavg + "f)"               )
 
-
   :
     txt = ui.AddText(
     ^"SPEED-O-METER" + "\n" +
@@ -57,14 +48,11 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
     ^"  PB  " + pb + "\n" +
     ^"  AVG " + avg              )
 
-
   txt.anchor = top_left
   txt.dock = top_left
 
-
   txt.x = 1
   txt.y = 1
-
 
   ?isSpeedrun
     txt.w = 19
@@ -74,11 +62,7 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
 
 
 
-
-
-
   var panel
-
 
   panel = ui.AddPanel()
   panel.Add(txt)
@@ -94,13 +78,12 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
   panel.w = txt.w + 2
   panel.h = txt.h + 2
 
-
   ?colorStr
     txt.color = colorStr
     panel.color = colorStr
 
-
   return panel
+
 
 
 // *******************************************************

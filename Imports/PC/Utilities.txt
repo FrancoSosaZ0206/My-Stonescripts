@@ -1,27 +1,41 @@
 ﻿// *******************************************************
-//                       FILE INFO
+//                     Utilities.txt                      
 // *******************************************************
+
+
+/* FILE INFO
+  Library of utilities
+  Made by MetalEagle26 (Tom Crow)
+
+This library provides a pack of useful
+  general purpose variables and
+  functions to make your script-making
+  tasks easier!
+
+- How to use:
+  var u = import MyScripts/Imports/PC/Utilities
+
+- Use the variables that you need like this:
+  ?u.sec // example */
+
 
 
 // VARIABLES:
 
-
 //Units
-
 
 var sec = 30 // frames
 var scr = 69 // 1 screen = 69 units
 
 
-//FUNCTIONS:
 
+//FUNCTIONS:
 
 func max(n1,n2)
   ?n1 >= n2
     return n1
   :
     return n2
-
 
 func myFormatDigital(frames)
   ?frames <= 0
@@ -53,9 +67,19 @@ func myFormatDigital(frames)
     
     return minStr + ":" + secStr
 
+func getLargestStr(arrStr)
+
+  var maxStr = arrStr[0]
+  var maxInd = -1
+
+  for str : arrStr
+    ?string.Size(str) > string.Size(maxStr)
+      maxStr = str
+
+  return maxStr
 
 
 
 // *******************************************************
-//                      END OF FILE
+//                 END OF "Utilities.txt"                 
 // *******************************************************

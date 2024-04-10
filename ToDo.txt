@@ -34,5 +34,6 @@ x Test & Debug
 x Upload and backup everything
 
 
+... Update Mobile/MAIN (standarize mobile scripts)
 ... Update PC location scripts
     ... Check and replace old functions with the new ones

@@ -1,26 +1,27 @@
 ﻿// *******************************************************
-//                       FILE INFO
+//                        MAIN.txt                        
 // *******************************************************
+
 
 
 /* MAIN SCRIPT, PC VERSION
   Made by Franco N. Sosa (Tom Crow)
 
+HOW TO IMPORT
+  Just drop this code into your mindstone, or
+  put this file into your Stonescript folder
+  and import it like this:
+    import MAIN
 
+  And you're done!
 
-
-Just drop this code into your mindstone, or import
-it like this:
-  import MyScripts/PC/MAIN
-And you're done!
 Enjoy your multi-location farming scripts package :3 */
 
 
-// MAIN SCRIPT
 
+// PROCEDURE
 
 var l = loc
-
 
 ?l = "Rocky"
   import MyScripts/Scripts/PC/1-Rocky
@@ -42,6 +43,7 @@ var l = loc
   import MyScripts/Scripts/PC/8-Temple
 
 
+
 // *******************************************************
-//                      END OF FILE
+//                    END OF "Main.txt"                   
 // *******************************************************

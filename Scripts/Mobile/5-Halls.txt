@@ -143,8 +143,10 @@ canAct = item.CanActivate()
 var bladeCd = 80 * sec
 var maskCd = 48 * sec
 var armCd = 39 * sec
-var taliCd = 5 * sec
+var fTaliCd = 5 * sec
+var aeTaliCd = 5 * sec
 var cindCd = 90 * sec
+var weaverCd = 90 * sec
 
 var bardCd = 30 * sec
 var hammCd = 22 * sec
@@ -160,8 +162,10 @@ var castTime = sec
 var bladeDelay = 0
 var maskDelay = 0
 var armDelay = 0
-var taliDelay = 0
+var fTaliDelay = 0
+var aeTaliDelay = 0
 var cindDelay = 0
+var weaverDelay = 0
 
 var bardDelay = 0
 var hammDelay = 0
@@ -180,8 +184,10 @@ var bashDelay = 0
   bladeDelay = 0
   maskDelay = 0
   armDelay = 0
-  taliDelay = 0
+  fTaliDelay = 0
+  aeTaliDelay = 0
   cindDelay = 0
+  weaverDelay = 0
 
   bardDelay = 0
   hammDelay = 0
@@ -584,29 +590,23 @@ func useMaskDS()
 
 
 
-func canUseTali()
-  return summon.count = 0 &
-  ^tt >= taliDelay &
+func canUseFTali()
+  return
+  ^summon.GetId() ! "cinderwisp" &
+  ^tt >= fTaliDelay &
   ^canAct |
-  ^(il = talisman & ils = 2) |
-  ^(ir = talisman & irs = 2)
+  ^(il = "fire_talisman" & ils = 2) |
+  ^(ir = "fire_talisman" & irs = 2)
 
-func canHideTali()
-  return summon.count > 0 & summon.GetId() = "cinderwisp"
-  ^& tt >= taliDelay
-  ^& canAct |
-  ^(il = talisman & ils = 2) |
-  ^(ir = talisman & irs = 2)
-
-func useTali(hand)
+func useFTali(hand)
   ?hand = "l"
-    equipL talisman
+    equipL fire_talisman
     activate L
   :?hand = "r"
-    equipR talisman
+    equipR fire_talisman
     activate R
 
-  taliDelay = tt + taliCd + castTime
+  fTaliDelay = tt + fTaliCd + castTime
 
   return
 
@@ -635,6 +635,57 @@ func useCind()
   activate cinderwisp
   cindDelay = tt + cindCd + castTime
   return
+
+
+func canUseAETali()
+  return
+  ^summon.GetId() ! "voidweaver" &
+  ^tt >= aeTaliDelay &
+  ^canAct |
+  ^(il = "aether_talisman" & ils = 2) |
+  ^(ir = "aether_talisman" & irs = 2)
+
+func useAETali(hand)
+  ?hand = "l"
+    equipL aether_talisman
+    activate L
+  :?hand = "r"
+    equipR aether_talisman
+    activate R
+
+  aeTaliDelay = tt + aeTaliCd + castTime
+
+  return
+
+/* Checks if you can use the voidweaver's "devour"
+ability. */
+func canUseWeaver()
+  return summon.count >= 1
+  ^& summon.GetId() = "voidweaver"
+  ^& tt >= weaverDelay & canAct
+
+func useWeaver()
+  activate voidweaver
+  weaverDelay = tt + weaverCd + castTime
+  return
+
+func canUseWeaverDS(nScreen)
+  return canUseWeaver()
+  ^& si = nScreen
+
+func useWeaverDS()
+  ?slideCount = 0
+    screen.Next()
+    slideCount = 20
+
+  :?slideCount > 0
+    slideCount--
+  
+    ?slideCount = 0
+      useWeaver()
+      screen.ResetOffset()
+
+      return
 
 
 /* Checks if you can use the
@@ -913,6 +964,7 @@ var dFsword = "fire sword dF *max"
 var dFwand = "fire wand dF *max"
 //ice:
 var dIsword = "ice sword dI *max -big"
+var aiShield = "ice shield ai *max"
 var dIwand1 = "ice wand dI *max +16"
 var dIwand2 = "ice wand dI *max +0"
 //special weapons:
@@ -1045,14 +1097,28 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
 
 
   var pausedOnce
-  var smiteScr = 1
   var runCount = 0
   var keepMask = true
+  var keepFTali = false
+
+  var canDebI
+  var canDebP
+  var canDebF
+
+  var smiteScr = 1
+  var weaverScr = 4
+
+  ?smiteScr = 3
+    weaverScr = 2
 
   ?lb | ll
     pausedOnce = false
 
+  ?f = "boss"
+    keepFTali = true
+
   ?ll
+    keepFTali = false
     keepMask = false
     ?tt = 1
       runCount++
@@ -1063,40 +1129,60 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
 
   // FUNCTIONS:
 
-  func Fight1v1()
+  func fight1v1()
     fds = foe.debuffs.string
     php = hp
     pmhp = maxhp
 
-    ?keepMask
-      ?fds ! "chill:6"
-        equipL @dIsword@
-      :?fds ! "damage"
-        equipL @dPsword1@
-      :?fds ! "dot"
-        equipL @dFsword@
-      :?php ! pmhp
+
+    /* How to apply debuffs:
+    - apply all except the ones the foe is immune to.
+    Finish when:
+    - all possible debuffs have been applied. */
+    canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
+    
+    canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
+    
+    canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
+    
+    ?canDebI | canDebP | canDebF
+      ?keepMask
+        ?canDebI
+          equipL @dIsword@
+        :?canDebP
+          equipL @dPsword1@
+        :?canDebF
+          equipL @dFsword@
+      :
+        //Left hand:
+        ?canDebP
+          equipL @dPsword1@
+        :?canDebF
+          equipL @dFsword@
+        :?canDebI
+          equipL @dIwand1@
+
+        //Right hand:
+        ?canDebI
+          equipR @dIsword@
+    
+    :?php ! pmhp
+      ?keepMask
         equipL @dLsword@
       :
-        equipL Dothaneel
+        equipL triskelion
+        equipR @dLsword@
 
     :
-      //Left hand:
-      ?fds ! "chill:6"
-        equipL @dIsword@
-      :?php ! pmhp
-        equipL @dLsword@
+      ?keepMask
+        equipL Dothaneel
       :
-        equipL @vsword@
+        bs = buffs.string
+        ?bs = "berserk"
+          doMoondial(Dothaneel, vsword, 2)
+        :
+          doMoondial(Dothaneel, vsword, 3)
 
-      //Right hand:
-      ?fds ! "damage"
-        equipR @dPsword1@
-      :?fds ! "dot"
-        equipR @dFsword@
-      :
-        equipR Dothaneel
-    
     return
 
 
@@ -1133,37 +1219,33 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
         equipL @vsword@
         equipR Dothaneel
 
-    :?mode = "magic"
+    :?mode = "magicDmg"
       ?keepMask
-        ?fds ! "chill:6" &
-        ^f ! "immune_to_debuff_chill"
-          equipL @dIwand1@
-        :?fds ! "damage" &
-        ^f ! "immune_to_debuff_damage"
-          equipL @dPwand@
-        :?fds ! "dot" &
-        ^f ! "immune_to_debuff_dot"
-          equipL @dFwand@
-        :
-          equipL @vwand1@
+        equipL @vwand1@
+      :
+        equipL @vwand2@
+        equipR @vwand1@
 
+    :?mode = "magicDeb"
+      ?keepMask
+        ?canDebI
+          equipL @dIwand1@
+        :?canDebP
+          equipL @dPwand@
+        :?canDebF
+          equipL @dFwand@
       :
         //Left hand:
-        ?fds ! "damage" &
-        ^f ! "immune_to_debuff_damage"
+        ?canDebP
           equipL @dPwand@
-        :?fds ! "dot" &
-        ^f ! "immune_to_debuff_dot"
-          equipL @dFwand@
-        :
-          equipL @vwand1@
-
+        :?canDebF
+          equipL @dPwand@
+        :?canDebI
+          equipL @dIwand2@
+        
         //Right hand:
-        ?fds ! "chill:6" &
-        ^f ! "immune_to_debuff_chill"
-          equipL @dIwand1@
-        :
-          equipR @vwand2@
+        ?canDebI
+          equipR @dIwand1@
 
 
     :
@@ -1210,9 +1292,18 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
     equipL triskelion
     equipR @cshield1@
 
-  :?canUseTali()
-    equipL triskelion
-    useTali("r")
+  :?canUseAETali() & !keepFTali
+    ?keepMask
+      useAETali("l")
+    :
+      equipL triskelion
+      useAETali("r")
+  :?canUseFTali() & keepFTali
+    ?keepMask
+      useFTali("l")
+    :
+      equipL triskelion
+      useFTali("r")
 
   :?canUsePot() & keepMask
     activate potion
@@ -1237,6 +1328,12 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
       ?fd <= 33
         useBladeDS()
 
+// **********************************
+    ?canUseWeaver()
+      ?si = weaverScr & fd < 15
+        useWeaver()
+// **********************************
+
     ?fd > 35
       pa = armor
 
@@ -1258,13 +1355,30 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
 
     :?fd > 15
       fs = foe.state
-
+      fds = foe.debuffs.string
+      
       ldtF("engage")
       ?php ! pmhp & f = "pallas" & fs = 0
         ?!keepMask
           equipR ouroboros
         :
           equipL ouroboros
+
+        var isAbtToDash
+        isAbtToDash = (fd <= 17)
+        ?keepMask & isAbtToDash
+          equipR @vshield@
+
+
+
+        canDebI = (fds ! "chill" &
+        ^f ! "immune_to_debuff_chill")
+        
+        bs = buffs.string
+        
+        ?!keepMask & canDebI & isAbtToDash &
+        ^getFoeTotalHP() > (getBuffInfo("smite", false, 2) * smiteMult)
+          equipR @aiShield@
 
     :?canBash()
       bash(dLsword)
@@ -1280,11 +1394,20 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
         useHamm()
 
       :?f = "spawner" & fc = 1
-        Fight1v1()
+        fight1v1()
 
       :?f ! "pallas"
         fds = foe.debuffs.string
-        ldtF("magic")
+        canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
+
+        canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
+
+        canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
+  
+        ?canDebI | canDebP | canDebF
+          ldtF("magicDeb")
+        :
+          ldtF("magicDmg")
 
       : // f = "pallas"
         fs = foe.state
@@ -1300,7 +1423,7 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
           :?canUseMask()
             useMask()
           :
-            Fight1v1()
+            fight1v1()
 
 // *******************************************************
 //                  END OF "5-Halls.txt"                  

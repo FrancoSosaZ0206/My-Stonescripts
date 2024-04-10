@@ -2,30 +2,29 @@
 //                       1-Rocky.txt                      
 // *******************************************************
 
-
 // Script for Rocky Plateau
-
 
 
 
 // IMPORTS
 
-
+var u = import MyScripts/Imports/PC/Utilities
+var uimkr = import MyScripts/Import/PC/UI_Maker
 var p
-p = import MyScripts/Imports/performanceV2
+p = import MyScripts/Imports/PC/PerformanceV2
+var a = import MyScripts/Imports/PC/MyArsenal
 var i
-i = import MyScripts/Imports/MyBetterInfo
-var c = import MyScripts/Imports/combat
-var a = import MyScripts/Imports/MyArsenal
-var u = import MyScripts/Imports/utilities
-
+i = import MyScripts/Imports/PC/MyBetterInfo
+var c = import MyScripts/Imports/PC/Combat
 
 var som
-som = import MyScripts/Imports/Speed_O_Meter
+som = import MyScripts/Imports/PC/Speed_O_Meter
+var dpsm
+dpsm = import MyScripts/Import/PC/DPS_Meter_MODIFIED
+
 
 
 // FUNCTIONS
-
 
 func harvFunc(btn)
   btnPressed = true
@@ -36,35 +35,46 @@ func harvFunc(btn)
   
   return
 
-
 func bossFight()
-
 
   ?p.f = "phase1"
     ?!keepMask & p.php = p.pmhp
-      c.doMoondial(Vantum Phoenix, a.fsword,0)
+      ?p.bs = "berserk"
+        ldtF("fdmg")
+      :
+        c.doMoondial(Vantum Phoenix, a.fsword, 0)
     :
       equipL Vantum Phoenix
-
 
   :?p.f = "phase2"
     ?p.f = "poison"
       ?!keepMask & p.php = p.pmhp
-        c.doMoondial(Bifrost, a.isword,3)
+        ?p.bs = "berserk"
+          ldtF("idmg")
+        :
+          c.doMoondial(Bifrost, a.isword, 0)
       :
         equipL Bifrost
     :?p.f = "vigor"
-      ldtF("pDmg")
+      ?!keepMask & p.php = p.pmhp
+        ?p.bs = "berserk"
+          ldtF("pdmg")
+        :
+          c.doMoondial(Mamba Negra, a.psword, 0)
+      :
+        equipL Mamba Negra
     :?p.f = "aether"
       ldtF("vDmg")
     :?p.f = "fire"
       ldtF("aeDmg")
     :?p.f = "ice"
       ?!keepMask & p.php = p.pmhp
-        c.doMoondial(Vantum Phoenix, a.fsword,0)
+        ?p.bs = "berserk"
+          ldtF("fdmg")
+        :
+          c.doMoondial(Vantum Phoenix, a.fsword, 0)
       :
         equipL Vantum Phoenix
-
 
   : // ?foe = phase3
     ?c.canUsePotDmg()
@@ -72,54 +82,53 @@ func bossFight()
     :?c.canUseMask()
       c.useMask()
 
-
     ?c.canUseCind()
       var cindMargin
       ?p.ls >= 13
         cindMargin = 1000
       :
         cindMargin = 3000
-      ?p.fds = "ignition:10" |
-      ^c.canKillCind(a.taliRDmg,cindMargin)
+      ?p.fds = "ignition:15" |
+      ^c.canKillCind(i.getFoeTotalHP(),
+      ^              i.getDebuffLvl("ignition",true),
+      ^              a.cindDmg, cindMargin)
         c.useCind()
-        
-    p.ft = foe.time
 
+    p.ft = foe.time
 
     ?((p.fs = 115 & p.ft < 70) |
     ^(p.fs = 32 & p.fdmg = 1))
     ^& p.ft >= 42 // putting up shield
       dontDash = true
 
-
       ?c.canUseMind()
         ldtF("escape")
       :?p.fd > 7
-        equip @a.ibow@
+        equip @a.aebow@
       :?c.canUseMask()
         c.useMask()
     :
       dontDash = false
-      ?p.fa > 0
-        ?c.canUseHamm2() & !bardCdSlower & p.fd < 11
-          c.useHamm()
-        :
-          equipL @a.phammer1@
-          ?!keepMask
-            equipR @a.aehammer1@
+      ?p.fa > 0 & c.canUseHamm2() &
+      ^!bardCdSlower & p.fd < 11
+        c.useHamm()
       :
         ?p.fbs ! "defense_fire"
           ?!keepMask & p.php = p.pmhp
-            c.doMoondial(Vantum Phoenix, a.fsword,0)
+            ?p.bs = "berserk"
+              ldtF("fdmg")
+            :
+              c.doMoondial(Vantum Phoenix, a.fsword, 0)
           :
             equipL Vantum Phoenix
         :
           ?!keepMask & p.php = p.pmhp
-            c.doMoondial(Bifrost, a.isword,3)
+            ?p.bs = "berserk"
+              ldtF("idmg")
+            :
+              c.doMoondial(Bifrost, a.isword, 0)
           :
             equipL Bifrost
-
-
 
 
   ?p.php < p.pmhp
@@ -128,15 +137,11 @@ func bossFight()
     equipR @a.dLsword@
 
 
-
-
   return
 
 
 
-
 // LOADOUTS
-
 
 func ldtF(mode)
   ?mode = "default"
@@ -150,7 +155,6 @@ func ldtF(mode)
   :?mode = "escape"
     equipL mind
     equipR @a.cshield2@
-
 
     p.mindDelay = p.tt + p.mindCd
   :?mode = "magnet"
@@ -181,6 +185,14 @@ func ldtF(mode)
     equipL @a.dIsword@
     equipR mask
   //damage
+  :?mode = "fDmg"
+    equipL Vantum Phoenix
+    ?!keepMask
+      equipR @a.fsword@
+  :?mode = "iDmg"
+    equipL Bifrost
+    ?!keepMask
+      equipR @a.isword@
   :?mode = "pDmg"
     equipL Mamba Negra
     ?!keepMask
@@ -205,16 +217,12 @@ func ldtF(mode)
 
 
 
-
 // VARIABLES
-
 
 var dontDash
 var trueDmg
 
-
 var nRuns = 0
-
 
 var keepMask = true
 ?p.ll
@@ -224,48 +232,54 @@ var keepMask = true
 
 
 
-
 // PROCEDURE
 
 
-var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+var somui = som.speedOmeterUI(1, 6, i.colorToHex("pink"), false, false)
 ?som.speedOmeterUpdate(false)
-  som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+  som.speedOmeterUI(1, 6, i.colorToHex("pink"), false, false)
 ?somui
   somui.Recycle()
   somui = null
 
 
-
-
+dpsm.DPSMeterEnabled = false
+var dpsPanel
+?dpsm.dpsMeterUpdate(2)
+  dpsPanel = dpsm.uiDPSMeter(1, 13, "#yellow", 2)
 
 
 var choice = false
 var btnPressed = false
 
-
 var yesBtn
 var noBtn
-
 
 var dontShowAgain = false
 
 
 
-
 ?!btnPressed
   ?!yesBtn
-    yesBtn = i.makeButton(
+    yesBtn = uimkr.mkBtn(
     ^-5,9,4,4,null,null,
-    ^"Yes","green",-5,harvFunc)
+    ^"Yes","#green",
+    ^null,null,null,
+    ^-5,harvFunc,
+    ^null,null,null)
+
   ?!noBtn
-    noBtn = i.makeButton(
+    noBtn = uimkr.mkBtn(
     ^5,9,5,4,null,null,
-    ^"No","red",-5,harvFunc)
+    ^"No","red",
+    ^null,null,null,
+    ^-5,harvFunc
+    ^null,null,null)
 
 
-  i.showStrCentered("Harvest boulders?",6,30,"yellow")
-
+  i.showStrCtr(6,30,
+  ^"Harvest boulders?","yellow",
+  ^false)
 
 :
   ?yesBtn
@@ -280,24 +294,30 @@ var dontShowAgain = false
     var aux = p.tt + 3*u.sec
     ?p.tt < aux
       ?choice
-        i.showStrCentered("Harvest boulders is enabled",6,30,"green")
+        i.showStrCtr(6, 30,
+        ^"Harvest boulders is enabled","green",
+        ^false)
       :
-        i.showStrCentered("Harvest boulders is disabled",6,30,"red")
+        i.showStrCtr(6, 30,
+        ^"Harvest boulders is disabled","red",
+        ^false)
     :
       ?!dontShowAgain
         dontShowAgain = true
 
 
 
-
-?p.ils = 3
+/* Mano izquierda:
+--- hacer AAC ---
+- cuando state = 3
+--- NO hacer AAC ---
+- Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
+?p.ils = 3 & !(keepMask & p.il = "sword D +21")
   equipL wand 0*
   equipL @p.il@
-?p.irs = 3
+?p.irs = 3 & p.ir ! "sword D +21"
   equipR @a.cshield2@
   equipR @p.ir@
-
-
 
 
 ?debuffs.string | (p.tt > p.lavg & nRuns >= 2)
@@ -308,12 +328,19 @@ var dontShowAgain = false
   p.rs = res.stone
   p.rb = res.bronze
 
-
-  ?p.rb >= 10 & p.rs >= 10
+  ?p.rs >= 10 & p.rb >= 10
     ?p.ip ! "lucky"
       brew stone + bronze
   :
     loc.Leave()
+
+  /*p.rw = res.wood
+  p.rb = res.bronze
+  ?p.rw >= 10 & p.rb >= 10
+    ?p.ip ! "berserk"
+      brew wood + bronze
+  :
+    loc.Leave()*/
 
 
 ?keepMask
@@ -326,9 +353,9 @@ var dontShowAgain = false
   equipR @a.cshield1@
 
 
-:?c.canUseTali()
+:?c.canUseFTali()
   equipL triskelion
-  c.useTali("r")
+  c.useFTali("r")
   
 :?c.canUsePotDmg() & keepMask
   activate potion
@@ -336,7 +363,6 @@ var dontShowAgain = false
 
 :?choice & harvest.distance < 5
   ldtF("harv")
-
 
 :?pickup.distance < 15
   ldtF("magnet")
@@ -364,7 +390,11 @@ var dontShowAgain = false
     :?c.canDash()
       c.dash(Vantum Phoenix, a.dshield)
     :
-      c.useBard(a.fastBard)
+      p.bs = buffs.string
+      ?p.bs = "berserk"
+        c.useBard(Kubikiribocho)
+      :
+        c.useBard(a.fastBard)
 
 
   :?p.fd > 15 | !aiE |
@@ -379,20 +409,16 @@ var dontShowAgain = false
   :?p.aiE & p.fs ! -1
     // fighting range
 
-
     p.f = foe
     p.fbs = foe.buffs.string
     p.fds = foe.debuffs.string
     p.fa = foe.armor
 
-
     p.bs = buffs.string
-
 
     ?p.f = "acronian_scout"
       ?c.canBash()
         c.bash(Vantum Phoenix)
-
 
       :
         ?keepMask
@@ -405,21 +431,17 @@ var dontShowAgain = false
           :
             equipL Vantum Phoenix
 
-
         :
           ?p.php = p.pmhp
-            c.doMoondial(Vantum Phoenix, a.fsword,0)
+            c.doMoondial(Vantum Phoenix, a.fsword, 0)
           :
             equipL Vantum Phoenix
             equipR @a.dLsword@
 
 
-
-
     :?p.f = "dysangelos" &
     ^p.fs ! 124
     ^!(p.fs = 107 & p.fdmg = 3)
-
 
       p.fdmg = foe.damage
       p.ft = foe.time
@@ -430,6 +452,7 @@ var dontShowAgain = false
           trueDmg -= 8
         :
           trueDmg -= 4
+
       ?p.fds = "feeble"
         trueDmg -= 2*c.getDebuffLvl("feeble", true)
       
@@ -437,13 +460,13 @@ var dontShowAgain = false
       ?c.canBash() & !dontDash
         c.bash(Vantum Phoenix)
       :?c.canDash() & !dontDash
-        c.dash(Vantum Phoenix,a.dshield)
+        c.dash(Vantum Phoenix, a.dshield)
 
 
       :?armor < trueDmg & p.fs = 32 & (
       ^(p.f = "phase1" &
       ^  ((p.fds = "chill" & p.ft > 58) // about to attack, slowed down by chill debuff
-      ^  |(48 < p.ft & p.ft < 52)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
+      ^ | (48 < p.ft & p.ft < 52)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
       ^(p.f = "phase3" & p.ft > 80)  ) // final phase, about to normal attack
         ldtF("aidActive")
 
@@ -451,10 +474,11 @@ var dontShowAgain = false
       :?p.f ! "immune_to_debuff_damage"
       ^& p.fbs ! "buff_protection"
       ^& p.ls > 5
-        ?p.fds ! "chill:6"
-          ldtF("iDeb")
-        :
-          ?p.fds ! "damage"
+        ?keepMask
+          ?p.fds ! "chill:6"
+            ldtF("iDeb")
+
+          :?p.fds ! "damage"
             ?p.f = "phase3"
               ldtF("pDeb2")
             :
@@ -464,8 +488,17 @@ var dontShowAgain = false
               ldtF("fDeb")
             :
               bossFight()
+        :
+          ?p.fds ! "damage"
+            ?p.f = "phase3"
+              ldtF("pDeb2")
+            :
+              ldtF("pDeb1")
+          :
+            bossFight()
       :
         bossFight()
+
 
 
 // *******************************************************

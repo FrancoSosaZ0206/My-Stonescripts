@@ -1002,8 +1002,8 @@ var rbow = "repeating crossbow *max"
 // Weapons damage
 
 var bladeDmg = 310
-var bladeRDmg = 95
-var smiteMult = 8.8 // mult = multiplier
+var bladeRDmg = 170
+var smiteMult = 4.6 // mult = multiplier
 
 var armDmg = 44
 var armRDmg = armDmg / 2
@@ -1018,8 +1018,7 @@ var hammDmg = 123
 "Kubikiribocho" only, not for the
 other bardiche! */
 var bardDmg = 52
-var bardCrit = 10.8
-var bardRDmg = (bardDmg + 17) * bardCrit
+var bardRDmg = bardDmg * 10.8
 
 
 // *******************************************************

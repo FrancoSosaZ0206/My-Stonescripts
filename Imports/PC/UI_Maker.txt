@@ -74,7 +74,7 @@ func mkPanel(x,y,w,h, anchor,dock, col,style, child)
     panel.w = w
   ?h
     panel.h = h
-  
+
   panel.anchor = anchor
   panel.dock = dock
 
@@ -132,11 +132,12 @@ func mkTxtbox(x,y,w,h, anchor,dock, txt, align, col)
   ?w
     txtbox.w = w
   :
+    >c0,0,#red,txtbox.lines.Count() = @txtbox.lines.Count()@
     txtbox.w = string.Size(u.getLargestStr(txtbox.lines))
   ?h
     txtbox.h = h
   :
-    txtbox.h = a.Count(txtbox.lines)
+    txtbox.h = txtbox.lines.Count()
 
 
   return txtbox
@@ -146,8 +147,6 @@ PARAMETERS
   Common:
     - x
     - y
-    - w
-    - h
     - anchor
     - dock
 
@@ -157,6 +156,8 @@ PARAMETERS
     - pressed = function that the button will perform when pressed
 
   Optionals:
+    - w
+    - h
     - tcol   = text color
     - bcol   = border color
     - hcol   = highlight color (when pressed)
@@ -173,8 +174,21 @@ func mkBtn(x,y,w,h, anchor,dock, txt, col,tcol,bcol,hcol, style, pressed,down,up
 
   btn.text = txt
 
-  btn.w = string.Size(btn.txt) + w
-  btn.h = h
+  ?w
+    btn.w = w
+  :
+    var txtSize = string.Size(txt)
+    var parity = txtSize % 2
+    ?parity = 0 // even
+      btn.w = (txtSize * 2) + 2 // *2 = always even, 2 for even margin
+    : // odd
+      btn.w = (txtSize * 2) + 3 // *2 + 1 = always odd, 3 for odd margin
+
+  ?h
+    btn.h = 3 + h
+  :
+    btn.h = 3
+
 
   ?anchor
     btn.anchor = anchor

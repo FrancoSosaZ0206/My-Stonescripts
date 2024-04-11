@@ -201,14 +201,14 @@ func speedOmeterToStr(isSlim, isSpeedrun)
   ?isSlim
     ?isSpeedrun
       return
-      ^"☆ " + pbSpeedrun   // ☆ = PB
-      ^" ≈ " + avgSpeedrun  // ☆ = AVG
-      ^" ▶ " + ttSpeedrun  // ☆ = CURR
+      ^"☆ " + pbSpeedrun + "\n" +  // ☆ = PB
+      ^" ≈ " + avgSpeedrun + "\n" + // ☆ = AVG
+      ^" ▶ " + ttSpeedrun   // ☆ = CURR
 
     :
       return
-      ^"☆ " + pb         // ☆ = PB
-      ^" ≈ " + avg        // ☆ = AVG
+      ^"☆ " + pb + "\n" +       // ☆ = PB
+      ^" ≈ " + avg + "\n" +      // ☆ = AVG
       ^" ▶ " + ttDigital // ☆ = CURR
 
   :
@@ -224,9 +224,9 @@ func speedOmeterToStr(isSlim, isSpeedrun)
       return
       ^"SPEED-O-METER" + "\n" +
       ^"·············" + "\n" +
-      ^" CUR " + ttDigital + "\n" +
-      ^" PB  " + pb + "\n" +
-      ^" AVG " + avg
+      ^"  CUR " + ttDigital + "\n" +
+      ^"  PB  " + pb + "\n" +
+      ^"  AVG " + avg
 
 func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 
@@ -248,28 +248,28 @@ func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
   var panel
 
   // For the panel:
-  var anchor
-  var dock
+  var pnlAnchor
+  var pnlDock
   var style
   
   ?isSlim
-    anchor = top_center
-    dock = top_center
+    pnlAnchor = top_center
+    pnlDock = top_center
     style = -1
   :
-    anchor = top_left
-    dock = top_left
+    pnlAnchor = top_left
+    pnlDock = top_left
     style = -2
 
   txt = uimkr.mkTxtbox(
     ^1, 1, null, null, // x, y, w, h,
-    ^top_left, top_left, // anchor, dock,
+    ^top_left, top_left, // pnlAnchor, dock,
     ^speedOmeterToStr(isSlim, isSpeedrun), // txt
     ^null, col) // align, col
 
   panel = uimkr.mkPanel(
     ^x, y, txt.w + 2, txt.h + 2, // x, y, w, h,
-    ^anchor, dock, // anchor, dock,
+    ^pnlAnchor, pnlDock, // anchor, dock,
     ^col, style, txt) // col, style, child
 
   return panel

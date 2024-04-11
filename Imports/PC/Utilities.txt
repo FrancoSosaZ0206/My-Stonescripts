@@ -70,15 +70,18 @@ func myFormatDigital(frames)
     return minStr + ":" + secStr
 
 func getLargestStr(arrStr)
+  ?arrStr.Count() > 0
+    var maxStr = arrStr[0]
+    var maxInd = -1
 
-  var maxStr = arrStr[0]
-  var maxInd = -1
+    for str : arrStr
+      ?string.Size(str) > string.Size(maxStr)
+        maxStr = str
 
-  for str : arrStr
-    ?string.Size(str) > string.Size(maxStr)
-      maxStr = str
-
-  return maxStr
+    return maxStr
+  
+  :
+    return null
 
 func replaceInStr(str,charOld,charNew)
   for i = 0 .. str.Count() - 1

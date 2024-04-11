@@ -113,10 +113,10 @@ canAct = item.CanActivate()
 var bladeCd = 80 * u.sec
 var maskCd = 48 * u.sec
 var armCd = 39 * u.sec
-var fTaliCd = 5 * sec
-var aeTaliCd = 5 * sec
-var cindCd = 90 * sec
-var weavCd = 90 * sec
+var fTaliCd = 5 * u.sec
+var aeTaliCd = 5 * u.sec
+var cindCd = 90 * u.sec
+var weavCd = 90 * u.sec
 
 var bardCd = 30 * u.sec
 var hammCd = 22 * u.sec

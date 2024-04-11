@@ -193,8 +193,8 @@ func showDebuffs(inFoe,x,y,col,isUI)
           ^1,1,null,null, // x,y,w,h
           ^top_left,top_left, // anchor, dock
           ^debuffsStr, // txt
-          ^null,col // align, col
-        )
+          ^null,col) // align, col
+        
 
         debuffsPanel = uimkr.mkPanel(
         ^x,y,
@@ -264,8 +264,8 @@ func showBuffs(inFoe,x,y,col,isUI)
           ^1,1,null,null, // x,y,w,h
           ^top_left,top_left, // anchor, dock
           ^buffsStr, // txt
-          ^null,col // align, col
-        )
+          ^null,col) // align, col
+        
 
         buffsPanel = uimkr.mkPanel(
         ^x,y,

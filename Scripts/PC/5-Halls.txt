@@ -3,7 +3,7 @@
 // *******************************************************
 
 
-//Script for Haunted Halls
+// Script for Haunted Halls
 
 
 //IMPORTS

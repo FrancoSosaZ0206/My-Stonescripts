@@ -9,7 +9,7 @@
 // IMPORTS
 
 var u = import MyScripts/Imports/PC/Utilities
-var uimkr = import MyScripts/Import/PC/UI_Maker
+var uimkr = import MyScripts/Imports/PC/UI_Maker
 var p
 p = import MyScripts/Imports/PC/PerformanceV2
 var a = import MyScripts/Imports/PC/MyArsenal
@@ -20,7 +20,7 @@ var c = import MyScripts/Imports/PC/Combat
 var som
 som = import MyScripts/Imports/PC/Speed_O_Meter
 var dpsm
-dpsm = import MyScripts/Import/PC/DPS_Meter_MODIFIED
+dpsm = import MyScripts/Imports/PC/DPS_Meter_MODIFIED
 
 
 
@@ -235,9 +235,9 @@ var keepMask = true
 // PROCEDURE
 
 
-var somui = som.speedOmeterUI(1, 6, i.colorToHex("pink"), false, false)
+var somui = som.speedOmeterUI(1, 6, i.colToHex("pink"), false, false)
 ?som.speedOmeterUpdate(false)
-  som.speedOmeterUI(1, 6, i.colorToHex("pink"), false, false)
+  somui = som.speedOmeterUI(1, 6, i.colToHex("pink"), false, false)
 ?somui
   somui.Recycle()
   somui = null
@@ -262,23 +262,23 @@ var dontShowAgain = false
 ?!btnPressed
   ?!yesBtn
     yesBtn = uimkr.mkBtn(
-    ^-5,9,4,4,null,null,
-    ^"Yes","#green",
-    ^null,null,null,
-    ^-5,harvFunc,
-    ^null,null,null)
+    ^-5,9,null,2,null,null, // x, y, w, h, anchor, dock,
+    ^"Yes","#green", // txt, col,
+    ^null,null,null, // tcol, bcol, hcol,
+    ^-5,harvFunc, // style, pressed,
+    ^null,null,null) // down, up, sound
 
   ?!noBtn
     noBtn = uimkr.mkBtn(
-    ^5,9,5,4,null,null,
-    ^"No","red",
-    ^null,null,null,
-    ^-5,harvFunc
-    ^null,null,null)
+    ^5,9,8,2,null,null, // x, y, w, h, anchor, dock,
+    ^"No","red", // txt, col,
+    ^null,null,null, // tcol, bcol, hcol,
+    ^-5,harvFunc, // style, pressed,
+    ^null,null,null) // down, up, sound
 
 
   i.showStrCtr(6,30,
-  ^"Harvest boulders?","yellow",
+  ^"Harvest boulders?","#yellow",
   ^false)
 
 :
@@ -295,11 +295,11 @@ var dontShowAgain = false
     ?p.tt < aux
       ?choice
         i.showStrCtr(6, 30,
-        ^"Harvest boulders is enabled","green",
+        ^"Harvest boulders is enabled","#green",
         ^false)
       :
         i.showStrCtr(6, 30,
-        ^"Harvest boulders is disabled","red",
+        ^"Harvest boulders is disabled","#red",
         ^false)
     :
       ?!dontShowAgain

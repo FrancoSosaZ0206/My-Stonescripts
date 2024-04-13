@@ -6,37 +6,6 @@
 
 // FUNCTIONS
 
-/* Common properties/parameters:
-  *** some of these may be optional ***
-
-  x = horizontal position (relative to dock)
-  y = vertical position (relative to dock)
-  w = width
-  h = height
-  anchor = position relative to the screen
-  dock = position relative to parent UI component
-  col = color in hex format
-  style = frame style ID (number from -8 to 8) */
-
-/* Optional properties/parameters:
-  send 0 if you don't want to use them.
-  The default value will be used instead. */
-
-
-/* Makes a panel component.
-PARAMETERS:
-  Common:
-    - x
-    - y
-    - anchor
-    - dock
-
-  Optional:
-    - w
-    - h
-    - col = color of the panel.
-    - style
-    - child = initial child component to add. */
 func mkPanel(x,y,w,h, anchor,dock, col,style, child)
 
   var panel
@@ -50,7 +19,7 @@ func mkPanel(x,y,w,h, anchor,dock, col,style, child)
     panel.w = w
   ?h
     panel.h = h
-  
+
   panel.anchor = anchor
   panel.dock = dock
 
@@ -64,23 +33,6 @@ func mkPanel(x,y,w,h, anchor,dock, col,style, child)
 
   return panel
 
-/* Makes a textbox component.
-PARAMETERS:
-  Common:
-    - x
-    - y
-    - anchor
-    - dock
-  
-  Special:
-    - txt = textbox contents.
-    - align = text justification/alignment inside the textbox.
-              Default: "left"
-  
-  Optional:
-    - w
-    - h
-    - col = textbox color */
 func mkTxtbox(x,y,w,h, anchor,dock, txt, align, col)
 
   //declarations:
@@ -108,37 +60,18 @@ func mkTxtbox(x,y,w,h, anchor,dock, txt, align, col)
   ?w
     txtbox.w = w
   :
-    txtbox.w = string.Size(getLargestStr(txtbox.lines))
+    txtbox.w = string.Size(
+    ^            getLargestStr(
+    ^              string.Split(txt, "\n")))
+    
   ?h
     txtbox.h = h
   :
-    txtbox.h = a.Count(txtbox.lines)
+    txtbox.h = string.Split(txt, "\n").Count()
 
 
   return txtbox
 
-/* Makes a button component.
-PARAMETERS
-  Common:
-    - x
-    - y
-    - w
-    - h
-    - anchor
-    - dock
-
-  Special:
-    - txt = button text
-    - col = general color of the button (colors below override it)
-    - pressed = function that the button will perform when pressed
-
-  Optionals:
-    - tcol   = text color
-    - bcol   = border color
-    - hcol   = highlight color (when pressed)
-    - down   = function that the button will perform when press begins
-    - up     = function that the button will perform when press ends
-    - sound  = sound effect when pressed */
 func mkBtn(x,y,w,h, anchor,dock, txt, col,tcol,bcol,hcol, style, pressed,down,up, sound)
   
   var btn
@@ -149,8 +82,21 @@ func mkBtn(x,y,w,h, anchor,dock, txt, col,tcol,bcol,hcol, style, pressed,down,up
 
   btn.text = txt
 
-  btn.w = string.Size(btn.txt) + w
-  btn.h = h
+  ?w
+    btn.w = w
+  :
+    var txtSize = string.Size(txt)
+    var parity = txtSize % 2
+    ?parity = 0 // even
+      btn.w = (txtSize * 2) + 2 // *2 = always even, 2 for even margin
+    : // odd
+      btn.w = (txtSize * 2) + 3 // *2 + 1 = always odd, 3 for odd margin
+
+  ?h
+    btn.h = 3 + h
+  :
+    btn.h = 3
+
 
   ?anchor
     btn.anchor = anchor

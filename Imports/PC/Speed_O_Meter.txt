@@ -3,11 +3,12 @@
 // *******************************************************
 
 
+
 /* FILE INFO
   Time Display Utility
   Made by MetalEagle26 (Tom Crow)
 
-  current version: 1.5
+  current version: 1.6
 
 
 DESCRIPTION
@@ -58,6 +59,13 @@ CHANGELOG:
   v1.5:
     - Now all functions that show the meter
       depend on speedOmeterToStr().
+  v1.6:
+    - formatSpeedrun(): now 1 digit frames
+      are prefixed with a zero ('0').
+    - myFormatDigital() and formatSpeedrun()
+      moved to Utilities.
+    - fixed ttSpeedrun update frequency. Now
+      it updates every frame as it should.
 
 
 ······················································
@@ -80,74 +88,6 @@ var uimkr = import MyScripts/Imports/PC/UI_Maker
 
 
 
-// PRIVATE FUNCTIONS:
-
-func myFormatDigital(frames)
-  ?frames <= 0
-    return "00:00"
-  :
-    var timeStr
-    var secs
-    var mins
-    var secStr
-    var minStr
-
-    secs = frames/30
-    mins = (frames/30)/60
-
-    secs -= mins*60
-
-    ?mins < 10
-      minStr = "0" + mins
-    :
-      minStr = mins
-      
-    ?secs < 10
-      secStr = "0" + secs
-    :
-      secStr = secs
-    
-    return minStr + ":" + secStr
-
-/* returns time in a similar format to time.FormatDigital,
-   but with frame presition. */
-func formatSpeedrun(frames)
-
-  var timeStr = "00:00 0f"
-
-  ?frames > 0
-
-    var frms
-    var secs
-    var mins
-    var frmStr
-    var secStr
-    var minStr
-
-    frms = frames % 30 // the rest of the division is the added frames between each second
-    secs = frames/30
-    mins = (frames/30)/60
-
-    secs -= mins*60
-
-    frmStr = frms + "f"
-
-    ?secs < 10
-      secStr = "0" + secs
-    :
-      secStr = secs
-      
-    ?mins < 10
-      minStr = "0" + mins
-    :
-      minStr = mins
-
-    timeStr = minStr + ":" + secStr + " " + frmStr
-    
-  return 
-
-
-
 // VARIABLES:
 
 var sec = 30 // frames
@@ -163,28 +103,27 @@ tt = totaltime
   lavg = loc.averageTime
 
 // Times in seconds:
-var ttDigital = myFormatDigital(tt)
-var pb = myFormatDigital(lbt)
-var avg = myFormatDigital(lavg)
+var ttDigital = u.myFormatDigital(tt)
+var pb = u.myFormatDigital(lbt)
+var avg = u.myFormatDigital(lavg)
 
 // Times in seconds and frames:
-var ttSpeedrun = formatSpeedrun(tt)
-var pbSpeedrun = formatSpeedrun(lbt)
-var avgSpeedrun = formatSpeedrun(lavg)
+var ttSpeedrun = u.formatSpeedrun(tt)
+var pbSpeedrun = u.formatSpeedrun(lbt)
+var avgSpeedrun = u.formatSpeedrun(lavg)
 
 
 // Variable updating frequency:
 ?tt % 30 = 0
-  ttDigital = myFormatDigital(tt)
-
-  ttSpeedrun = formatSpeedrun(tt)
+  ttDigital = u.myFormatDigital(tt)
+ttSpeedrun = u.formatSpeedrun(tt)
 
 ?loc.loop
-  pb = myFormatDigital(lbt)
-  avg = myFormatDigital(lavg)
+  pb = u.myFormatDigital(lbt)
+  avg = u.myFormatDigital(lavg)
 
-  pbSpeedrun = formatSpeedrun(lbt)
-  avgSpeedrun = formatSpeedrun(lavg)
+  pbSpeedrun = u.u.formatSpeedrun(lbt)
+  avgSpeedrun = u.u.formatSpeedrun(lavg)
 
 
 
@@ -194,39 +133,39 @@ func speedOmeterUpdate(isSpeedrun)
   ?isSpeedrun
     return true
   :
-    return loc.begin | loc.loop | tt % 30 = 0
+    return loc.begin | loc.loop | (tt % 30 = 0)
 
 func speedOmeterToStr(isSlim, isSpeedrun)
 
   ?isSlim
     ?isSpeedrun
       return
-      ^"☆ " + pbSpeedrun + "\n" +  // ☆ = PB
-      ^" ≈ " + avgSpeedrun + "\n" + // ☆ = AVG
-      ^" ▶ " + ttSpeedrun   // ☆ = CURR
+      ^"☆ " + pbSpeedrun +  // ☆ = PB
+      ^" | ≈ " + avgSpeedrun + // ≈ = AVG
+      ^" | ▶ " + ttSpeedrun           // ▶ = CURR
 
     :
       return
-      ^"☆ " + pb + "\n" +       // ☆ = PB
-      ^" ≈ " + avg + "\n" +      // ☆ = AVG
-      ^" ▶ " + ttDigital // ☆ = CURR
+      ^"☆ " + pb +       // ☆ = PB
+      ^" | ≈ " + avg +      // ≈ = AVG
+      ^" | ▶ " + ttDigital         // ▶ = CURR
 
   :
     ?isSpeedrun
       return
       ^"    SPEED-O-METER" + "\n" +
       ^"·····················" + "\n" +
-      ^" CUR " + ttSpedrun + " (" + tt + "f)" + "\n" +
-      ^" PB  " + pbSpedrun + " (" + lbt + "f)" + "\n" +
-      ^" AVG " + avgSpedrun + " (" + lavg + "f)"
+      ^" PB  " + pbSpeedrun + " (" + lbt + "f)" + "\n" +
+      ^" AVG " + avgSpeedrun + " (" + lavg + "f)" + "\n" +
+      ^" CUR " + ttSpeedrun + " (" + tt + "f)"
 
     :
       return
       ^"SPEED-O-METER" + "\n" +
       ^"·············" + "\n" +
-      ^"  CUR " + ttDigital + "\n" +
       ^"  PB  " + pb + "\n" +
-      ^"  AVG " + avg
+      ^"  AVG " + avg + "\n" +
+      ^"  CUR " + ttDigital
 
 func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 

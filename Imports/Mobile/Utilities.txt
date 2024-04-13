@@ -51,23 +51,97 @@ func myFormatDigital(frames)
     
     return minStr + ":" + secStr
 
+/* Finds the largest string in an array of strings. */
 func getLargestStr(arrStr)
+  ?arrStr.Count() > 0
+    var maxStr = arrStr[0]
+    var maxInd = -1
 
-  var maxStr = arrStr[0]
-  var maxInd = -1
+    for str : arrStr
+      ?string.Size(str) > string.Size(maxStr)
+        maxStr = str
 
-  for str : arrStr
-    ?string.Size(str) > string.Size(maxStr)
-      maxStr = str
+    return maxStr
+  
+  :
+    return null
 
-  return maxStr
-
-func replaceInStr(str,charOld,charNew)
+func replaceInStr(str, charOld, charNew)
   for i = 0 .. str.Count() - 1
     ?str[i] = charOld
       str[i] = charNew
 
   return str
+
+
+func myFormatDigital(frames)
+  ?frames <= 0
+    return "00:00"
+  :
+    var timeStr
+    var secs
+    var mins
+    var secStr
+    var minStr
+
+    secs = frames/30
+    mins = (frames/30)/60
+
+    secs -= mins*60
+
+    ?mins < 10
+      minStr = "0" + mins
+    :
+      minStr = mins
+      
+    ?secs < 10
+      secStr = "0" + secs
+    :
+      secStr = secs
+    
+    return minStr + ":" + secStr
+
+/* returns time in a similar format to time.FormatDigital,
+   but with frame presition. */
+func formatSpeedrun(frames)
+
+  var timeStr = "00:00 00f"
+
+  ?frames > 0
+
+    var frms
+    var secs
+    var mins
+    var frmStr
+    var secStr
+    var minStr
+
+    frms = frames % 30 // the rest of the division is the added frames between each second
+    secs = frames/30
+    mins = (frames/30)/60
+
+    secs -= mins*60
+
+    frmStr = frms + "f"
+
+    ?frms < 10
+      frmStr = "0" + frms + "f"
+    :
+      frmStr = frms + "f"
+
+    ?secs < 10
+      secStr = "0" + secs
+    :
+      secStr = secs
+      
+    ?mins < 10
+      minStr = "0" + mins
+    :
+      minStr = mins
+
+    timeStr = minStr + ":" + secStr + " " + frmStr
+    
+  return timeStr
 
 
 

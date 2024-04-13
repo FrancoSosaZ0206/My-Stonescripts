@@ -132,12 +132,14 @@ func mkTxtbox(x,y,w,h, anchor,dock, txt, align, col)
   ?w
     txtbox.w = w
   :
-    >c0,0,#red,txtbox.lines.Count() = @txtbox.lines.Count()@
-    txtbox.w = string.Size(u.getLargestStr(txtbox.lines))
+    txtbox.w = string.Size(
+    ^            u.getLargestStr(
+    ^              string.Split(txt, "\n")))
+    
   ?h
     txtbox.h = h
   :
-    txtbox.h = txtbox.lines.Count()
+    txtbox.h = string.Split(txt, "\n").Count()
 
 
   return txtbox

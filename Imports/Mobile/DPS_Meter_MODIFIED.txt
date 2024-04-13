@@ -7,7 +7,7 @@
   Made by: Pikarizard Charikachu xD
   Modified by: MetalEagle26 (Tom Crow)
   
-  Current version: v1.6 */
+  Current version: v1.7 */
 
 
 // PUBLIC VARIABLES

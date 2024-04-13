@@ -21,19 +21,19 @@ x = to do
 
 ✔ Update mobile imports
     ✔ Combat
-    ✔ DPS_Meter_MODIFIED
+    ... DPS_Meter_MODIFIED
     ✔ MyArsenal
     ✔ MyBetterInfo
     ✔ PerformanceV2
-    ✔ Speed_O_Meter
-    ✔ Utilities
-    ✔ UI_Maker
+    ... Speed_O_Meter
+    ... Utilities
+    ... UI_Maker
 
 
-x Test & Debug
 x Upload and backup everything
 
 
+... Test & Debug
 ... Update Mobile/MAIN (standarize mobile scripts)
 ... Update PC location scripts
     ... Check and replace old functions with the new ones

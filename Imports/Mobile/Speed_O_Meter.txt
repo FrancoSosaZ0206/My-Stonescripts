@@ -10,17 +10,19 @@
 
 // VARIABLES:
 
-var sec = 30 // frames
+// Already defined in Utilities:
+// var sec = 30 // frames
 
 // Times in frames:
-var tt = totaltime
+// Already defined in PerformanceV2:
+/* var tt = totaltime
 var lbt
 var lavg
 
 tt = totaltime
 ?tt <= 1
   lbt = loc.bestTime
-  lavg = loc.averageTime
+  lavg = loc.averageTime */
 
 // Times in seconds:
 var ttDigital = myFormatDigital(tt)

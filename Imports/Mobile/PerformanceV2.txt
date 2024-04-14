@@ -30,6 +30,7 @@ fhp = foe.hp
 var fa
 fa = foe.armor
 var fdmg
+var fmhp
 
 // Time
 var tt

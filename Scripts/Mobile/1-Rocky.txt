@@ -349,7 +349,7 @@ func mkTxtbox(x,y,w,h, anchor,dock, txt, align, col)
   ?h
     txtbox.h = h
   :
-    txtbox.h = Count(txtbox.lines)
+    txtbox.h = a.Count(txtbox.lines)
 
 
   return txtbox
@@ -539,89 +539,27 @@ var bardRDmg = (bardDmg + 17) * bardCrit
 //                    Speed_O_Meter.txt                   
 // *******************************************************
 
+/* FILE INFO
+  Time Display Utility
+  Made by MetalEagle26 (Tom Crow)
 
-
-// PRIVATE FUNCTIONS:
-
-func myFormatDigital(frames)
-  ?frames <= 0
-    return "00:00"
-  :
-    var timeStr
-    var secs
-    var mins
-    var secStr
-    var minStr
-
-    secs = frames/30
-    mins = (frames/30)/60
-
-    secs -= mins*60
-
-    ?mins < 10
-      minStr = "0" + mins
-    :
-      minStr = mins
-      
-    ?secs < 10
-      secStr = "0" + secs
-    :
-      secStr = secs
-    
-    return minStr + ":" + secStr
-
-/* returns time in a similar format to time.FormatDigital,
-   but with frame presition. */
-func formatSpeedrun(frames)
-
-  var timeStr = "00:00 0f"
-
-  ?frames > 0
-
-    var frms
-    var secs
-    var mins
-    var frmStr
-    var secStr
-    var minStr
-
-    frms = frames % 30 // the rest of the division is the added frames between each second
-    secs = frames/30
-    mins = (frames/30)/60
-
-    secs -= mins*60
-
-    frmStr = frms + "f"
-
-    ?secs < 10
-      secStr = "0" + secs
-    :
-      secStr = secs
-      
-    ?mins < 10
-      minStr = "0" + mins
-    :
-      minStr = mins
-
-    timeStr = minStr + ":" + secStr + " " + frmStr
-    
-  return 
-
-
+  current version: 1.6 */
 
 // VARIABLES:
 
-var sec = 30 // frames
+// Already defined in Utilities:
+// var sec = 30 // frames
 
 // Times in frames:
-var tt = totaltime
+// Already defined in PerformanceV2:
+/* var tt = totaltime
 var lbt
 var lavg
 
 tt = totaltime
 ?tt <= 1
   lbt = loc.bestTime
-  lavg = loc.averageTime
+  lavg = loc.averageTime */
 
 // Times in seconds:
 var ttDigital = myFormatDigital(tt)
@@ -637,8 +575,7 @@ var avgSpeedrun = formatSpeedrun(lavg)
 // Variable updating frequency:
 ?tt % 30 = 0
   ttDigital = myFormatDigital(tt)
-
-  ttSpeedrun = formatSpeedrun(tt)
+ttSpeedrun = formatSpeedrun(tt)
 
 ?loc.loop
   pb = myFormatDigital(lbt)
@@ -655,39 +592,39 @@ func speedOmeterUpdate(isSpeedrun)
   ?isSpeedrun
     return true
   :
-    return loc.begin | loc.loop | tt % 30 = 0
+    return loc.begin | loc.loop | (tt % 30 = 0)
 
 func speedOmeterToStr(isSlim, isSpeedrun)
 
   ?isSlim
     ?isSpeedrun
       return
-      ^"☆ " + pbSpeedrun   // ☆ = PB
-      ^" ≈ " + avgSpeedrun  // ☆ = AVG
-      ^" ▶ " + ttSpeedrun  // ☆ = CURR
+      ^"☆ " + pbSpeedrun +  // ☆ = PB
+      ^" | ≈ " + avgSpeedrun + // ≈ = AVG
+      ^" | ▶ " + ttSpeedrun           // ▶ = CURR
 
     :
       return
-      ^"☆ " + pb         // ☆ = PB
-      ^" ≈ " + avg        // ☆ = AVG
-      ^" ▶ " + ttDigital // ☆ = CURR
+      ^"☆ " + pb +       // ☆ = PB
+      ^" | ≈ " + avg +      // ≈ = AVG
+      ^" | ▶ " + ttDigital         // ▶ = CURR
 
   :
     ?isSpeedrun
       return
       ^"    SPEED-O-METER" + "\n" +
       ^"·····················" + "\n" +
-      ^" CUR " + ttSpedrun + " (" + tt + "f)" + "\n" +
-      ^" PB  " + pbSpedrun + " (" + lbt + "f)" + "\n" +
-      ^" AVG " + avgSpedrun + " (" + lavg + "f)"
+      ^" PB  " + pbSpeedrun + " (" + lbt + "f)" + "\n" +
+      ^" AVG " + avgSpeedrun + " (" + lavg + "f)" + "\n" +
+      ^" CUR " + ttSpeedrun + " (" + tt + "f)"
 
     :
       return
       ^"SPEED-O-METER" + "\n" +
       ^"·············" + "\n" +
-      ^" CUR " + ttDigital + "\n" +
-      ^" PB  " + pb + "\n" +
-      ^" AVG " + avg
+      ^"  PB  " + pb + "\n" +
+      ^"  AVG " + avg + "\n" +
+      ^"  CUR " + ttDigital
 
 func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 
@@ -709,28 +646,28 @@ func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
   var panel
 
   // For the panel:
-  var anchor
-  var dock
+  var pnlAnchor
+  var pnlDock
   var style
   
   ?isSlim
-    anchor = top_center
-    dock = top_center
+    pnlAnchor = top_center
+    pnlDock = top_center
     style = -1
   :
-    anchor = top_left
-    dock = top_left
+    pnlAnchor = top_left
+    pnlDock = top_left
     style = -2
 
   txt = mkTxtbox(
     ^1, 1, null, null, // x, y, w, h,
-    ^top_left, top_left, // anchor, dock,
+    ^top_left, top_left, // pnlAnchor, dock,
     ^speedOmeterToStr(isSlim, isSpeedrun), // txt
     ^null, col) // align, col
 
   panel = mkPanel(
     ^x, y, txt.w + 2, txt.h + 2, // x, y, w, h,
-    ^anchor, dock, // anchor, dock,
+    ^pnlAnchor, pnlDock, // anchor, dock,
     ^col, style, txt) // col, style, child
 
   return panel
@@ -1295,7 +1232,7 @@ func showBigStr(x,y,maxW,str,col,isUI)
   :
     var a = string.Break(str, maxW)
 
-    for i = 0 .. Count()-1
+    for i = 0 .. a.Count()-1
       ?col
         >`@x@,@y + i@,@col@,@a[i]@
       :
@@ -1338,7 +1275,7 @@ func showStrCtr(y,maxW,str,col,isUI)
 
     var a = string.Break(str, maxW)
 
-    for i = 0 .. Count()-1
+    for i = 0 .. a.Count()-1
       var x
       x = - ( string.Size(a[i]) - 1 ) / 2
       ?col
@@ -1817,56 +1754,44 @@ func doMoondial(weapon1, weapon2, mode)
 
   return
 
+
+
 // *******************************************************
 //                  END OF "Combat.txt"                   
 // *******************************************************
 
 
+
 ?l = "Rocky"
-// FUNCTIONS
+  // VARIABLES
 
-func harvFunc(btn)
-  btnPressed = true
-  ?btn = yesBtn
-    choice = true
-  : // btn = noBtn
-    choice = false
-  
-  return
+  var dontDash
+  var trueDmg
 
-func bossFight()
+  var nRuns = 0
 
-  ?f = "phase1"
-    ?!keepMask & php = pmhp
-      ?bs = "berserk"
-        ldtF("fdmg")
-      :
-        doMoondial(Vantum Phoenix, fsword, 0)
-    :
-      equipL Vantum Phoenix
+  var keepMask = true
+  ?ll
+    keepMask = false
+    ?tt = 1
+      nRuns++
 
-  :?f = "phase2"
-    ?f = "poison"
-      ?!keepMask & php = pmhp
-        ?bs = "berserk"
-          ldtF("idmg")
-        :
-          doMoondial(Bifrost, isword, 0)
-      :
-        equipL Bifrost
-    :?f = "vigor"
-      ?!keepMask & php = pmhp
-        ?bs = "berserk"
-          ldtF("pdmg")
-        :
-          doMoondial(Mamba Negra, psword, 0)
-      :
-        equipL Mamba Negra
-    :?f = "aether"
-      ldtF("vDmg")
-    :?f = "fire"
-      ldtF("aeDmg")
-    :?f = "ice"
+
+
+  // FUNCTIONS
+
+  func harvFunc(btn)
+    btnPressed = true
+    ?btn = yesBtn
+      choice = true
+    : // btn = noBtn
+      choice = false
+    
+    return
+
+  func bossFight()
+
+    ?f = "phase1"
       ?!keepMask & php = pmhp
         ?bs = "berserk"
           ldtF("fdmg")
@@ -1875,428 +1800,446 @@ func bossFight()
       :
         equipL Vantum Phoenix
 
-  : // ?foe = phase3
-    ?canUsePotDmg()
-      activate potion
-    :?canUseMask()
-      useMask()
+    :?f = "phase2"
+      ?f = "poison"
+        ?!keepMask & php = pmhp
+          ?bs = "berserk"
+            ldtF("idmg")
+          :
+            doMoondial(Bifrost, isword, 0)
+        :
+          equipL Bifrost
+      :?f = "vigor"
+        ?!keepMask & php = pmhp
+          ?bs = "berserk"
+            ldtF("pdmg")
+          :
+            doMoondial(Mamba Negra, psword, 0)
+        :
+          equipL Mamba Negra
+      :?f = "aether"
+        ldtF("vDmg")
+      :?f = "fire"
+        ldtF("aeDmg")
+      :?f = "ice"
+        ?!keepMask & php = pmhp
+          ?bs = "berserk"
+            ldtF("fdmg")
+          :
+            doMoondial(Vantum Phoenix, fsword, 0)
+        :
+          equipL Vantum Phoenix
 
-    ?canUseCind()
-      var cindMargin
-      ?ls >= 13
-        cindMargin = 1000
-      :
-        cindMargin = 3000
-      ?fds = "ignition:15" |
-      ^canKillCind(getFoeTotalHP(),
-      ^              getDebuffLvl("ignition",true),
-      ^              cindDmg, cindMargin)
-        useCind()
-
-    ft = foe.time
-
-    ?((fs = 115 & ft < 70) |
-    ^(fs = 32 & fdmg = 1))
-    ^& ft >= 42 // putting up shield
-      dontDash = true
-
-      ?canUseMind()
-        ldtF("escape")
-      :?fd > 7
-        equip @aebow@
+    : // ?foe = phase3
+      ?canUsePotDmg()
+        activate potion
       :?canUseMask()
         useMask()
-    :
-      dontDash = false
-      ?fa > 0 & canUseHamm2() &
-      ^!bardCdSlower & fd < 11
-        useHamm()
-      :
-        ?fbs ! "defense_fire"
-          ?!keepMask & php = pmhp
-            ?bs = "berserk"
-              ldtF("fdmg")
-            :
-              doMoondial(Vantum Phoenix, fsword, 0)
-          :
-            equipL Vantum Phoenix
+
+      ?canUseCind()
+        var cindMargin
+        ?ls >= 13
+          cindMargin = 1000
         :
-          ?!keepMask & php = pmhp
-            ?bs = "berserk"
-              ldtF("idmg")
-            :
-              doMoondial(Bifrost, isword, 0)
-          :
-            equipL Bifrost
+          cindMargin = 3000
+        ?fds = "ignition:15" |
+        ^canKillCind(getFoeTotalHP(),
+        ^              getDebuffLvl("ignition",true),
+        ^              cindDmg, cindMargin)
+          useCind()
 
+      ft = foe.time
 
-  ?php < pmhp
-  ^& !canBash() & !canDash()
-  ^& !keepMask
-    equipR @dLsword@
+      ?((fs = 115 & ft < 70) |
+      ^(fs = 32 & fdmg = 1))
+      ^& ft >= 42 // putting up shield
+        dontDash = true
 
-
-  return
-
-
-
-// LOADOUTS
-
-func ldtF(mode)
-  ?mode = "default"
-    equipL triskelion
-    ?!keepMask
-      equipR @cshield1@
-  :?mode = "armorRecover"
-    equipL triskelion
-    ?!keepMask
-      equipR @cshield2@
-  :?mode = "escape"
-    equipL mind
-    equipR @cshield2@
-
-    mindDelay = tt + mindCd
-  :?mode = "magnet"
-    equipL star
-    ?!keepMask
-      equipR triskelion
-
-
-  :?mode = "harv"
-    equip shovel
-
-
-  //buffs/debuffs (oriented to duration)
-  :?mode = "pDeb1"
-    equipL @dPsword1@
-    equipR mask
-  :?mode = "pDeb2"
-    equipL @dPsword1@ // put 2 when upgraded back to normal
-    equipR mask
-  :?mode = "aidActive"
-    equipL @ahHammer@
-    equipR @ahShield@
-    
-  :?mode = "fDeb"
-    equipL @dFsword@
-    equipR mask
-  :?mode = "iDeb"
-    equipL @dIsword@
-    equipR mask
-  //damage
-  :?mode = "fDmg"
-    equipL Vantum Phoenix
-    ?!keepMask
-      equipR @fsword@
-  :?mode = "iDmg"
-    equipL Bifrost
-    ?!keepMask
-      equipR @isword@
-  :?mode = "pDmg"
-    equipL Mamba Negra
-    ?!keepMask
-      equipR @psword@
-  :?mode = "vDmg"
-    equipL Dothaneel
-    ?!keepMask
-      equipR @vsword@
-  :?mode = "aeDmg"
-    equipL Void Slayer
-    ?!keepMask
-      equipR @aesword@
-
-
-  : // print error message on screen
-    showStrCentered(
-    ^"ERROR: ldtF() recieved incorrect mode: " + mode,
-    ^0, 30, "yellow")
-
-
-  return 
-
-
-
-// VARIABLES
-
-var dontDash
-var trueDmg
-
-var nRuns = 0
-
-var keepMask = true
-?ll
-  keepMask = false
-  ?tt = 1
-    nRuns++
-
-
-
-// PROCEDURE
-
-
-var somui = speedOmeterUI(1, 6, colorToHex("pink"), false, false)
-?speedOmeterUpdate(false)
-  speedOmeterUI(1, 6, colorToHex("pink"), false, false)
-?somui
-  somui.Recycle()
-  somui = null
-
-
-DPSMeterEnabled = false
-var dpsPanel
-?dpsMeterUpdate(2)
-  dpsPanel = uiDPSMeter(1, 13, "#yellow", 2)
-
-
-var choice = false
-var btnPressed = false
-
-var yesBtn
-var noBtn
-
-var dontShowAgain = false
-
-
-
-?!btnPressed
-  ?!yesBtn
-    yesBtn = mkBtn(
-    ^-5,9,4,4,null,null,
-    ^"Yes","#green",
-    ^null,null,null,
-    ^-5,harvFunc,
-    ^null,null,null)
-
-  ?!noBtn
-    noBtn = mkBtn(
-    ^5,9,5,4,null,null,
-    ^"No","red",
-    ^null,null,null,
-    ^-5,harvFunc
-    ^null,null,null)
-
-
-  showStrCtr(6,30,
-  ^"Harvest boulders?","yellow",
-  ^false)
-
-:
-  ?yesBtn
-    yesBtn.Recycle()
-    yesBtn = null
-  ?noBtn
-    noBtn.Recycle()
-    noBtn = null
-
-
-  ?!dontShowAgain
-    var aux = tt + 3*sec
-    ?tt < aux
-      ?choice
-        showStrCtr(6, 30,
-        ^"Harvest boulders is enabled","green",
-        ^false)
+        ?canUseMind()
+          ldtF("escape")
+        :?fd > 7
+          equip @aebow@
+        :?canUseMask()
+          useMask()
       :
-        showStrCtr(6, 30,
-        ^"Harvest boulders is disabled","red",
-        ^false)
-    :
-      ?!dontShowAgain
-        dontShowAgain = true
+        dontDash = false
+        ?fa > 0 & canUseHamm2() &
+        ^!bardCdSlower & fd < 11
+          useHamm()
+        :
+          ?fbs ! "defense_fire"
+            ?!keepMask & php = pmhp
+              ?bs = "berserk"
+                ldtF("fdmg")
+              :
+                doMoondial(Vantum Phoenix, fsword, 0)
+            :
+              equipL Vantum Phoenix
+          :
+            ?!keepMask & php = pmhp
+              ?bs = "berserk"
+                ldtF("idmg")
+              :
+                doMoondial(Bifrost, isword, 0)
+            :
+              equipL Bifrost
+
+
+    ?php < pmhp
+    ^& !canBash() & !canDash()
+    ^& !keepMask
+      equipR @dLsword@
+
+
+    return
 
 
 
-/* Mano izquierda:
---- hacer AAC ---
-- cuando state = 3
---- NO hacer AAC ---
-- Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
-?ils = 3 & !(keepMask & il = "sword D +21")
-  equipL wand 0*
-  equipL @il@
-?irs = 3 & ir ! "sword D +21"
-  equipR @cshield2@
-  equipR @ir@
+  // LOADOUTS
+
+  func ldtF(mode)
+    ?mode = "default"
+      equipL triskelion
+      ?!keepMask
+        equipR @cshield1@
+    :?mode = "armorRecover"
+      equipL triskelion
+      ?!keepMask
+        equipR @cshield2@
+    :?mode = "escape"
+      equipL mind
+      equipR @cshield2@
+
+      //mindDelay = tt + mindCd
+    :?mode = "magnet"
+      equipL star
+      ?!keepMask
+        equipR triskelion
 
 
-?debuffs.string | (tt > lavg & nRuns >= 2)
-  loc.Leave()
+    :?mode = "harv"
+      equip shovel
 
 
-?lb
-  rs = res.stone
-  rb = res.bronze
+    //buffs/debuffs (oriented to duration)
+    :?mode = "pDeb1"
+      equipL @dPsword1@
+      equipR mask
+    :?mode = "pDeb2"
+      equipL @dPsword1@ // put 2 when upgraded back to normal
+      equipR mask
+    :?mode = "aidActive"
+      equipL @ahHammer@
+      equipR @ahShield@
+      
+    :?mode = "fDeb"
+      equipL @dFsword@
+      equipR mask
+    :?mode = "iDeb"
+      equipL @dIsword@
+      equipR mask
+    //damage
+    :?mode = "fDmg"
+      equipL Vantum Phoenix
+      ?!keepMask
+        equipR @fsword@
+    :?mode = "iDmg"
+      equipL Bifrost
+      ?!keepMask
+        equipR @isword@
+    :?mode = "pDmg"
+      equipL Mamba Negra
+      ?!keepMask
+        equipR @psword@
+    :?mode = "vDmg"
+      equipL Dothaneel
+      ?!keepMask
+        equipR @vsword@
+    :?mode = "aeDmg"
+      equipL Void Slayer
+      ?!keepMask
+        equipR @aesword@
 
-  ?rs >= 10 & rb >= 10
-    ?ip ! "lucky"
-      brew stone + bronze
+
+    : // print error message on screen
+      showStrCentered(
+      ^"ERROR: ldtF() recieved incorrect mode: " + mode,
+      ^0, 30, "yellow")
+
+
+    return 
+
+
+  // PROCEDURE
+
+
+  var somui = speedOmeterUI(0, 1, colToHex("pink"), true, false)
+  ?speedOmeterUpdate(false)
+    somui.Recycle()
+    somui = null
+
+    somui = speedOmeterUI(0, 1, colToHex("pink"), true, false)
+
+
+  DPSMeterEnabled = true
+  var dpsPanel
+  ?dpsMeterUpdate(2)
+    ?dpsPanel
+      dpsPanel.Recycle()
+      dpsPanel = null
+
+    dpsPanel = uiDPSMeter(0, 4, "#yellow", 2)
+
+
+  var choice = false
+  var btnPressed = false
+
+  var yesBtn
+  var noBtn
+
+  var dontShowAgain = false
+
+
+
+  ?!btnPressed
+    ?!yesBtn
+      yesBtn = mkBtn(
+      ^-5,9,null,2,null,null, // x, y, w, h, anchor, dock,
+      ^"Yes","#green", // txt, col,
+      ^null,null,null, // tcol, bcol, hcol,
+      ^-5,harvFunc, // style, pressed,
+      ^null,null,null) // down, up, sound
+
+    ?!noBtn
+      noBtn = mkBtn(
+      ^5,9,8,2,null,null, // x, y, w, h, anchor, dock,
+      ^"No","red", // txt, col,
+      ^null,null,null, // tcol, bcol, hcol,
+      ^-5,harvFunc, // style, pressed,
+      ^null,null,null) // down, up, sound
+
+
+    showStrCtr(6,30,
+    ^"Harvest boulders?","#yellow",
+    ^false)
+
   :
+    ?yesBtn
+      yesBtn.Recycle()
+      yesBtn = null
+    ?noBtn
+      noBtn.Recycle()
+      noBtn = null
+
+
+    ?!dontShowAgain
+      var aux = tt + 3*sec
+      ?tt < aux
+        ?choice
+          showStrCtr(6, 30,
+          ^"Harvest boulders is enabled","#green",
+          ^false)
+        :
+          showStrCtr(6, 30,
+          ^"Harvest boulders is disabled","#red",
+          ^false)
+      :
+        ?!dontShowAgain
+          dontShowAgain = true
+
+
+
+  /* Mano izquierda:
+  --- hacer AAC ---
+  - cuando state = 3
+  --- NO hacer AAC ---
+  - Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
+  ?ils = 3 & !(keepMask & il = "sword D +21")
+    equipL wand 0*
+    equipL @il@
+  ?irs = 3 & ir ! "sword D +21"
+    equipR @cshield2@
+    equipR @ir@
+
+
+  ?debuffs.string | (tt > lavg & nRuns >= 2)
     loc.Leave()
 
-  /*rw = res.wood
-  rb = res.bronze
-  ?rw >= 10 & rb >= 10
-    ?ip ! "berserk"
-      brew wood + bronze
+
+  ?lb
+    rs = res.stone
+    rb = res.bronze
+
+    ?rs >= 10 & rb >= 10
+      ?ip ! "lucky"
+        brew stone + bronze
+    :
+      loc.Leave()
+
+    /*rw = res.wood
+    rb = res.bronze
+    ?rw >= 10 & rb >= 10
+      ?ip ! "berserk"
+        brew wood + bronze
+    :
+      loc.Leave()*/
+
+
+  ?keepMask
+    equipR mask
+
+
+  ?lb | ll
+    /* ldtF("default") but w/o considering keepMask*/
+    equipL triskelion
+    equipR @cshield1@
+
+
+  :?canUseFTali()
+    equipL triskelion
+    useFTali("r")
+    
+  :?canUsePotDmg() & keepMask
+    activate potion
+
+
+  :?choice & harvest.distance < 5
+    ldtF("harv")
+
+  :?pickup.distance < 15
+    ldtF("magnet")
+
+
   :
-    loc.Leave()*/
+    fd = foe.distance
+    fs = foe.state
+    fdmg = foe.damage
+    php = hp
+    pmhp = maxhp
 
 
-?keepMask
-  equipR mask
+    aiE = ai.enabled
 
 
-?lb | ll
-  /* ldtF("default") but w/o considering keepMask*/
-  equipL triskelion
-  equipR @cshield1@
-
-
-:?canUseFTali()
-  equipL triskelion
-  useFTali("r")
-  
-:?canUsePotDmg() & keepMask
-  activate potion
-
-
-:?choice & harvest.distance < 5
-  ldtF("harv")
-
-:?pickup.distance < 15
-  ldtF("magnet")
-
-
-:
-  fd = foe.distance
-  fs = foe.state
-  fdmg = foe.damage
-  php = hp
-  pmhp = maxhp
-
-
-  aiE = ai.enabled
-
-
-  ?f = "dysangelos" & fd <= 22
-  ^& canUseBard2() &
-  ^(fs = 100 | fs = 101 |
-  ^fs = 102 | fs = 126)
-    ?canUseHamm2()
-      useHamm()
-    :?canUseQstaff()
-      useQstaff(myqstaff)
-    :?canDash()
-      dash(Vantum Phoenix, dshield)
-    :
-      bs = buffs.string
-      ?bs = "berserk"
-        useBard(Kubikiribocho)
-      :
-        useBard(fastBard)
-
-
-  :?fd > 15 | !aiE |
-  ^(fs = 124 | fs = -1 |
-  ^(fs = 107 & fdmg = 3)) // Dysan's flying animation (after putting shield on phase3)
-    fa = armor
-    ?14 <= fa & fa <= 29
-      ldtF("default")
-    :
-      ldtF("armorRecover")
-      
-  :?aiE & fs ! -1
-    // fighting range
-
-    f = foe
-    fbs = foe.buffs.string
-    fds = foe.debuffs.string
-    fa = foe.armor
-
-    bs = buffs.string
-
-    ?f = "acronian_scout"
-      ?canBash()
-        bash(Vantum Phoenix)
-
-      :
-        ?keepMask
-          ?fds ! "chill:6"
-            equipL @dIsword@
-          :?fds ! "damage"
-            equipL @dPsword1@
-          :?fds ! "dot"
-            equipL @dFsword@
-          :
-            equipL Vantum Phoenix
-
-        :
-          ?php = pmhp
-            doMoondial(Vantum Phoenix, fsword, 0)
-          :
-            equipL Vantum Phoenix
-            equipR @dLsword@
-
-
-    :?f = "dysangelos" &
-    ^fs ! 124
-    ^!(fs = 107 & fdmg = 3)
-
-      fdmg = foe.damage
-      ft = foe.time
-      
-      trueDmg = fdmg
-      ?fds = "damage"
-        ?f = "phase3"
-          trueDmg -= 8
-        :
-          trueDmg -= 4
-
-      ?fds = "feeble"
-        trueDmg -= 2*getDebuffLvl("feeble", true)
-      
-      
-      ?canBash() & !dontDash
-        bash(Vantum Phoenix)
-      :?canDash() & !dontDash
+    ?f = "dysangelos" & fd <= 22
+    ^& canUseBard2() &
+    ^(fs = 100 | fs = 101 |
+    ^fs = 102 | fs = 126)
+      ?canUseHamm2()
+        useHamm()
+      :?canUseQstaff()
+        useQstaff(myqstaff)
+      :?canDash()
         dash(Vantum Phoenix, dshield)
+      :
+        bs = buffs.string
+        ?bs = "berserk"
+          useBard(Kubikiribocho)
+        :
+          useBard(fastBard)
 
 
-      :?armor < trueDmg & fs = 32 & (
-      ^(f = "phase1" &
-      ^  ((fds = "chill" & ft > 58) // about to attack, slowed down by chill debuff
-      ^ | (48 < ft & ft < 52)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
-      ^(f = "phase3" & ft > 80)  ) // final phase, about to normal attack
-        ldtF("aidActive")
+    :?fd > 15 | !aiE |
+    ^(fs = 124 | fs = -1 |
+    ^(fs = 107 & fdmg = 3)) // Dysan's flying animation (after putting shield on phase3)
+      fa = armor
+      ?14 <= fa & fa <= 29
+        ldtF("default")
+      :
+        ldtF("armorRecover")
+        
+    :?aiE & fs ! -1
+      // fighting range
 
+      f = foe
+      fbs = foe.buffs.string
+      fds = foe.debuffs.string
+      fa = foe.armor
 
-      :?f ! "immune_to_debuff_damage"
-      ^& fbs ! "buff_protection"
-      ^& ls > 5
-        ?keepMask
-          ?fds ! "chill:6"
-            ldtF("iDeb")
+      bs = buffs.string
 
-          :?fds ! "damage"
-            ?f = "phase3"
-              ldtF("pDeb2")
+      ?f = "acronian_scout"
+        ?canBash()
+          bash(Vantum Phoenix)
+
+        :
+          ?keepMask
+            ?fds ! "chill:6"
+              equipL @dIsword@
+            :?fds ! "damage"
+              equipL @dPsword1@
+            :?fds ! "dot"
+              equipL @dFsword@
             :
-              ldtF("pDeb1")
+              equipL Vantum Phoenix
+
           :
-            ?fds ! "dot"
-              ldtF("fDeb")
+            ?php = pmhp
+              doMoondial(Vantum Phoenix, fsword, 0)
+            :
+              equipL Vantum Phoenix
+              equipR @dLsword@
+
+
+      :?f = "dysangelos" &
+      ^fs ! 124
+      ^!(fs = 107 & fdmg = 3)
+
+        fdmg = foe.damage
+        ft = foe.time
+        
+        trueDmg = fdmg
+        ?fds = "damage"
+          ?f = "phase3"
+            trueDmg -= 8
+          :
+            trueDmg -= 4
+
+        ?fds = "feeble"
+          trueDmg -= 2*getDebuffLvl("feeble", true)
+        
+        
+        ?canBash() & !dontDash
+          bash(Vantum Phoenix)
+        :?canDash() & !dontDash
+          dash(Vantum Phoenix, dshield)
+
+
+        :?armor < trueDmg & fs = 32 & (
+        ^(f = "phase1" &
+        ^  ((fds = "chill" & ft > 58) // about to attack, slowed down by chill debuff
+        ^ | (48 < ft & ft < 52)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
+        ^(f = "phase3" & ft > 80)  ) // final phase, about to normal attack
+          ldtF("aidActive")
+
+
+        :?f ! "immune_to_debuff_damage"
+        ^& fbs ! "buff_protection"
+        ^& ls > 5
+          ?keepMask
+            ?fds ! "chill:6"
+              ldtF("iDeb")
+
+            :?fds ! "damage"
+              ?f = "phase3"
+                ldtF("pDeb2")
+              :
+                ldtF("pDeb1")
+            :
+              ?fds ! "dot"
+                ldtF("fDeb")
+              :
+                bossFight()
+          :
+            ?fds ! "damage"
+              ?f = "phase3"
+                ldtF("pDeb2")
+              :
+                ldtF("pDeb1")
             :
               bossFight()
         :
-          ?fds ! "damage"
-            ?f = "phase3"
-              ldtF("pDeb2")
-            :
-              ldtF("pDeb1")
-          :
-            bossFight()
-      :
-        bossFight()
+          bossFight()
 
 
 

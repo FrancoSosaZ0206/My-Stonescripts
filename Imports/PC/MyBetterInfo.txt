@@ -87,7 +87,7 @@ infoIndex - tyoe of information to get:
   2 = stack count (buffs accumulated).
   3 = remaining duration on first stack.
 RETURNS: buff info if found, 0 otherwise. */
-func getBuffInfo(nameid,inFoe,infoIndex)
+func getBuffInfo(nameid, inFoe, infoIndex)
 // if inFoe = true, checks foe's buffs, else, player's buffs
   var info
   var buffFound

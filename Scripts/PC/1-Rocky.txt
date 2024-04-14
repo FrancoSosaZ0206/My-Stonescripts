@@ -24,6 +24,21 @@ dpsm = import MyScripts/Imports/PC/DPS_Meter_MODIFIED
 
 
 
+// VARIABLES
+
+var dontDash
+var trueDmg
+
+var nRuns = 0
+
+var keepMask = true
+?p.ll
+  keepMask = false
+  ?p.tt = 1
+    nRuns++
+
+
+
 // FUNCTIONS
 
 func harvFunc(btn)
@@ -214,22 +229,6 @@ func ldtF(mode)
 
 
   return 
-
-
-
-// VARIABLES
-
-var dontDash
-var trueDmg
-
-var nRuns = 0
-
-var keepMask = true
-?p.ll
-  keepMask = false
-  ?p.tt = 1
-    nRuns++
-
 
 
 // PROCEDURE

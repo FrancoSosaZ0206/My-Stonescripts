@@ -1125,7 +1125,7 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
   var weaverScr = 3
 
   var keepFTali = false
-  
+
   ?f = "boss"
     keepFTali = true
 
@@ -1229,7 +1229,6 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
   func fight1v1()
     fds = foe.debuffs.string
 
-
     /* How to apply debuffs:
     - apply all except the ones the foe is immune to.
     Finish when:
@@ -1271,7 +1270,7 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
           doMoondial(Vantum Phoenix, fsword, 0)
 
     return
-  
+
   // PROCEDURE:
   
   var somui = showSpeedOmeterUI(1,6,colorToHex("pink"),false)

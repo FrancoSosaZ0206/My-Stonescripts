@@ -526,89 +526,27 @@ var bardRDmg = (bardDmg + 17) * bardCrit
 //                    Speed_O_Meter.txt                   
 // *******************************************************
 
+/* FILE INFO
+  Time Display Utility
+  Made by MetalEagle26 (Tom Crow)
 
-
-// PRIVATE FUNCTIONS:
-
-func myFormatDigital(frames)
-  ?frames <= 0
-    return "00:00"
-  :
-    var timeStr
-    var secs
-    var mins
-    var secStr
-    var minStr
-
-    secs = frames/30
-    mins = (frames/30)/60
-
-    secs -= mins*60
-
-    ?mins < 10
-      minStr = "0" + mins
-    :
-      minStr = mins
-      
-    ?secs < 10
-      secStr = "0" + secs
-    :
-      secStr = secs
-    
-    return minStr + ":" + secStr
-
-/* returns time in a similar format to time.FormatDigital,
-   but with frame presition. */
-func formatSpeedrun(frames)
-
-  var timeStr = "00:00 0f"
-
-  ?frames > 0
-
-    var frms
-    var secs
-    var mins
-    var frmStr
-    var secStr
-    var minStr
-
-    frms = frames % 30 // the rest of the division is the added frames between each second
-    secs = frames/30
-    mins = (frames/30)/60
-
-    secs -= mins*60
-
-    frmStr = frms + "f"
-
-    ?secs < 10
-      secStr = "0" + secs
-    :
-      secStr = secs
-      
-    ?mins < 10
-      minStr = "0" + mins
-    :
-      minStr = mins
-
-    timeStr = minStr + ":" + secStr + " " + frmStr
-    
-  return 
-
-
+  current version: 1.6 */
 
 // VARIABLES:
 
-var sec = 30 // frames
+// Already defined in Utilities:
+// var sec = 30 // frames
 
 // Times in frames:
-var tt = totaltime
+// Already defined in PerformanceV2:
+/* var tt = totaltime
 var lbt
 var lavg
 
 tt = totaltime
 ?tt <= 1
   lbt = loc.bestTime
-  lavg = loc.averageTime
+  lavg = loc.averageTime */
 
 // Times in seconds:
 var ttDigital = myFormatDigital(tt)
@@ -624,8 +562,7 @@ var avgSpeedrun = formatSpeedrun(lavg)
 // Variable updating frequency:
 ?tt % 30 = 0
   ttDigital = myFormatDigital(tt)
-
-  ttSpeedrun = formatSpeedrun(tt)
+ttSpeedrun = formatSpeedrun(tt)
 
 ?loc.loop
   pb = myFormatDigital(lbt)
@@ -642,39 +579,39 @@ func speedOmeterUpdate(isSpeedrun)
   ?isSpeedrun
     return true
   :
-    return loc.begin | loc.loop | tt % 30 = 0
+    return loc.begin | loc.loop | (tt % 30 = 0)
 
 func speedOmeterToStr(isSlim, isSpeedrun)
 
   ?isSlim
     ?isSpeedrun
       return
-      ^"☆ " + pbSpeedrun   // ☆ = PB
-      ^" ≈ " + avgSpeedrun  // ☆ = AVG
-      ^" ▶ " + ttSpeedrun  // ☆ = CURR
+      ^"☆ " + pbSpeedrun +  // ☆ = PB
+      ^" | ≈ " + avgSpeedrun + // ≈ = AVG
+      ^" | ▶ " + ttSpeedrun           // ▶ = CURR
 
     :
       return
-      ^"☆ " + pb         // ☆ = PB
-      ^" ≈ " + avg        // ☆ = AVG
-      ^" ▶ " + ttDigital // ☆ = CURR
+      ^"☆ " + pb +       // ☆ = PB
+      ^" | ≈ " + avg +      // ≈ = AVG
+      ^" | ▶ " + ttDigital         // ▶ = CURR
 
   :
     ?isSpeedrun
       return
       ^"    SPEED-O-METER" + "\n" +
       ^"·····················" + "\n" +
-      ^" CUR " + ttSpedrun + " (" + tt + "f)" + "\n" +
-      ^" PB  " + pbSpedrun + " (" + lbt + "f)" + "\n" +
-      ^" AVG " + avgSpedrun + " (" + lavg + "f)"
+      ^" PB  " + pbSpeedrun + " (" + lbt + "f)" + "\n" +
+      ^" AVG " + avgSpeedrun + " (" + lavg + "f)" + "\n" +
+      ^" CUR " + ttSpeedrun + " (" + tt + "f)"
 
     :
       return
       ^"SPEED-O-METER" + "\n" +
       ^"·············" + "\n" +
-      ^" CUR " + ttDigital + "\n" +
-      ^" PB  " + pb + "\n" +
-      ^" AVG " + avg
+      ^"  PB  " + pb + "\n" +
+      ^"  AVG " + avg + "\n" +
+      ^"  CUR " + ttDigital
 
 func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 
@@ -696,28 +633,28 @@ func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
   var panel
 
   // For the panel:
-  var anchor
-  var dock
+  var pnlAnchor
+  var pnlDock
   var style
   
   ?isSlim
-    anchor = top_center
-    dock = top_center
+    pnlAnchor = top_center
+    pnlDock = top_center
     style = -1
   :
-    anchor = top_left
-    dock = top_left
+    pnlAnchor = top_left
+    pnlDock = top_left
     style = -2
 
   txt = mkTxtbox(
     ^1, 1, null, null, // x, y, w, h,
-    ^top_left, top_left, // anchor, dock,
+    ^top_left, top_left, // pnlAnchor, dock,
     ^speedOmeterToStr(isSlim, isSpeedrun), // txt
     ^null, col) // align, col
 
   panel = mkPanel(
     ^x, y, txt.w + 2, txt.h + 2, // x, y, w, h,
-    ^anchor, dock, // anchor, dock,
+    ^pnlAnchor, pnlDock, // anchor, dock,
     ^col, style, txt) // col, style, child
 
   return panel
@@ -1475,18 +1412,6 @@ func canUseCind()
   return summon.GetId() = "cinderwisp"
   ^& tt >= cindDelay & canAct
 
-/* Checks if the estimated damage of
-cinderwisp's "devour" ability will kill the foe,
-leaving a damage margin.
-  - foeTotalHP: foe hp + armor
-  - nIgnitions: amount of ignition debuffs currently
-                applied to the foe.
-  - cindDmg: damage dealt by cinderwisp for each ignition.
-  - margin: number representing a health margin to add
-            to the remaining foe's health. This is
-            necessary because the ability has a cast time
-            that will alter the estimations done here.
-            Send 0 if you don't want to use a margin. */
 func canKillCind(foeTotalHP,nIgnitions,cindDmg,margin)
   return foeTotalHP <= (nIgnitions * cindDmg) + margin
 
@@ -1803,6 +1728,8 @@ func doMoondial(weapon1, weapon2, mode)
 
 
   return
+
+
 
 // *******************************************************
 //                  END OF "Combat.txt"                   

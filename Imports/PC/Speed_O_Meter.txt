@@ -122,8 +122,8 @@ ttSpeedrun = u.formatSpeedrun(tt)
   pb = u.myFormatDigital(lbt)
   avg = u.myFormatDigital(lavg)
 
-  pbSpeedrun = u.u.formatSpeedrun(lbt)
-  avgSpeedrun = u.u.formatSpeedrun(lavg)
+  pbSpeedrun = u.formatSpeedrun(lbt)
+  avgSpeedrun = u.formatSpeedrun(lavg)
 
 
 

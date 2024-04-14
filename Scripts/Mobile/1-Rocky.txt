@@ -1818,7 +1818,13 @@ func doMoondial(weapon1, weapon2, mode)
         :
           equipL Mamba Negra
       :?f = "aether"
-        ldtF("vDmg")
+        ?!keepMask & php = pmhp
+          ?bs = "berserk"
+            ldtF("vdmg")
+          :
+            doMoondial(Dothaneel, vsword, 0)
+        :
+          equipL Dothaneel
       :?f = "fire"
         ldtF("aeDmg")
       :?f = "ice"

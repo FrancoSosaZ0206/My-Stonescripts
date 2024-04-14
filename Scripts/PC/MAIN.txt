@@ -29,7 +29,7 @@ var l = loc
   import MyScripts/Scripts/PC/2-Deadwood
 :?l = "Caves"
   import MyScripts/Scripts/PC/3-Caves
-:?l = "Mushroom"
+:?l = "Mushroom" | l = "Waterfall"
   import MyScripts/Scripts/PC/4-Mushroom
 :?l = "Halls"
   import MyScripts/Scripts/PC/5-Halls

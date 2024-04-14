@@ -79,7 +79,13 @@ func bossFight()
       :
         equipL Mamba Negra
     :?p.f = "aether"
-      ldtF("vDmg")
+      ?!keepMask & p.php = p.pmhp
+        ?p.bs = "berserk"
+          ldtF("vdmg")
+        :
+          c.doMoondial(Dothaneel, a.vsword, 0)
+      :
+        equipL Dothaneel
     :?p.f = "fire"
       ldtF("aeDmg")
     :?p.f = "ice"

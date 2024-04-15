@@ -172,7 +172,7 @@ var somui = som.speedOmeterUI(0, 1, i.colToHex("pink"), true, false)
   somui = som.speedOmeterUI(0, 1, i.colToHex("pink"), true, false)
 
 
-dpsm.DPSMeterEnabled = false
+dpsm.DPSMeterEnabled = true
 var dpsPanel
 ?dpsm.dpsMeterUpdate(2)
   ?dpsPanel
@@ -261,7 +261,6 @@ var dpsPanel
         ldtF("rangedDmg")
 
   :?p.f = "mushroom_boss" & p.f ! "phase2"
-    var isUnmk = false
 
     ?c.canUsePotDmg()
       activate potion
@@ -276,32 +275,36 @@ var dpsPanel
       p.fs = foe.state
       p.ft = foe.time
 
-      >c0,0,#red,state = @p.fs@
-      >c0,1,#green,time = @p.ft@
+      /*// Estimated frames to defeat phase1 boss
+      var dummyFrm = 999
+      dummyFrm = i.getFoeTotalHP() / dpsm.DPF
+
+      >c0,2,#red,foe hp + armor = @i.getFoeTotalHP()@
+      ^\nDamage per frame = @dpsm.DPF@
+      ^\ndummyFrm = @dummyFrm@
+
+      ?dummyFrm <= 0 // Dummy boss between phase1 and phase2
+      //^& c.canUseWeav()
+        >c0,0,#rainbow,VOIDWEAVER NOW!!!
+        activate voidweaver*/
 
       ?i.getFoeTotalHP() <= 168 | (
       ^p.fs = 32 & p.ft >= 80) // boss's punch attack
         ?c.canUseMask() & p.fd <= 10
           ldtF("escape")
         :
-          isUnmk = true
-          equip @a.dUstaff@
+          ?keepMask
+            equipL @a.dUwand@
+          :
+            equipL moon
+            equipR @a.dUwand@
 
       :
-        isUnmk = false
-        >c0,-1,#green,OK
-
         fight1v1()
 
-        /* BOSS'S PUNCH ATTACK
-        :
-          ?!p.fa |
-          (p.fs = 32 & p.ft >= 47) // boss's punch attack
-            ?c.canUseMask()
-              ldtF("escape")
-            :
-              equip @a.dUstaff@*/
-      
+
+
+
   : // normal foes and boss's phase2
     p.fs = foe.state
     ?c.canUseBladeDS(smiteScr)

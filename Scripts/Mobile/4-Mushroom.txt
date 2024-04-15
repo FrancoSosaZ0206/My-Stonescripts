@@ -1511,71 +1511,130 @@ func doMoondial(weapon1, weapon2, mode)
   var keepMask = true
   var smiteScr = 1
 
+  var canDebI
+  var canDebP
+  var canDebF
+
+  var keepFTali = false
+
+  ?f = "phase2"
+    keepFTali = true
+
   ?ll
     keepMask = false
+    keepFTali = false
 
     ?tt = 1 & ls > 5 &
     ^smiteScr ! 3
       smiteScr++
 
 
-  // LOADOUTS:
+
+  // FUNCTIONS:
+
+  func fight1v1()
+    fds = foe.debuffs.string
+
+    /* How to apply debuffs:
+    - apply all except the ones the foe is immune to.
+    Finish when:
+    - all possible debuffs have been applied. */
+    canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
+    canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
+    canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
+    
+    ?canDebI | canDebP | canDebF
+      ?keepMask
+        ?canDebI
+          equipL @a.dIsword@
+        :?canDebP
+          equipL @a.dPsword1@
+        :?canDebF
+          equipL @a.dFsword@
+      :
+        //Left hand:
+        ?canDebP
+          equipL @a.dPsword1@
+        :?canDebF
+          equipL @a.dFsword@
+        :?canDebI
+          equipL @a.dIwand1@
+
+        //Right hand:
+        ?canDebI
+          equipR @a.dIsword@
+    :
+      php = hp
+      pmhp = maxhp
+
+      ?keepMask
+        equipL Mamba Negra
+
+        ?php ! pmhp
+          equipL @a.dLsword@
+      :
+        bs = buffs.string
+        ?bs = "berserk"
+          doMoondial(Mamba Negra, a.psword, 2)
+        :
+          doMoondial(Mamba Negra, a.psword, 0)
+
+        ?php ! pmhp
+          equipR @a.dLsword@
+
+    return
 
   func ldtF(mode)
 
     ?mode = "default"
       equipL triskelion
       ?!keepMask
-        equipR @cshield1@
+        equipR @a.cshield1@
     :?mode = "armorRegen"
       equipL triskelion
       ?!keepMask
-        equipR @cshield2@
+        equipR @a.cshield2@
     :?mode = "engage"
       equipL triskelion
       ?!keepMask
-        equipR @pshield@
+        equipR @a.pshield@
     :?mode = "escape"
       equipL mind
       ?!keepMask
-        equipR @pshield@
+        equipR @a.pshield@
     :?mode = "magnet"
       equipL star
       ?!keepMask
         equipR triskelion
 
-
     :?mode = "meleeDmg"
       equipL Mamba Negra
       ?!keepMask
-        equipR @psword@
+        equipR @a.psword@
 
     :?mode = "rangedDmg"
-      equip @dPbow@
+      equip @a.dPbow@
 
     :?mode = "magic"
       ?keepMask
-        ?fds ! "chill:6" &
-        ^f ! "immune_to_debuff_chill"
-          equipL @dIwand1@
-        :?fds ! "damage" &
-        ^f ! "immune_to_debuff_damage"
-          equipL @dPwand@
-        :?fds ! "dot" &
-        ^f ! "immune_to_debuff_dot"
-          equipL @dFwand@
-        :
-          equipL @dPwand@
+        ?canDebI
+          equipL @a.dIwand1@
+        :?canDebP
+          equipL @a.dPwand@
+        :?canDebF
+          equipL @a.dFwand@
       :
-        ?fds ! "damage" &
-        ^f ! "immune_to_debuff_damage"
-          equipL @dPwand@
-        :?fds ! "dot" &
-        ^f ! "immune_to_debuff_dot"
-          equipL @dFwand@
-        :
-          equipL @dPwand@
-        equipR @dIwand1@
+        //Left hand:
+        ?canDebP
+          equipL @a.dPwand@
+        :?canDebF
+          equipL @a.dPwand@
+        :?canDebI
+          equipL @a.dIwand2@
+        
+        //Right hand:
+        ?canDebI
+          equipR @a.dIwand1@
 
     :
       >c-10,0,#red,
@@ -1584,15 +1643,41 @@ func doMoondial(weapon1, weapon2, mode)
     return
 
 
+
   // PROCEDURE:
 
-  var somui = showSpeedOmeterUI(1,6,colorToHex("pink"),false)
+  var somui = speedOmeterUI(0, 1, colToHex("pink"), true, false)
   ?speedOmeterUpdate(false)
-    showSpeedOmeterUI(1,6,colorToHex("pink"),false)
+    somuRecycle()
+    somui = null
 
+    somui = speedOmeterUI(0, 1, colToHex("pink"), true, false)
+
+
+  DPSMeterEnabled = true
+  var dpsPanel
+  ?dpsMeterUpdate(2)
+    ?dpsPanel
+      dpsPanel.Recycle()
+      dpsPanel = null
+
+    dpsPanel = uiDPSMeter(0, 4, "#yellow", 2)
+
+
+  /* Mano izquierda:
+  --- hacer AAC ---
+  - cuando state = 3
+  --- NO hacer AAC ---
+  - Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
+  ?ils = 3 & !(keepMask & il = "sword D +21")
+    equipL wand 0*
+    equipL @il@
+  ?irs = 3 & ir ! "sword D +21"
+    equipR @a.cshield1@
+    equipR @ir@
 
   ?hp < maxhp & !keepMask
-    loc.Leave()
+    loLeave()
 
   ?lb
     rs = res.stone
@@ -1607,38 +1692,58 @@ func doMoondial(weapon1, weapon2, mode)
         ?ip ! "lucky"
           brew stone + bronze
       :
-        loc.Leave()
+        loLeave()
     :
-      loc.Leave()
+      loLeave()
 
   ?keepMask
     equipR mask
 
   ?lb | ll
     equipL triskelion
-    equipR @cshield1@
+    equipR @a.cshield1@
 
-  :?canUseTali()
-    equipL triskelion
-    useTali("r")
+  :?canUseAETali() & !keepFTali
+    ?keepMask
+      useAETali("l")
+    :
+      equipL triskelion
+      useAETali("r")
+
+  :?canUseFTali() & keepFTali
+    ?keepMask
+      useFTali("l")
+    :
+      equipL triskelion
+      useFTali("r")
 
   :?canUsePotDmg() & keepMask
     activate potion
 
-  :?pickup.distance ! 9999
+  :?pickudistance ! 9999
     ldtF("magnet")
-
   :
     fds = foe.debuffs.string
     fd = foe.distance
-    fc = foe.GetCount(10)
+    fc = foe.count
 
     ?f = "explode"
-      ldtF("magic")
+      canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
+      canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
+      canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
+      
+      ?fd < 7
+        ldtF("escape")
+      :?canDebI | canDebP | canDebF
+        ldtF("magic")
+      :
+        ?keepMask
+          equipL @a.altbow@
+        :
+          ldtF("rangedDmg")
 
     :?f = "mushroom_boss" & f ! "phase2"
-      var isUnmk = false
-    
+
       ?canUsePotDmg()
         activate potion
 
@@ -1646,104 +1751,57 @@ func doMoondial(weapon1, weapon2, mode)
         ?canBash()
           bash(Mamba Negra)
         :?canDash()
-          dash(Mamba Negra,dshield)
-      
-      :?!fa | (
-      ^fs = 32 & ft >= 47) // boss's punch attack
-        ?canUseMask()
-          ldtF("escape")
-        :
-          isUnmk = true
-          equip @dUstaff@
+          dash(Mamba Negra, a.dshield)
       
       :
-        >c0,0,#green,OK
-        
-        ?bs = "berserk"
-          ?keepMask
-            ?fds ! "chill:6"
-              equipL @dIsword@
-            :?fds ! "damage"
-              equipL @dPsword1@
-            :?fds ! "dot"
-              equipL @dFsword@
-            :?php ! pmhp
-              equipL @dLsword@
-            :
-              equipL Mamba Negra
+        fs = foe.state
+        ft = foe.time
 
-          :?fds = "chill:6" &
-          ^fds = "damage" &
-          ^fds = "dot"
+        /*// Estimated frames to defeat phase1 boss
+        var dummyFrm = 999
+        dummyFrm = getFoeTotalHP() / DPF
 
-            // Left hand:
-            ?fds ! "chill:6"
-              equipL @dIsword@
+        >c0,2,#red,foe hp + armor = @getFoeTotalHP()@
+        ^\nDamage per frame = @DPF@
+        ^\ndummyFrm = @dummyFrm@
 
-            // Right hand:
-            ?fds ! "damage"
-              equipR @dPsword1@
-            :?fds ! "dot"
-              equipR @dFsword@
-            :?php ! pmhp
-              equipR @dLsword@
-            :
-              equipR Mamba Negra
+        ?dummyFrm <= 0 // Dummy boss between phase1 and phase2
+        //^& canUseWeav()
+          >c0,0,#rainbow,VOIDWEAVER NOW!!!
+          activate voidweaver*/
 
-          :
-            doMoondial(Mamba Negra, pSword, 0)
-          
-            ?php ! pmhp
-              equipL @dLsword@
-
-        :
-          ?!keepMask
-            doMoondial(Mamba Negra, pSword, 0)
-          :
-            equipL Mamba Negra
-
-          ?php ! pmhp
-            ?keepMask
-              equipL @dLsword@
-            :
-              equipR @dLsword@
-    
-      /*
-      :
-        ?!fa |
-        (fs = 32 & ft >= 47) // boss's punch attack
-          ?canUseMask()
+        ?getFoeTotalHP() <= 168 | (
+        ^fs = 32 & ft >= 80) // boss's punch attack
+          ?canUseMask() & fd <= 10
             ldtF("escape")
           :
-            equip @dUstaff@*/
-      
-      /*:?fd <= 10
-        ldtF("escape")
+            ?keepMask
+              equipL @a.dUwand@
+            :
+              equipL moon
+              equipR @a.dUwand@
 
-      :?fds ! "chill:6" |
-      ^fds ! "damage" |
-      ^fds ! "dot"
-        ldtF("magic")
-      :?fa > 0
-        equip @aebow@
-      :
-        equip @dUstaff@*/
+        :
+          fight1v1()
 
-    :
+
+
+
+    : // normal foes and boss's phase2
       fs = foe.state
       ?canUseBladeDS(smiteScr)
         ?fd <= 33
           useBladeDS()
 
       ?canUseQstaff()
-        aiE = ai.enabled
+        aiE = aenabled
 
         ?aiE & ir ! "heavy hammer"
         ^& ir ! "bardiche"
         ^& ir ! Kubikiribocho
         ^& (!(canBash() | canDash())
         ^| (fd < 11 | fd > 15))
-          useQstaff(myqstaff)
+          useQstaff(a.myqstaff)
 
       ?fd > 35
         pa = armor
@@ -1757,18 +1815,23 @@ func doMoondial(weapon1, weapon2, mode)
 
       :?fd > 15
         ldtF("engage")
+
+        var isAbtToDash
+        isAbtToDash = (fd <= 17)
+        ?keepMask & isAbtToDash
+          equipR @a.pshield@
         
-        ?keepMask & 15 < fd & fd < 17
-          equipR @pshield@
-          
-        ?!keepMask & fds ! "chill" &
-        ^f ! "immune_to_debuff_chill"
-          equipR @aiShield@
+        canDebI = (fds ! "chill" & f ! "immune_to_debuff_chill")
+        bs = buffs.string
+
+        ?!keepMask & canDebI & isAbtToDash &
+        ^getFoeTotalHP() > getBuffInfo("smite", false, 2) * a.smiteMult
+          equipR @a.aiShield@
 
       :?canBash()
         bash(Mamba Negra)
       :?canDash()
-        dash(Mamba Negra,dshield)
+        dash(Mamba Negra, a.dshield)
 
       :?f ! "phase2"
         ?fc >= 5 & canUseHamm() &
@@ -1776,108 +1839,28 @@ func doMoondial(weapon1, weapon2, mode)
           useHamm()
 
         :?fc = 1
-          bs = buffs.string
-          ?bs = "berserk"
-            ?keepMask
-              ?fds ! "chill:6" &
-              ^f ! "immune_to_debuff_chill"
-                equipL @dIsword@
-              :?fds ! "damage" &
-              ^f ! "immune_to_debuff_damage"
-                equipL @dPsword1@
-              :?fds ! "dot" &
-              ^f ! "immune_to_debuff_dot"
-                equipL @dFsword@
-              :
-                equipL Mamba Negra
-
-            :
-              //Left hand:
-              ?fds ! "chill:6" &
-              ^f ! "immune_to_debuff_chill"
-                equipL @dIsword@
-              :
-                equipL @psword@
-
-              //Right hand:
-              ?fds ! "damage" &
-              ^f ! "immune_to_debuff_damage"
-                equipR @dPsword1@
-              :?fds ! "dot" &
-              ^f ! "immune_to_debuff_dot"
-                equipR @dFsword@
-              :
-                equipR Mamba Negra
-          :
-            ?!keepMask
-              doMoondial(Mamba Negra, pSword, 0)
-            :
-              equipL Mamba Negra
+          fight1v1()
         :
-          ldtF("magic")
+          canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
+          canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
+          canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
+          
+          ?canDebI | canDebP | canDebF
+            ldtF("magic")
+          :?keepMask
+            equipL @a.dPwand@
+          :
+            ldtF("rangedDmg")
 
 
       :?fs ! 1 // boss appearing animation
       ^&fs ! 4 // dying
-        // foe = "mushroom_boss"(es)
+        // foe = "phase2" (enoki & ___riel)
 
         ft = foe.time
         bs = buffs.string
 
         ?canUseMask()
           useMask()
-
         :
-          ?bs = "berserk"
-            ?keepMask
-              ?fds ! "chill:6" &
-              ^f ! "immune_to_debuff_chill"
-                equipL @dIsword@
-              :?fds ! "damage" &
-              ^f ! "immune_to_debuff_damage"
-                equipL @dPsword1@
-              :?fds ! "dot" &
-              ^f ! "immune_to_debuff_dot"
-                equipL @dFsword@
-              :?php ! pmhp
-                equipL @dLsword@
-              :?fa > 0
-                equipL @phammer1@
-              :
-                equipL Mamba Negra
-
-            :
-              //Left hand:
-              ?fds ! "chill:6" &
-              ^f ! "immune_to_debuff_chill"
-                equipL @dIsword@
-              :?php ! pmhp
-                equipL @dLsword@
-              :?fa > 0
-                equipL @phammer2@
-              :
-                equipL @psword@
-
-              //Right hand:
-              ?fds ! "damage" &
-              ^f ! "immune_to_debuff_damage"
-                equipR @dPsword1@
-              :?fds ! "dot" &
-              ^f ! "immune_to_debuff_dot"
-                equipR @dFsword@
-              :?fa > 0
-                equipR @phammer1@
-              :
-                equipR Mamba Negra
-
-          :
-            ?!keepMask
-              doMoondial(Mamba Negra, pSword, 0)
-            :
-              equipL Mamba Negra
-
-            ?php ! pmhp
-              ?keepMask
-                equipL @dLsword@
-              :
-                equipR @dLsword@
+          fight1v1()

@@ -1,14 +1,8 @@
-﻿// *******************************************************
-//                       Combat.txt                       
-// *******************************************************
-
-
-
-// VARIABLES
+﻿// VARIABLES
 
 // Status
 
-var pmhp = maxhp // PRIVATE - to save sys variable accesses (and reduce lag)
+pmhp = maxhp // PRIVATE - to save sys variable accesses (and reduce lag)
 
 var midhp = pmhp / 2
 var lowhp = pmhp / 3
@@ -24,7 +18,6 @@ var hihp = (4 * pmhp) / 5
 func canUseBlade()
   return tt >= bladeDelay & canAct
 
-// cannot be interrupted, doesn't need a cooldown check
 func useBlade()
   equip blade
   activate R
@@ -33,9 +26,6 @@ func useBlade()
 
   return
 
-/* Checks if Blade of the Fallen God
-can be used in 2 screens of distance,
-according to a certain screen index. */
 func canUseBladeDS(nScreen)
   return canUseBlade()
   ^& si = nScreen
@@ -126,24 +116,10 @@ func useFTali(hand)
 
   return
 
-/* Checks if you can use the cinderwisp's "devour"
-ability. */
 func canUseCind()
   return summon.GetId() = "cinderwisp"
   ^& tt >= cindDelay & canAct
 
-/* Checks if the estimated damage of
-cinderwisp's "devour" ability will kill the foe,
-leaving a damage margin.
-  - foeTotalHP: foe hp + armor
-  - nIgnitions: amount of ignition debuffs currently
-                applied to the foe.
-  - cindDmg: damage dealt by cinderwisp for each ignition.
-  - margin: number representing a health margin to add
-            to the remaining foe's health. This is
-            necessary because the ability has a cast time
-            that will alter the estimations done here.
-            Send 0 if you don't want to use a margin. */
 func canKillCind(foeTotalHP,nIgnitions,cindDmg,margin)
   return foeTotalHP <= (nIgnitions * cindDmg) + margin
 
@@ -173,8 +149,6 @@ func useAETali(hand)
 
   return
 
-/* Checks if you can use the voidweaver's "devour"
-ability. */
 func canUseWeav()
   return summon.GetId() = "voidweaver"
   ^& tt >= weavDelay & canAct
@@ -203,8 +177,6 @@ func useWeavDS()
       return
 
 
-/* Checks if you can use the
-bashing shield's ability. */
 func canBash()
   return tt >= bashDelay & !aiI
   ^& 11 <= fd & fd <= 15
@@ -270,8 +242,6 @@ func useBard(yourBard)
   return
 
 
-/* Checks if you can use the
-dashing shield's ability. */
 func canDash()
   return tt >= dashDelay & !aiI
   ^& 11 <= fd & fd <= 15
@@ -296,7 +266,6 @@ func canUseQstaff()
   :
     return false
 
-// recieves a string
 func useQstaff(yourQstaff)
   equip @yourQstaff@
   activate R
@@ -328,12 +297,6 @@ func useHatchet()
 func canUsePot()
   return ip ! "empty" & canAct
 
-/* Checks if a healing type potion
-can be used.
-Healing type potions are considered:
-  - healing
-  - defensive
-  - vampiric */
 func canUsePotHeal()
   ?canUsePot()
     ?ip = "healing" |
@@ -348,25 +311,10 @@ func canUsePotHeal()
   :
     return false
 
-/* Determines if a damage buff potion
-is brewed. Generally used for bosses.
-Potions related:
-  - berserk
-  - lucky */
 func canUsePotDmg()
   return canUsePot() &
   ^(ip = "berserk" | ip = "lucky")
 
-/* Determines if a special potion
-can be activated, given a special
-condition that's different for each potion type.
-Valid potion types and conditions:
-  - cleansing | min. no. of debuffs to cleanse
-  - strength | min. amount of foe's armor
-  - lightning, | ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-  - experience | min. no. of foes to activate
-  - invisibility | NONE (will activate if foe = boss)
-    + (send true as condition for this type) */
 func canUsePotSpecial(type,cond)
 
   ?canUsePot()
@@ -463,6 +411,3 @@ func doMoondial(weapon1, weapon2, mode)
 
 
 
-// *******************************************************
-//                  END OF "Combat.txt"                   
-// *******************************************************

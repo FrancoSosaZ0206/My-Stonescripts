@@ -1,10 +1,4 @@
-﻿// *******************************************************
-//                    performanceV2.txt                   
-// *******************************************************
-
-
-
-// VARIABLES - definitions
+﻿// VARIABLES - definitions
 
 
 //Location
@@ -71,12 +65,12 @@ var si
 si = screen.i
 
 //resources
-var rs // res.stone
-var rw // res.wood
-var rt // res.tar
-var rb // res.bronze
-var rk // res.ki
-var rc // res.crystals
+var rs
+var rw
+var rt
+var rb
+var rk
+var rc
 
 // Functions
 var canAct
@@ -142,6 +136,3 @@ var bashDelay = 0
 
 
 
-// *******************************************************
-//               END OF "performanceV2.txt"               
-// *******************************************************

@@ -276,8 +276,8 @@ var dpsPanel
       p.fs = foe.state
       p.ft = foe.time
 
-      >c0,-3,#red,state = @p.fs@
-      >c0,-2,#green,time = @p.ft@
+      >c0,0,#red,state = @p.fs@
+      >c0,1,#green,time = @p.ft@
 
       ?i.getFoeTotalHP() <= 168 | (
       ^p.fs = 32 & p.ft >= 80) // boss's punch attack
@@ -289,7 +289,7 @@ var dpsPanel
 
       :
         isUnmk = false
-        >c0,0,#green,OK
+        >c0,-1,#green,OK
 
         fight1v1()
 

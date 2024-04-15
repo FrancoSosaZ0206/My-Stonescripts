@@ -88,12 +88,12 @@ infoIndex - tyoe of information to get:
   3 = remaining duration on first stack.
 RETURNS: buff info if found, 0 otherwise. */
 func getBuffInfo(nameid, inFoe, infoIndex)
-// if inFoe = true, checks foe's buffs, else, player's buffs
   var info
   var buffFound
   var arrBuffs
 
 
+  // if inFoe = true, checks foe's buffs, else, player's buffs
   ?inFoe
     arrBuffs = string.Split(p.fbs,",", true)
   :
@@ -122,12 +122,12 @@ func getBuffInfo(nameid, inFoe, infoIndex)
    - arrInfo[2] is stack count
    - arrInfo[3] is remaining duration on first stack */
 func getDebuffLvl(nameid,inFoe)
-// if inFoe = true, checks foe's debuffs, else, player's debuffs
   var lvl
   var debuffFound
   var arrDebuffs
 
 
+  // if inFoe = true, checks foe's debuffs, else, player's debuffs
   ?inFoe
     arrDebuffs = string.Split(p.fds,",", true)
   :

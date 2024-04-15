@@ -1,10 +1,4 @@
-﻿// *******************************************************
-//                    MyBetterInfo.txt                    
-// *******************************************************
-
-
-
-// FUNCTIONS
+﻿// FUNCTIONS
 
 // Helper functions
 
@@ -49,27 +43,15 @@ func colToHex(colName)
     >c-20,0,#red,ERROR: colToHex() got unexisting color: @colName@
 
 
-
 // Stats
 
-/* Gets buff information
-nameid = name of the buff
-inFoe - buff precedence:
-  true = get buff from foe.
-  false = get buff from player.
-infoIndex - tyoe of information to get:
-  0 = symbol (Unicode).
-  1 = id (buff name).
-  2 = stack count (buffs accumulated).
-  3 = remaining duration on first stack.
-RETURNS: buff info if found, 0 otherwise. */
-func getBuffInfo(nameid,inFoe,infoIndex)
-// if inFoe = true, checks foe's buffs, else, player's buffs
+func getBuffInfo(nameid, inFoe, infoIndex)
   var info
   var buffFound
   var arrBuffs
 
 
+  // if inFoe = true, checks foe's buffs, else, player's buffs
   ?inFoe
     arrBuffs = string.Split(fbs,",", true)
   :
@@ -93,17 +75,13 @@ func getBuffInfo(nameid,inFoe,infoIndex)
     :
       return 0
 
-/* - arrInfo[0] is symbol
-   - arrInfo[1] is id
-   - arrInfo[2] is stack count
-   - arrInfo[3] is remaining duration on first stack */
 func getDebuffLvl(nameid,inFoe)
-// if inFoe = true, checks foe's debuffs, else, player's debuffs
   var lvl
   var debuffFound
   var arrDebuffs
 
 
+  // if inFoe = true, checks foe's debuffs, else, player's debuffs
   ?inFoe
     arrDebuffs = string.Split(fds,",", true)
   :
@@ -126,22 +104,6 @@ func getDebuffLvl(nameid,inFoe)
       return 0
 
 
-/* Shows a list of debuffs.
-PARAMETERS:
-  - inFoe:
-    true = debuffs from foe
-    false = player debuffs
-  - col = color to show the debuffs list
-  - isUI:
-    true = returns an UI panel containing
-           an UI textbox with the debuffs list
-    false = directly prints out the debuffs
-            list into the screen
-
-RETURNS: 
-  if there are debuffs in the target entity (inFoe),
-    UI panel if isUI = true, nothing otherwise.
-  else, returns nothing. */
 func showDebuffs(inFoe,x,y,col,isUI)
   ?(inFoe & fds)
   ^|(!inFoe & ds)
@@ -169,8 +131,8 @@ func showDebuffs(inFoe,x,y,col,isUI)
           ^1,1,null,null, // x,y,w,h
           ^top_left,top_left, // anchor, dock
           ^debuffsStr, // txt
-          ^null,col // align, col
-        )
+          ^null,col) // align, col
+        
 
         debuffsPanel = mkPanel(
         ^x,y,
@@ -197,22 +159,6 @@ func showDebuffs(inFoe,x,y,col,isUI)
   :
     return
 
-/* Shows a list of buffs.
-PARAMETERS:
-  - inFoe:
-    true = buffs from foe
-    false = player buffs
-  - col = color to show the buffs list
-  - isUI:
-    true = returns an UI panel containing
-           an UI textbox with the buffs list
-    false = directly prints out the buffs
-            list into the screen
-
-RETURNS: 
-  if there are buffs in the target entity (inFoe),
-    UI panel if isUI = true, nothing otherwise.
-  else, returns nothing. */
 func showBuffs(inFoe,x,y,col,isUI)
   ?(inFoe & fbs)
   ^|(!inFoe & bs)
@@ -240,8 +186,8 @@ func showBuffs(inFoe,x,y,col,isUI)
           ^1,1,null,null, // x,y,w,h
           ^top_left,top_left, // anchor, dock
           ^buffsStr, // txt
-          ^null,col // align, col
-        )
+          ^null,col) // align, col
+        
 
         buffsPanel = mkPanel(
         ^x,y,
@@ -287,20 +233,8 @@ func getFoeTotalHP()
   return fhp + fa
 
 
-
 // Strings
 
-/* shows a big string, broken down into several lines.
-PARAMETERS:
-  - str = the string in question
-  - x
-  - y
-  - maxW = maximum width to show the string
-  - col (optional) = resulting text's color
-  - isUI:
-    - true = returns an UI component with the string
-    - false = prints out the broken down string directly.
-              DOES NOT RETURN ANYTHING. */
 func showBigStr(x,y,maxW,str,col,isUI)
 
   ?isUI
@@ -330,18 +264,6 @@ func showBigStr(x,y,maxW,str,col,isUI)
 
     return
 
-/* Shows a string centered in the screen,
-   breaking it down into several lines if necessary.
-PARAMETERS:
-  - y
-  - maxW = maximum width to show the string
-  - str = the string in question
-  - col = output color of the string
-  - isUI:
-    - true = returns an UI component with the string
-    - false = prints out the centered, broken down
-              string directly.
-              DOES NOT RETURN ANYTHING. */
 func showStrCtr(y,maxW,str,col,isUI)
 
   ?isUI
@@ -377,6 +299,3 @@ func showStrCtr(y,maxW,str,col,isUI)
 
 
 
-// *******************************************************
-//               END OF "MyBetterInfo.txt"                
-// *******************************************************

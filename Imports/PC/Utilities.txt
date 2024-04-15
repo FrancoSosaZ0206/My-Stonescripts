@@ -39,36 +39,6 @@ func max(n1,n2)
   :
     return n2
 
-func myFormatDigital(frames)
-  ?frames <= 0
-    return "00:00"
-  :
-    var timeStr
-    var secs
-    var mins
-    var secStr
-    var minStr
-
-
-    secs = frames/30
-    mins = (frames/30)/60
-
-
-    secs -= mins*60
-
-
-    ?mins < 10
-      minStr = "0" + mins
-    :
-      minStr = mins
-      
-    ?secs < 10
-      secStr = "0" + secs
-    :
-      secStr = secs
-    
-    return minStr + ":" + secStr
-
 /* Finds the largest string in an array of strings. */
 func getLargestStr(arrStr)
   ?arrStr.Count() > 0

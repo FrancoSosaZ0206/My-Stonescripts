@@ -1,21 +1,4 @@
-﻿// *******************************************************
-//                     MyArsenal.txt                      
-// *******************************************************
-
-
-
-// VARIABLES:
-
-/* Renamed:
-
-Mamba Negra = poison sword D *max
-Dothaneel = vigor sword D *max
-Void Slayer = aether sword D *max
-Vantum Phoenix = fire sword D *max
-Bifrost = ice sword D *max
-Speedy Hammer = stone hammer *max
-Kubikiribocho = bardiche *max (enchanted: crit) */
-
+﻿// VARIABLES:
 
 //poison:
 var dPsword1 = "poison sword dP *max +13" // enchanted: speed
@@ -93,15 +76,9 @@ var weavArmor = 1.35
 
 var hammDmg = 123
 
-/* WARNING: These stats are for
-"Kubikiribocho" only, not for the
-other bardiche! */
 var bardDmg = 52
 var bardCrit = 10.8
 var bardRDmg = (bardDmg + 17) * bardCrit
 
 
 
-// *******************************************************
-//                 END OF "MyArsenal.txt"                 
-// *******************************************************

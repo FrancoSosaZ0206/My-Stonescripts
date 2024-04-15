@@ -1,8 +1,11 @@
-﻿// *******************************************************
-//                     Utilities.txt                      
-// *******************************************************
+﻿var mind = import UI/MindstoneButton
+mind.SetXY(1,6)
+
+import Cosmetics/PetStonehead
 
 
+
+/* *** IMPORTS *** */
 
 // VARIABLES:
 
@@ -11,15 +14,44 @@
 var sec = 30 // frames
 var scr = 69 // 1 screen = 69 units
 
+// VARIABLES:
+
+// Units
+
+var sec = 30
+var scr = 69
 
 
-//FUNCTIONS:
+
+// FUNCTIONS:
 
 func max(n1,n2)
   ?n1 >= n2
     return n1
   :
     return n2
+
+func getLargestStr(arrStr)
+  ?arrStr.Count() > 0
+    var maxStr = arrStr[0]
+    var maxInd = -1
+
+    for str : arrStr
+      ?string.Size(str) > string.Size(maxStr)
+        maxStr = str
+
+    return maxStr
+  
+  :
+    return null
+
+func replaceInStr(str, charOld, charNew)
+  for i = 0 .. str.Count() - 1
+    ?str[i] = charOld
+      str[i] = charNew
+
+  return str
+
 
 func myFormatDigital(frames)
   ?frames <= 0
@@ -31,13 +63,10 @@ func myFormatDigital(frames)
     var secStr
     var minStr
 
-
     secs = frames/30
     mins = (frames/30)/60
 
-
     secs -= mins*60
-
 
     ?mins < 10
       minStr = "0" + mins
@@ -51,33 +80,45 @@ func myFormatDigital(frames)
     
     return minStr + ":" + secStr
 
-func getLargestStr(arrStr)
+func formatSpeedrun(frames)
 
-  var maxStr = arrStr[0]
-  var maxInd = -1
+  var timeStr = "00:00 00f"
 
-  for str : arrStr
-    ?string.Size(str) > string.Size(maxStr)
-      maxStr = str
+  ?frames > 0
 
-  return maxStr
+    var frms
+    var secs
+    var mins
+    var frmStr
+    var secStr
+    var minStr
 
-func replaceInStr(str,charOld,charNew)
-  for i = 0 .. str.Count() - 1
-    ?str[i] = charOld
-      str[i] = charNew
+    frms = frames % 30 // the rest of the division is the added frames between each second
+    secs = frames/30
+    mins = (frames/30)/60
 
-  return str
+    secs -= mins*60
 
+    frmStr = frms + "f"
 
+    ?frms < 10
+      frmStr = "0" + frms + "f"
+    :
+      frmStr = frms + "f"
 
-// *******************************************************
-//                 END OF "Utilities.txt"                 
-// *******************************************************
+    ?secs < 10
+      secStr = "0" + secs
+    :
+      secStr = secs
+      
+    ?mins < 10
+      minStr = "0" + mins
+    :
+      minStr = mins
 
-// *******************************************************
-//                    performanceV2.txt                   
-// *******************************************************
+    timeStr = minStr + ":" + secStr + " " + frmStr
+    
+  return timeStr
 
 
 
@@ -107,6 +148,7 @@ fhp = foe.hp
 var fa
 fa = foe.armor
 var fdmg
+var fmhp
 
 // Time
 var tt
@@ -147,12 +189,12 @@ var si
 si = screen.i
 
 //resources
-var rs // res.stone
-var rw // res.wood
-var rt // res.tar
-var rb // res.bronze
-var rk // res.ki
-var rc // res.crystals
+var rs
+var rw
+var rt
+var rb
+var rk
+var rc
 
 // Functions
 var canAct
@@ -218,49 +260,8 @@ var bashDelay = 0
 
 
 
-// *******************************************************
-//               END OF "performanceV2.txt"               
-// *******************************************************
-
-// *******************************************************
-//                      UI_Maker.txt                      
-// *******************************************************
-
-
-
 // FUNCTIONS
 
-/* Common properties/parameters:
-  *** some of these may be optional ***
-
-  x = horizontal position (relative to dock)
-  y = vertical position (relative to dock)
-  w = width
-  h = height
-  anchor = position relative to the screen
-  dock = position relative to parent UI component
-  col = color in hex format
-  style = frame style ID (number from -8 to 8) */
-
-/* Optional properties/parameters:
-  send 0 if you don't want to use them.
-  The default value will be used instead. */
-
-
-/* Makes a panel component.
-PARAMETERS:
-  Common:
-    - x
-    - y
-    - anchor
-    - dock
-
-  Optional:
-    - w
-    - h
-    - col = color of the panel.
-    - style
-    - child = initial child component to add. */
 func mkPanel(x,y,w,h, anchor,dock, col,style, child)
 
   var panel
@@ -274,7 +275,7 @@ func mkPanel(x,y,w,h, anchor,dock, col,style, child)
     panel.w = w
   ?h
     panel.h = h
-  
+
   panel.anchor = anchor
   panel.dock = dock
 
@@ -288,23 +289,6 @@ func mkPanel(x,y,w,h, anchor,dock, col,style, child)
 
   return panel
 
-/* Makes a textbox component.
-PARAMETERS:
-  Common:
-    - x
-    - y
-    - anchor
-    - dock
-  
-  Special:
-    - txt = textbox contents.
-    - align = text justification/alignment inside the textbox.
-              Default: "left"
-  
-  Optional:
-    - w
-    - h
-    - col = textbox color */
 func mkTxtbox(x,y,w,h, anchor,dock, txt, align, col)
 
   //declarations:
@@ -332,37 +316,18 @@ func mkTxtbox(x,y,w,h, anchor,dock, txt, align, col)
   ?w
     txtbox.w = w
   :
-    txtbox.w = string.Size(getLargestStr(txtbox.lines))
+    txtbox.w = string.Size(
+    ^            getLargestStr(
+    ^              string.Split(txt, "\n")))
+    
   ?h
     txtbox.h = h
   :
-    txtbox.h = a.Count(txtbox.lines)
+    txtbox.h = string.Split(txt, "\n").Count()
 
 
   return txtbox
 
-/* Makes a button component.
-PARAMETERS
-  Common:
-    - x
-    - y
-    - w
-    - h
-    - anchor
-    - dock
-
-  Special:
-    - txt = button text
-    - col = general color of the button (colors below override it)
-    - pressed = function that the button will perform when pressed
-
-  Optionals:
-    - tcol   = text color
-    - bcol   = border color
-    - hcol   = highlight color (when pressed)
-    - down   = function that the button will perform when press begins
-    - up     = function that the button will perform when press ends
-    - sound  = sound effect when pressed */
 func mkBtn(x,y,w,h, anchor,dock, txt, col,tcol,bcol,hcol, style, pressed,down,up, sound)
   
   var btn
@@ -373,8 +338,21 @@ func mkBtn(x,y,w,h, anchor,dock, txt, col,tcol,bcol,hcol, style, pressed,down,up
 
   btn.text = txt
 
-  btn.w = string.Size(btn.txt) + w
-  btn.h = h
+  ?w
+    btn.w = w
+  :
+    var txtSize = string.Size(txt)
+    var parity = txtSize % 2
+    ?parity = 0 // even
+      btn.w = (txtSize * 2) + 2 // *2 = always even, 2 for even margin
+    : // odd
+      btn.w = (txtSize * 2) + 3 // *2 + 1 = always odd, 3 for odd margin
+
+  ?h
+    btn.h = 3 + h
+  :
+    btn.h = 3
+
 
   ?anchor
     btn.anchor = anchor
@@ -410,35 +388,13 @@ func mkBtn(x,y,w,h, anchor,dock, txt, col,tcol,bcol,hcol, style, pressed,down,up
 
 
 
-// *******************************************************
-//                  END OF "UI_Maker.txt"                 
-// *******************************************************
-
-// *******************************************************
-//                     MyArsenal.txt                      
-// *******************************************************
-
-
-
 // VARIABLES:
-
-/* Renamed:
-
-Mamba Negra = poison sword D *max
-Dothaneel = vigor sword D *max
-Void Slayer = aether sword D *max
-Vantum Phoenix = fire sword D *max
-Bifrost = ice sword D *max
-Speedy Hammer = stone hammer *max
-Kubikiribocho = bardiche *max (enchanted: crit) */
-
 
 //poison:
 var dPsword1 = "poison sword dP *max +13" // enchanted: speed
 var dPsword2 = "poison sword dP +0" // enchanted: debuff
 var psword = "poison sword D *max"
 var pshield = "poison shield A *max"
-var pbow = "poison bow -dP *max"
 var dPbow = "poison bow dP *max"
 var dPwand = "poison wand dP *max"
 
@@ -458,8 +414,8 @@ var dUSWORD2 = "big aether sword dU *max +15"
 var aeshield = "aether shield -au *max"
 var auShield = "aether shield au *max"
 var aebow = "aether crossbow D *max"
-var aeStaff = "aether staff dU *max"
-var aeWand = "aether wand dU *max"
+var dUstaff = "aether staff dU *max"
+var dUwand = "aether wand dU *max"
 
 //fire:
 var dFsword = "fire sword dF *max"
@@ -472,6 +428,7 @@ var dFwand = "fire wand dF *max"
 var dIsword = "ice sword dI *max"
 var isword = "ice sword D *max"
 var ishield = "ice shield A *max"
+var aiShield = "ice shield ai *max"
 var dIwand1 = "ice wand dI *max +16"
 var dIwand2 = "ice wand dI *max +11"
 var ibow = "ice crossbow D *max"
@@ -509,44 +466,13 @@ var weavArmor = 1.35
 
 var hammDmg = 123
 
-/* WARNING: These stats are for
-"Kubikiribocho" only, not for the
-other bardiche! */
 var bardDmg = 52
 var bardCrit = 10.8
 var bardRDmg = (bardDmg + 17) * bardCrit
 
 
 
-// *******************************************************
-//                 END OF "MyArsenal.txt"                 
-// *******************************************************
-
-// *******************************************************
-//                    Speed_O_Meter.txt                   
-// *******************************************************
-
-/* FILE INFO
-  Time Display Utility
-  Made by MetalEagle26 (Tom Crow)
-
-  current version: 1.6 */
-
 // VARIABLES:
-
-// Already defined in Utilities:
-// var sec = 30 // frames
-
-// Times in frames:
-// Already defined in PerformanceV2:
-/* var tt = totaltime
-var lbt
-var lavg
-
-tt = totaltime
-?tt <= 1
-  lbt = loc.bestTime
-  lavg = loc.averageTime */
 
 // Times in seconds:
 var ttDigital = myFormatDigital(tt)
@@ -661,22 +587,6 @@ func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
 
 
 
-// *******************************************************
-//               END OF "Speed_O_Meter.txt"               
-// *******************************************************
-
-// *******************************************************
-//                 DPS_Meter_MODIFIED.txt                 
-// *******************************************************
-
-
-/* FILE INFO
-  Made by: Pikarizard Charikachu xD
-  Modified by: MetalEagle26 (Tom Crow)
-  
-  Current version: v1.6 */
-
-
 // PUBLIC VARIABLES
 
 var DPSMeterEnabled = false
@@ -686,27 +596,27 @@ var DPSMeterEnabled = false
 
 var dps_sec = 30  // 1 sec = 30 frames
 
-var dps_tt        // total time, on in-game frames
-var currhp = 0    // foe's current hitpoints (with armor)
-var nethp = 0     // foe's net maximum hitpoints (with armor)
-var dps_f         // foe
+var dps_tt
+var currhp = 0
+var nethp = 0
+var dps_f
 
 dps_tt  = totaltime
 currhp = foe.hp + foe.armor
 nethp  = foe.maxhp + foe.maxarmor
 dps_f   = foe
 
-var hits      = 0 // hit counter
-var dmg       = 0 // current damage dealt
-var totalDmg  = 0 // total damage dealt
-var startTime = 0 // timestamp for the beginning of the fight
-var auxhp     = 0 // auxiliar variable to compare with currhp
+var hits      = 0
+var dmg       = 0
+var totalDmg  = 0
+var startTime = 0
+var auxhp     = 0
 
-var FRM = "N/A" // frames elapsed from first hit
-var FPH = "N/A" // frames per hit >>> hit frequency | frames elapsed from each hit to the next
-var HPS = "N/A" // hits per second
-var DPF = "N/A" // damage per frame
-var DPS = "N/A" // damage per second
+var FRM = "N/A"
+var FPH = "N/A"
+var HPS = "N/A"
+var DPF = "N/A"
+var DPS = "N/A"
 
 
 
@@ -773,11 +683,6 @@ var DPS_old
 
 // PUBLIC FUNCTIONS
 
-/* mode:
-  1 = updates the full version of the Meter.
-
-  2 = updates a smaller version of it,
-      containing less information. */
 func dpsMeterUpdate(mode)
   var result = false
 
@@ -811,12 +716,6 @@ func dpsMeterUpdate(mode)
   return result
 
 
-/* Returns ui panel containing the DPS Meter.
-mode:
-  1 = returns the full version of the Meter.
-
-  2 = returns a smaller version of it,
-      containing less information. */
 func uiDPSMeter(x,y,colorStr,mode)
   var panel
   var txt
@@ -891,16 +790,6 @@ func uiDPSMeter(x,y,colorStr,mode)
 
 
 
-// *******************************************************
-//             END OF "DPS_Meter_MODIFIED.txt"            
-// *******************************************************
-
-// *******************************************************
-//                    MyBetterInfo.txt                    
-// *******************************************************
-
-
-
 // FUNCTIONS
 
 // Helper functions
@@ -946,27 +835,15 @@ func colToHex(colName)
     >c-20,0,#red,ERROR: colToHex() got unexisting color: @colName@
 
 
-
 // Stats
 
-/* Gets buff information
-nameid = name of the buff
-inFoe - buff precedence:
-  true = get buff from foe.
-  false = get buff from player.
-infoIndex - tyoe of information to get:
-  0 = symbol (Unicode).
-  1 = id (buff name).
-  2 = stack count (buffs accumulated).
-  3 = remaining duration on first stack.
-RETURNS: buff info if found, 0 otherwise. */
-func getBuffInfo(nameid,inFoe,infoIndex)
-// if inFoe = true, checks foe's buffs, else, player's buffs
+func getBuffInfo(nameid, inFoe, infoIndex)
   var info
   var buffFound
   var arrBuffs
 
 
+  // if inFoe = true, checks foe's buffs, else, player's buffs
   ?inFoe
     arrBuffs = string.Split(fbs,",", true)
   :
@@ -990,17 +867,13 @@ func getBuffInfo(nameid,inFoe,infoIndex)
     :
       return 0
 
-/* - arrInfo[0] is symbol
-   - arrInfo[1] is id
-   - arrInfo[2] is stack count
-   - arrInfo[3] is remaining duration on first stack */
 func getDebuffLvl(nameid,inFoe)
-// if inFoe = true, checks foe's debuffs, else, player's debuffs
   var lvl
   var debuffFound
   var arrDebuffs
 
 
+  // if inFoe = true, checks foe's debuffs, else, player's debuffs
   ?inFoe
     arrDebuffs = string.Split(fds,",", true)
   :
@@ -1023,22 +896,6 @@ func getDebuffLvl(nameid,inFoe)
       return 0
 
 
-/* Shows a list of debuffs.
-PARAMETERS:
-  - inFoe:
-    true = debuffs from foe
-    false = player debuffs
-  - col = color to show the debuffs list
-  - isUI:
-    true = returns an UI panel containing
-           an UI textbox with the debuffs list
-    false = directly prints out the debuffs
-            list into the screen
-
-RETURNS: 
-  if there are debuffs in the target entity (inFoe),
-    UI panel if isUI = true, nothing otherwise.
-  else, returns nothing. */
 func showDebuffs(inFoe,x,y,col,isUI)
   ?(inFoe & fds)
   ^|(!inFoe & ds)
@@ -1066,8 +923,8 @@ func showDebuffs(inFoe,x,y,col,isUI)
           ^1,1,null,null, // x,y,w,h
           ^top_left,top_left, // anchor, dock
           ^debuffsStr, // txt
-          ^null,col // align, col
-        )
+          ^null,col) // align, col
+        
 
         debuffsPanel = mkPanel(
         ^x,y,
@@ -1094,22 +951,6 @@ func showDebuffs(inFoe,x,y,col,isUI)
   :
     return
 
-/* Shows a list of buffs.
-PARAMETERS:
-  - inFoe:
-    true = buffs from foe
-    false = player buffs
-  - col = color to show the buffs list
-  - isUI:
-    true = returns an UI panel containing
-           an UI textbox with the buffs list
-    false = directly prints out the buffs
-            list into the screen
-
-RETURNS: 
-  if there are buffs in the target entity (inFoe),
-    UI panel if isUI = true, nothing otherwise.
-  else, returns nothing. */
 func showBuffs(inFoe,x,y,col,isUI)
   ?(inFoe & fbs)
   ^|(!inFoe & bs)
@@ -1137,8 +978,8 @@ func showBuffs(inFoe,x,y,col,isUI)
           ^1,1,null,null, // x,y,w,h
           ^top_left,top_left, // anchor, dock
           ^buffsStr, // txt
-          ^null,col // align, col
-        )
+          ^null,col) // align, col
+        
 
         buffsPanel = mkPanel(
         ^x,y,
@@ -1184,20 +1025,8 @@ func getFoeTotalHP()
   return fhp + fa
 
 
-
 // Strings
 
-/* shows a big string, broken down into several lines.
-PARAMETERS:
-  - str = the string in question
-  - x
-  - y
-  - maxW = maximum width to show the string
-  - col (optional) = resulting text's color
-  - isUI:
-    - true = returns an UI component with the string
-    - false = prints out the broken down string directly.
-              DOES NOT RETURN ANYTHING. */
 func showBigStr(x,y,maxW,str,col,isUI)
 
   ?isUI
@@ -1227,18 +1056,6 @@ func showBigStr(x,y,maxW,str,col,isUI)
 
     return
 
-/* Shows a string centered in the screen,
-   breaking it down into several lines if necessary.
-PARAMETERS:
-  - y
-  - maxW = maximum width to show the string
-  - str = the string in question
-  - col = output color of the string
-  - isUI:
-    - true = returns an UI component with the string
-    - false = prints out the centered, broken down
-              string directly.
-              DOES NOT RETURN ANYTHING. */
 func showStrCtr(y,maxW,str,col,isUI)
 
   ?isUI
@@ -1274,21 +1091,11 @@ func showStrCtr(y,maxW,str,col,isUI)
 
 
 
-// *******************************************************
-//               END OF "MyBetterInfo.txt"                
-// *******************************************************
-
-// *******************************************************
-//                       Combat.txt                       
-// *******************************************************
-
-
-
 // VARIABLES
 
 // Status
 
-var pmhp = maxhp // PRIVATE - to save sys variable accesses (and reduce lag)
+pmhp = maxhp // PRIVATE - to save sys variable accesses (and reduce lag)
 
 var midhp = pmhp / 2
 var lowhp = pmhp / 3
@@ -1304,7 +1111,6 @@ var hihp = (4 * pmhp) / 5
 func canUseBlade()
   return tt >= bladeDelay & canAct
 
-// cannot be interrupted, doesn't need a cooldown check
 func useBlade()
   equip blade
   activate R
@@ -1313,9 +1119,6 @@ func useBlade()
 
   return
 
-/* Checks if Blade of the Fallen God
-can be used in 2 screens of distance,
-according to a certain screen index. */
 func canUseBladeDS(nScreen)
   return canUseBlade()
   ^& si = nScreen
@@ -1406,8 +1209,6 @@ func useFTali(hand)
 
   return
 
-/* Checks if you can use the cinderwisp's "devour"
-ability. */
 func canUseCind()
   return summon.GetId() = "cinderwisp"
   ^& tt >= cindDelay & canAct
@@ -1441,8 +1242,6 @@ func useAETali(hand)
 
   return
 
-/* Checks if you can use the voidweaver's "devour"
-ability. */
 func canUseWeav()
   return summon.GetId() = "voidweaver"
   ^& tt >= weavDelay & canAct
@@ -1471,8 +1270,6 @@ func useWeavDS()
       return
 
 
-/* Checks if you can use the
-bashing shield's ability. */
 func canBash()
   return tt >= bashDelay & !aiI
   ^& 11 <= fd & fd <= 15
@@ -1538,8 +1335,6 @@ func useBard(yourBard)
   return
 
 
-/* Checks if you can use the
-dashing shield's ability. */
 func canDash()
   return tt >= dashDelay & !aiI
   ^& 11 <= fd & fd <= 15
@@ -1564,7 +1359,6 @@ func canUseQstaff()
   :
     return false
 
-// recieves a string
 func useQstaff(yourQstaff)
   equip @yourQstaff@
   activate R
@@ -1596,12 +1390,6 @@ func useHatchet()
 func canUsePot()
   return ip ! "empty" & canAct
 
-/* Checks if a healing type potion
-can be used.
-Healing type potions are considered:
-  - healing
-  - defensive
-  - vampiric */
 func canUsePotHeal()
   ?canUsePot()
     ?ip = "healing" |
@@ -1616,25 +1404,10 @@ func canUsePotHeal()
   :
     return false
 
-/* Determines if a damage buff potion
-is brewed. Generally used for bosses.
-Potions related:
-  - berserk
-  - lucky */
 func canUsePotDmg()
   return canUsePot() &
   ^(ip = "berserk" | ip = "lucky")
 
-/* Determines if a special potion
-can be activated, given a special
-condition that's different for each potion type.
-Valid potion types and conditions:
-  - cleansing | min. no. of debuffs to cleanse
-  - strength | min. amount of foe's armor
-  - lightning, | ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-  - experience | min. no. of foes to activate
-  - invisibility | NONE (will activate if foe = boss)
-    + (send true as condition for this type) */
 func canUsePotSpecial(type,cond)
 
   ?canUsePot()
@@ -1728,13 +1501,6 @@ func doMoondial(weapon1, weapon2, mode)
 
 
   return
-
-
-
-// *******************************************************
-//                  END OF "Combat.txt"                   
-// *******************************************************
-
 
 
 

@@ -1,15 +1,3 @@
-// *******************************************************
-//                 DPS_Meter_MODIFIED.txt                 
-// *******************************************************
-
-
-/* FILE INFO
-  Made by: Pikarizard Charikachu xD
-  Modified by: MetalEagle26 (Tom Crow)
-  
-  Current version: v1.7 */
-
-
 // PUBLIC VARIABLES
 
 var DPSMeterEnabled = false
@@ -19,27 +7,27 @@ var DPSMeterEnabled = false
 
 var dps_sec = 30  // 1 sec = 30 frames
 
-var dps_tt        // total time, on in-game frames
-var currhp = 0    // foe's current hitpoints (with armor)
-var nethp = 0     // foe's net maximum hitpoints (with armor)
-var dps_f         // foe
+var dps_tt
+var currhp = 0
+var nethp = 0
+var dps_f
 
 dps_tt  = totaltime
 currhp = foe.hp + foe.armor
 nethp  = foe.maxhp + foe.maxarmor
 dps_f   = foe
 
-var hits      = 0 // hit counter
-var dmg       = 0 // current damage dealt
-var totalDmg  = 0 // total damage dealt
-var startTime = 0 // timestamp for the beginning of the fight
-var auxhp     = 0 // auxiliar variable to compare with currhp
+var hits      = 0
+var dmg       = 0
+var totalDmg  = 0
+var startTime = 0
+var auxhp     = 0
 
-var FRM = "N/A" // frames elapsed from first hit
-var FPH = "N/A" // frames per hit >>> hit frequency | frames elapsed from each hit to the next
-var HPS = "N/A" // hits per second
-var DPF = "N/A" // damage per frame
-var DPS = "N/A" // damage per second
+var FRM = "N/A"
+var FPH = "N/A"
+var HPS = "N/A"
+var DPF = "N/A"
+var DPS = "N/A"
 
 
 
@@ -106,11 +94,6 @@ var DPS_old
 
 // PUBLIC FUNCTIONS
 
-/* mode:
-  1 = updates the full version of the Meter.
-
-  2 = updates a smaller version of it,
-      containing less information. */
 func dpsMeterUpdate(mode)
   var result = false
 
@@ -144,12 +127,6 @@ func dpsMeterUpdate(mode)
   return result
 
 
-/* Returns ui panel containing the DPS Meter.
-mode:
-  1 = returns the full version of the Meter.
-
-  2 = returns a smaller version of it,
-      containing less information. */
 func uiDPSMeter(x,y,colorStr,mode)
   var panel
   var txt
@@ -224,6 +201,3 @@ func uiDPSMeter(x,y,colorStr,mode)
 
 
 
-// *******************************************************
-//             END OF "DPS_Meter_MODIFIED.txt"            
-// *******************************************************

@@ -1,9 +1,3 @@
-// *******************************************************
-//                      UI_Maker.txt                      
-// *******************************************************
-
-
-
 // FUNCTIONS
 
 func mkPanel(x,y,w,h, anchor,dock, col,style, child)
@@ -132,6 +126,3 @@ func mkBtn(x,y,w,h, anchor,dock, txt, col,tcol,bcol,hcol, style, pressed,down,up
 
 
 
-// *******************************************************
-//                  END OF "UI_Maker.txt"                 
-// *******************************************************

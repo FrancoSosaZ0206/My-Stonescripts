@@ -1,28 +1,4 @@
-﻿// *******************************************************
-//                    Speed_O_Meter.txt                   
-// *******************************************************
-
-/* FILE INFO
-  Time Display Utility
-  Made by MetalEagle26 (Tom Crow)
-
-  current version: 1.6 */
-
-// VARIABLES:
-
-// Already defined in Utilities:
-// var sec = 30 // frames
-
-// Times in frames:
-// Already defined in PerformanceV2:
-/* var tt = totaltime
-var lbt
-var lavg
-
-tt = totaltime
-?tt <= 1
-  lbt = loc.bestTime
-  lavg = loc.averageTime */
+﻿// VARIABLES:
 
 // Times in seconds:
 var ttDigital = myFormatDigital(tt)
@@ -137,6 +113,3 @@ func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
 
 
 
-// *******************************************************
-//               END OF "Speed_O_Meter.txt"               
-// *******************************************************

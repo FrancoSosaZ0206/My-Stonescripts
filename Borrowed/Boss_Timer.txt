@@ -1,0 +1,29 @@
+/* BOSS TIMER
+    Made by: Tomato Bulb
+    Modified by: MetalEagle26 (Tom Crow) */
+
+var p
+p = import MyScripts/Imports/PC/PerformanceV2
+
+p.fs = foe.state
+p.ft = foe.time
+p.fn = foe.name
+
+var prebos = -1
+var endbos = -1
+var thebos = p.f
+
+?p.f = "boss" & thebos ! p.fn
+^& (p.irs = 2 | p.ils = 2)
+  prebos = p.tt
+  thebos = p.fn
+
+?p.f = "boss" & p.fhp < 1 & p.fs ! 125 & p.fs ! 108
+^&(p.f = "elementalist" & p.ft = 1 | p.ft = 0)
+  endbos = p.tt
+
+?endbos ! -1 & ((p.tt - endbos) % 10 >= 5 | key = primary)
+^ & (p.tt - 120) <= endbos & endbos - prebos > 0
+  >c-20,10,#339999,@thebos@#killed#in#@endbos - prebos@#frames!
+
+/* *************************** */

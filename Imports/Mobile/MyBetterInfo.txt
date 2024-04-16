@@ -254,13 +254,13 @@ func showBigStr(x,y,maxW,str,col,isUI)
     return panel
   
   :
-    var a = string.Break(str, maxW)
+    var arr = string.Break(str, maxW)
 
-    for i = 0 .. a.Count()-1
+    for i = 0 .. arr.Count()-1
       ?col
-        >`@x@,@y + i@,@col@,@a[i]@
+        >`@x@,@y + i@,@col@,@arr[i]@
       :
-        >`@x@,@y + i@,@a[i]@
+        >`@x@,@y + i@,@arr[i]@
 
     return
 
@@ -285,15 +285,15 @@ func showStrCtr(y,maxW,str,col,isUI)
 
   :
 
-    var a = string.Break(str, maxW)
+    var arr = string.Break(str, maxW)
 
-    for i = 0 .. a.Count()-1
+    for i = 0 .. arr.Count()-1
       var x
-      x = - ( string.Size(a[i]) - 1 ) / 2
+      x = - ( string.Size(arr[i]) - 1 ) / 2
       ?col
-        >c@x@,@y + i@,@col@,@a[i]@
+        >c@x@,@y + i@,@col@,@arr[i]@
       :
-        >c@x@,@y + i@,@a[i]@
+        >c@x@,@y + i@,@arr[i]@
 
     return
 

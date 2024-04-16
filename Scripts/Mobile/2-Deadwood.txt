@@ -395,6 +395,7 @@ var dPsword1 = "poison sword dP *max +13" // enchanted: speed
 var dPsword2 = "poison sword dP +0" // enchanted: debuff
 var psword = "poison sword D *max"
 var pshield = "poison shield A *max"
+var pBow = "poison bow -dP *max"
 var dPbow = "poison bow dP *max"
 var dPwand = "poison wand dP *max"
 
@@ -594,17 +595,11 @@ var DPSMeterEnabled = false
 
 // GLOBAL VARIABLES
 
-var dps_sec = 30  // 1 sec = 30 frames
-
-var dps_tt
 var currhp = 0
 var nethp = 0
-var dps_f
 
-dps_tt  = totaltime
-currhp = foe.hp + foe.armor
+currhp = fhp + fa
 nethp  = foe.maxhp + foe.maxarmor
-dps_f   = foe
 
 var hits      = 0
 var dmg       = 0
@@ -625,7 +620,7 @@ var DPS = "N/A"
 // Calculate only when desired:
 ?DPSMeterEnabled
 
-  ?dps_f = "boss" // only works when there's a boss
+  ?f = "boss" // only works when there's a boss
 
     ?0 < currhp & currhp < nethp // boss lost hp/armor, but isn't dead
 
@@ -635,20 +630,20 @@ var DPS = "N/A"
         totalDmg  = totalDmg + dmg // and we accumulate it in this variable
   
     : // else, reset temporal variables
-      startTime = dps_tt
+      startTime = tt
       hits      = 0
       dmg       = 0
       totalDmg  = 0
 
 
-    FRM = dps_tt - startTime // total time minus the time the first hit was dealt
+    FRM = tt - startTime // total time minus the time the first hit was dealt
     ?hits > 1
       FPH = FRM      / (hits-1) // -1 is there to avoid stat flicking
     :
       FPH = "N/A"
   
     ?FPH ! "N/A"
-      HPS = dps_sec      / FPH
+      HPS = sec      / FPH
     :
       HPS = "N/A"
       
@@ -658,7 +653,7 @@ var DPS = "N/A"
       DPF = "N/A"
 
     ?DPF ! "N/A"
-      DPS = DPF  * dps_sec
+      DPS = DPF  * sec
     :
       DPS = "N/A"
 
@@ -687,7 +682,7 @@ func dpsMeterUpdate(mode)
   var result = false
 
   ?DPSMeterEnabled
-    ?dps_f = "boss"
+    ?f = "boss"
       
       ?mode = 1
         ?(hits_old ! hits | HPS_old ! HPS |
@@ -1046,13 +1041,13 @@ func showBigStr(x,y,maxW,str,col,isUI)
     return panel
   
   :
-    var a = string.Break(str, maxW)
+    var arr = string.Break(str, maxW)
 
-    for i = 0 .. a.Count()-1
+    for i = 0 .. arr.Count()-1
       ?col
-        >`@x@,@y + i@,@col@,@a[i]@
+        >`@x@,@y + i@,@col@,@arr[i]@
       :
-        >`@x@,@y + i@,@a[i]@
+        >`@x@,@y + i@,@arr[i]@
 
     return
 
@@ -1077,15 +1072,15 @@ func showStrCtr(y,maxW,str,col,isUI)
 
   :
 
-    var a = string.Break(str, maxW)
+    var arr = string.Break(str, maxW)
 
-    for i = 0 .. a.Count()-1
+    for i = 0 .. arr.Count()-1
       var x
-      x = - ( string.Size(a[i]) - 1 ) / 2
+      x = - ( string.Size(arr[i]) - 1 ) / 2
       ?col
-        >c@x@,@y + i@,@col@,@a[i]@
+        >c@x@,@y + i@,@col@,@arr[i]@
       :
-        >c@x@,@y + i@,@a[i]@
+        >c@x@,@y + i@,@arr[i]@
 
     return
 
@@ -1359,6 +1354,14 @@ func canUseQstaff()
   :
     return false
 
+func canUseQstaff_OG()
+  var qstaffCd_OG
+  qstaffCd_OG = item.GetCooldown("quarterstaff")
+
+  return canAct &
+  ^(qstaffCd_OG <= 0 /*| qstaffCd_OG > 165*/)
+  ^ | (ir = "quarterstaff" & irs = 2)
+
 func useQstaff(yourQstaff)
   equip @yourQstaff@
   activate R
@@ -1501,6 +1504,15 @@ func doMoondial(weapon1, weapon2, mode)
 
 
   return
+
+
+
+?!loc.isQuest & (
+^l = "Waterfall" |
+^l = "undead_crypt_intro" |
+^l = "cross_deadwood_river" |
+^l = "cross_bridge")
+  loc.Leave()
 
 
 

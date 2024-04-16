@@ -5,17 +5,11 @@ var DPSMeterEnabled = false
 
 // GLOBAL VARIABLES
 
-var dps_sec = 30  // 1 sec = 30 frames
-
-var dps_tt
 var currhp = 0
 var nethp = 0
-var dps_f
 
-dps_tt  = totaltime
-currhp = foe.hp + foe.armor
+currhp = fhp + fa
 nethp  = foe.maxhp + foe.maxarmor
-dps_f   = foe
 
 var hits      = 0
 var dmg       = 0
@@ -36,7 +30,7 @@ var DPS = "N/A"
 // Calculate only when desired:
 ?DPSMeterEnabled
 
-  ?dps_f = "boss" // only works when there's a boss
+  ?f = "boss" // only works when there's a boss
 
     ?0 < currhp & currhp < nethp // boss lost hp/armor, but isn't dead
 
@@ -46,20 +40,20 @@ var DPS = "N/A"
         totalDmg  = totalDmg + dmg // and we accumulate it in this variable
   
     : // else, reset temporal variables
-      startTime = dps_tt
+      startTime = tt
       hits      = 0
       dmg       = 0
       totalDmg  = 0
 
 
-    FRM = dps_tt - startTime // total time minus the time the first hit was dealt
+    FRM = tt - startTime // total time minus the time the first hit was dealt
     ?hits > 1
       FPH = FRM      / (hits-1) // -1 is there to avoid stat flicking
     :
       FPH = "N/A"
   
     ?FPH ! "N/A"
-      HPS = dps_sec      / FPH
+      HPS = sec      / FPH
     :
       HPS = "N/A"
       
@@ -69,7 +63,7 @@ var DPS = "N/A"
       DPF = "N/A"
 
     ?DPF ! "N/A"
-      DPS = DPF  * dps_sec
+      DPS = DPF  * sec
     :
       DPS = "N/A"
 
@@ -98,7 +92,7 @@ func dpsMeterUpdate(mode)
   var result = false
 
   ?DPSMeterEnabled
-    ?dps_f = "boss"
+    ?f = "boss"
       
       ?mode = 1
         ?(hits_old ! hits | HPS_old ! HPS |
@@ -137,17 +131,17 @@ func uiDPSMeter(x,y,colorStr,mode)
 
     var dpsStr
     ?mode = 1
-      dpsStr = "   DPS METER   "   + "\n" +
+      dpsStr = "###DPS METER###"   + "\n" +
       ^        "···············"   + "\n" +
-      ^        " hits     " + hits_old + "\n" +
-      ^        " hits/s   " + HPS_old  + "\n" +
-      ^        " dmg /hit " + dmg_old  + "\n" +
-      ^        " dmg /f   " + DPF_old  + "\n" +
-      ^        " dmg /s   " + DPS_old  + "\n" +
+      ^        "#hits#####" + hits_old + "\n" +
+      ^        "#hits/s###" + HPS_old  + "\n" +
+      ^        "#dmg#/hit#" + dmg_old  + "\n" +
+      ^        "#dmg#/f###" + DPF_old  + "\n" +
+      ^        "#dmg#/s###" + DPS_old  + "\n" +
       ^        "···············"
 
     :?mode = 2
-      dpsStr = "DPS | " + DPS_old
+      dpsStr = "DPS#|#" + DPS_old
 
     txt = ui.AddText(dpsStr)
 

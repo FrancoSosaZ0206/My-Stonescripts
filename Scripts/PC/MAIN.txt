@@ -23,13 +23,21 @@ Enjoy your multi-location farming scripts package :3 */
 
 var l = loc
 
-?l = "Rocky"
+
+?!loc.isQuest & (
+^l = "Waterfall" |
+^l = "undead_crypt_intro" |
+^l = "cross_deadwood_river" |
+^l = "cross_bridge") |
+^l = "ulaa_shop"
+  loc.Leave()
+:?l = "Rocky"
   import MyScripts/Scripts/PC/1-Rocky
 :?l = "Deadwood"
   import MyScripts/Scripts/PC/2-Deadwood
 :?l = "Caves"
   import MyScripts/Scripts/PC/3-Caves
-:?l = "Mushroom" | l = "Waterfall"
+:?l = "Mushroom"
   import MyScripts/Scripts/PC/4-Mushroom
 :?l = "Halls"
   import MyScripts/Scripts/PC/5-Halls

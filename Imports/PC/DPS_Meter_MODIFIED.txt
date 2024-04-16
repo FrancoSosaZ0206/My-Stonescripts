@@ -227,17 +227,17 @@ func uiDPSMeter(x,y,colorStr,mode)
 
     var dpsStr
     ?mode = 1
-      dpsStr = "   DPS METER   "   + "\n" +
+      dpsStr = "###DPS METER###"   + "\n" +
       ^        "···············"   + "\n" +
-      ^        " hits     " + hits_old + "\n" +
-      ^        " hits/s   " + HPS_old  + "\n" +
-      ^        " dmg /hit " + dmg_old  + "\n" +
-      ^        " dmg /f   " + DPF_old  + "\n" +
-      ^        " dmg /s   " + DPS_old  + "\n" +
+      ^        "#hits#####" + hits_old + "\n" +
+      ^        "#hits/s###" + HPS_old  + "\n" +
+      ^        "#dmg#/hit#" + dmg_old  + "\n" +
+      ^        "#dmg#/f###" + DPF_old  + "\n" +
+      ^        "#dmg#/s###" + DPS_old  + "\n" +
       ^        "···············"
 
     :?mode = 2
-      dpsStr = "DPS | " + DPS_old
+      dpsStr = "DPS#|#" + DPS_old
 
     txt = ui.AddText(dpsStr)
 

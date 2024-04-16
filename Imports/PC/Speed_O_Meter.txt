@@ -140,32 +140,32 @@ func speedOmeterToStr(isSlim, isSpeedrun)
   ?isSlim
     ?isSpeedrun
       return
-      ^"☆ " + pbSpeedrun +  // ☆ = PB
-      ^" | ≈ " + avgSpeedrun + // ≈ = AVG
-      ^" | ▶ " + ttSpeedrun           // ▶ = CURR
+      ^"☆#" + pbSpeedrun +     // ☆ = PB
+      ^"#|#≈#" + avgSpeedrun + // ≈ = AVG
+      ^"#|#▶#" + ttSpeedrun    // ▶ = CURR
 
     :
       return
-      ^"☆ " + pb +       // ☆ = PB
-      ^" | ≈ " + avg +      // ≈ = AVG
-      ^" | ▶ " + ttDigital         // ▶ = CURR
+      ^"☆#" + pb +         // ☆ = PB
+      ^"#|#≈#" + avg +      // ≈ = AVG
+      ^"#|#▶#" + ttDigital // ▶ = CURR
 
   :
     ?isSpeedrun
       return
-      ^"    SPEED-O-METER" + "\n" +
+      ^"####SPEED-O-METER" + "\n" +
       ^"·····················" + "\n" +
-      ^" PB  " + pbSpeedrun + " (" + lbt + "f)" + "\n" +
-      ^" AVG " + avgSpeedrun + " (" + lavg + "f)" + "\n" +
-      ^" CUR " + ttSpeedrun + " (" + tt + "f)"
+      ^" PB##" + pbSpeedrun + "#(" + lbt + "f)" + "\n" +
+      ^" AVG#" + avgSpeedrun + "#(" + lavg + "f)" + "\n" +
+      ^" CUR#" + ttSpeedrun + "#(" + tt + "f)"
 
     :
       return
       ^"SPEED-O-METER" + "\n" +
       ^"·············" + "\n" +
-      ^"  PB  " + pb + "\n" +
-      ^"  AVG " + avg + "\n" +
-      ^"  CUR " + ttDigital
+      ^"##PB  " + pb + "\n" +
+      ^"##AVG " + avg + "\n" +
+      ^"##CUR " + ttDigital
 
 func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 

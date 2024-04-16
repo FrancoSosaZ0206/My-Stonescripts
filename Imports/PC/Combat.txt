@@ -316,6 +316,14 @@ func canUseQstaff()
   :
     return false
 
+func canUseQstaff_OG()
+  var qstaffCd_OG
+  qstaffCd_OG = item.GetCooldown("quarterstaff")
+
+  return canAct &
+  ^(qstaffCd_OG <= 0 /*| qstaffCd_OG > 165*/)
+  ^ | (ir = "quarterstaff" & irs = 2)
+
 // recieves a string
 func useQstaff(yourQstaff)
   equip @yourQstaff@

@@ -1,9 +1,7 @@
-﻿?loc = "Gate"
+﻿import Cosmetics/PetStonehead
 
-  import Cosmetics/PetStonehead
+equipL triskelion
+equipR mask
 
-  equipL triskelion
-  equipR mask
-
-  var freeChest = import UI/FreeChestTracker
-  freeChest.Main()
+var freeChest = import UI/FreeChestTracker
+freeChest.Main()

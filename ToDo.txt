@@ -19,6 +19,8 @@ x = to do
     ✔ Update Combat
     ✔ Update DPS_Meter
 
+✔ Update Mobile/MAIN (standarize mobile scripts)
+
 ✔ Update mobile imports
     ✔ Combat
     ... DPS_Meter_MODIFIED
@@ -31,9 +33,8 @@ x = to do
 
 
 x Upload and backup everything
-
+x Update imports for mobile loc scripts 1, 2 and 3 and upload
 
 ... Test & Debug
-... Update Mobile/MAIN (standarize mobile scripts)
 ... Update PC location scripts
     ... Check and replace old functions with the new ones

@@ -528,17 +528,17 @@ func speedOmeterToStr(isSlim, isSpeedrun)
       return
       ^"####SPEED-O-METER" + "\n" +
       ^"·····················" + "\n" +
-      ^" PB##" + pbSpeedrun + "#(" + lbt + "f)" + "\n" +
-      ^" AVG#" + avgSpeedrun + "#(" + lavg + "f)" + "\n" +
-      ^" CUR#" + ttSpeedrun + "#(" + tt + "f)"
+      ^"#PB##" + pbSpeedrun + "#(" + lbt + "f)" + "\n" +
+      ^"#AVG#" + avgSpeedrun + "#(" + lavg + "f)" + "\n" +
+      ^"#CUR#" + ttSpeedrun + "#(" + tt + "f)"
 
     :
       return
       ^"SPEED-O-METER" + "\n" +
       ^"·············" + "\n" +
-      ^"##PB  " + pb + "\n" +
-      ^"##AVG " + avg + "\n" +
-      ^"##CUR " + ttDigital
+      ^"##PB##" + pb + "\n" +
+      ^"##AVG#" + avg + "\n" +
+      ^"##CUR#" + ttDigital
 
 func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 

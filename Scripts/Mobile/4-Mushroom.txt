@@ -513,32 +513,32 @@ func speedOmeterToStr(isSlim, isSpeedrun)
   ?isSlim
     ?isSpeedrun
       return
-      ^"☆ " + pbSpeedrun +  // ☆ = PB
-      ^" | ≈ " + avgSpeedrun + // ≈ = AVG
-      ^" | ▶ " + ttSpeedrun           // ▶ = CURR
+      ^"☆#" + pbSpeedrun +     // ☆ = PB
+      ^"#|#≈#" + avgSpeedrun + // ≈ = AVG
+      ^"#|#▶#" + ttSpeedrun    // ▶ = CURR
 
     :
       return
-      ^"☆ " + pb +       // ☆ = PB
-      ^" | ≈ " + avg +      // ≈ = AVG
-      ^" | ▶ " + ttDigital         // ▶ = CURR
+      ^"☆#" + pb +         // ☆ = PB
+      ^"#|#≈#" + avg +      // ≈ = AVG
+      ^"#|#▶#" + ttDigital // ▶ = CURR
 
   :
     ?isSpeedrun
       return
-      ^"    SPEED-O-METER" + "\n" +
+      ^"####SPEED-O-METER" + "\n" +
       ^"·····················" + "\n" +
-      ^" PB  " + pbSpeedrun + " (" + lbt + "f)" + "\n" +
-      ^" AVG " + avgSpeedrun + " (" + lavg + "f)" + "\n" +
-      ^" CUR " + ttSpeedrun + " (" + tt + "f)"
+      ^"#PB##" + pbSpeedrun + "#(" + lbt + "f)" + "\n" +
+      ^"#AVG#" + avgSpeedrun + "#(" + lavg + "f)" + "\n" +
+      ^"#CUR#" + ttSpeedrun + "#(" + tt + "f)"
 
     :
       return
       ^"SPEED-O-METER" + "\n" +
       ^"·············" + "\n" +
-      ^"  PB  " + pb + "\n" +
-      ^"  AVG " + avg + "\n" +
-      ^"  CUR " + ttDigital
+      ^"##PB##" + pb + "\n" +
+      ^"##AVG#" + avg + "\n" +
+      ^"##CUR#" + ttDigital
 
 func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 
@@ -721,17 +721,17 @@ func uiDPSMeter(x,y,colorStr,mode)
 
     var dpsStr
     ?mode = 1
-      dpsStr = "   DPS METER   "   + "\n" +
+      dpsStr = "###DPS METER###"   + "\n" +
       ^        "···············"   + "\n" +
-      ^        " hits     " + hits_old + "\n" +
-      ^        " hits/s   " + HPS_old  + "\n" +
-      ^        " dmg /hit " + dmg_old  + "\n" +
-      ^        " dmg /f   " + DPF_old  + "\n" +
-      ^        " dmg /s   " + DPS_old  + "\n" +
+      ^        "#hits#####" + hits_old + "\n" +
+      ^        "#hits/s###" + HPS_old  + "\n" +
+      ^        "#dmg#/hit#" + dmg_old  + "\n" +
+      ^        "#dmg#/f###" + DPF_old  + "\n" +
+      ^        "#dmg#/s###" + DPS_old  + "\n" +
       ^        "···············"
 
     :?mode = 2
-      dpsStr = "DPS | " + DPS_old
+      dpsStr = "DPS#|#" + DPS_old
 
     txt = ui.AddText(dpsStr)
 
@@ -1515,30 +1515,7 @@ func doMoondial(weapon1, weapon2, mode)
   loc.Leave()
 
 
-
-fs = foe.state
-ft = foe.time
-fn = foe.name
-
-var prebos = -1
-var endbos = -1
-var thebos = f
-
-?f = "boss" & thebos ! fn
-^& (irs = 2 | ils = 2)
-  prebos = tt
-  thebos = fn
-
-?f = "boss" & fhp < 1 & fs ! 125 & fs ! 108
-^&(f = "elementalist" & ft = 1 | ft = 0)
-  endbos = tt
-
-?endbos ! -1 & ((tt - endbos) % 10 >= 5 | key = primary)
-^ & (tt - 120) <= endbos & endbos - prebos > 0
-  >c-20,-10,#339999,@thebos@#killed#in#@endbos - prebos@#frames!
-
-
-?totaltime - endbos = 8 & loc = "harder Angry"
+?totaltime - endbos = 1 & loc = "harder Angry"
   activate voidweaver
 
 
@@ -1554,14 +1531,14 @@ var thebos = f
   var canDebP
   var canDebF
 
-  var keepFTali = false
+  /*var keepFTali = false
 
   ?f = "phase2"
-    keepFTali = true
+    keepFTali = true*/
 
   ?ll
     keepMask = false
-    keepFTali = false
+    //keepFTali = false
 
     ?tt = 1 & ls > 5 &
     ^smiteScr ! 3
@@ -1742,19 +1719,19 @@ var thebos = f
     equipL triskelion
     equipR @cshield1@
 
-  :?canUseAETali() & !keepFTali
+  :?canUseAETali()// & !keepFTali
     ?keepMask
       useAETali("l")
     :
       equipL triskelion
       useAETali("r")
 
-  :?canUseFTali() & keepFTali
+  /*:?canUseFTali() & keepFTali
     ?keepMask
       useFTali("l")
     :
       equipL triskelion
-      useFTali("r")
+      useFTali("r")*/
 
   :?canUsePotDmg() & keepMask
     activate potion
@@ -1762,35 +1739,11 @@ var thebos = f
   :?pickup.distance ! 9999
     ldtF("magnet")
   :
-    >c-15,-2,#cyan,endbos = @endbos@
-    ^\nloc = @l@
-    ?tt - endbos = 8 & l = "harder Angry"
-      >c0,0,#green,ACTIVATING VOIDWEAVER NOW!!!
-      //useWeav()
-      activate voidweaver
-
     fds = foe.debuffs.string
     fd = foe.distance
     fc = foe.count
 
-    ?f = "explode"
-      canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
-      canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
-      canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
-      
-      ?fd < 7
-        ldtF("escape")
-      :?canDebI | canDebP | canDebF
-        ldtF("magic")
-      :
-        ldtF("rangedDmg")
-
-        /*?keepMask
-          equipL @altbow@
-        :
-          ldtF("rangedDmg")*/
-
-    :?f = "mushroom_boss" & f ! "phase2"
+    ?f = "mushroom_boss" & f ! "phase2"
 
       ?canUsePotDmg()
         activate potion
@@ -1802,24 +1755,19 @@ var thebos = f
           dash(Mamba Negra, dshield)
       
       :
-        fs = foe.state
-        ft = foe.time
-
         var bossDmg
         bossDmg = 168
         ?!keepMask
           bossDmg *= 2
           
-        ?getFoeTotalHP() <= bossDmg | (
-        ^fs = 32 & ft >= 80) // boss's punch attack
+        ?fs = 32 & ft >= 80 // boss's punch attack
           ?canUseMask() & fd <= 10
             ldtF("escape")
           :
             ?keepMask
-              equipL @dUwand@
+              equipL @dPwand@
             :
-              equipL moon
-              equipR @dUwand@
+              ldtF("rangedDmg")
 
         :
           fight1v1()
@@ -1900,7 +1848,9 @@ var thebos = f
         ft = foe.time
         bs = buffs.string
 
-        ?canUseMask()
+        ?canUseMind()
+          ldtF("escape")
+        :?canUseMask()
           useMask()
         :
           fight1v1()

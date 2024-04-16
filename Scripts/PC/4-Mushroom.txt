@@ -37,15 +37,15 @@ var canDebI
 var canDebP
 var canDebF
 
-var keepFTali = false
+/*var keepFTali = false
 
 ?p.f = "phase2"
-  keepFTali = true
+  keepFTali = true*/
 
 
 ?p.ll
   keepMask = false
-  keepFTali = false
+  //keepFTali = false
 
   ?p.tt = 1 & p.ls > 5 &
   ^smiteScr ! 3
@@ -266,9 +266,6 @@ var dpsPanel
         c.dash(Mamba Negra, a.dshield)
     
     :
-      // p.fs = foe.state
-      // p.ft = foe.time
-
       ?p.fs = 32 & p.ft >= 80 // boss's punch attack
         ?c.canUseMask() & p.fd <= 10
           ldtF("escape")

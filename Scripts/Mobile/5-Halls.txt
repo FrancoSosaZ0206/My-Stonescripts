@@ -1,16 +1,11 @@
-﻿import Cosmetics/PetStonehead
+﻿var mind = import UI/MindstoneButton
+mind.SetXY(1,6)
 
-// *******************************************************
-//                       5-Halls.txt                      
-// *******************************************************
+import Cosmetics/PetStonehead
 
-//Script for Haunted Halls
 
-//IMPORTS
 
-// *******************************************************
-//                     utilities.txt                      
-// *******************************************************
+/* *** IMPORTS *** */
 
 // VARIABLES:
 
@@ -19,7 +14,44 @@
 var sec = 30 // frames
 var scr = 69 // 1 screen = 69 units
 
-//FUNCTIONS:
+// VARIABLES:
+
+// Units
+
+var sec = 30
+var scr = 69
+
+
+
+// FUNCTIONS:
+
+func max(n1,n2)
+  ?n1 >= n2
+    return n1
+  :
+    return n2
+
+func getLargestStr(arrStr)
+  ?arrStr.Count() > 0
+    var maxStr = arrStr[0]
+    var maxInd = -1
+
+    for str : arrStr
+      ?string.Size(str) > string.Size(maxStr)
+        maxStr = str
+
+    return maxStr
+  
+  :
+    return null
+
+func replaceInStr(str, charOld, charNew)
+  for i = 0 .. str.Count() - 1
+    ?str[i] = charOld
+      str[i] = charNew
+
+  return str
+
 
 func myFormatDigital(frames)
   ?frames <= 0
@@ -48,14 +80,46 @@ func myFormatDigital(frames)
     
     return minStr + ":" + secStr
 
+func formatSpeedrun(frames)
 
-// *******************************************************
-//                 END OF "utilities.txt"                 
-// *******************************************************
+  var timeStr = "00:00 00f"
 
-// *******************************************************
-//                    performanceV2.txt                   
-// *******************************************************
+  ?frames > 0
+
+    var frms
+    var secs
+    var mins
+    var frmStr
+    var secStr
+    var minStr
+
+    frms = frames % 30 // the rest of the division is the added frames between each second
+    secs = frames/30
+    mins = (frames/30)/60
+
+    secs -= mins*60
+
+    frmStr = frms + "f"
+
+    ?frms < 10
+      frmStr = "0" + frms + "f"
+    :
+      frmStr = frms + "f"
+
+    ?secs < 10
+      secStr = "0" + secs
+    :
+      secStr = secs
+      
+    ?mins < 10
+      minStr = "0" + mins
+    :
+      minStr = mins
+
+    timeStr = minStr + ":" + secStr + " " + frmStr
+    
+  return timeStr
+
 
 
 // VARIABLES - definitions
@@ -68,7 +132,6 @@ var lavg = loc.averageTime
 var lbt = loc.bestTime
 var lb = loc.begin
 var ll = loc.loop
-
 
 // Foe
 var f
@@ -85,6 +148,7 @@ fhp = foe.hp
 var fa
 fa = foe.armor
 var fdmg
+var fmhp
 
 // Time
 var tt
@@ -120,20 +184,17 @@ var aiE
 var aiI
 aiI = ai.idle
 
-
 //screen
 var si
 si = screen.i
 
-
 //resources
-var rs // res.stone
-var rw // res.wood
-var rt // res.tar
-var rb // res.bronze
-var rk // res.ki
-var rc // res.crystals
-
+var rs
+var rw
+var rt
+var rb
+var rk
+var rc
 
 // Functions
 var canAct
@@ -146,11 +207,11 @@ var armCd = 39 * sec
 var fTaliCd = 5 * sec
 var aeTaliCd = 5 * sec
 var cindCd = 90 * sec
-var weaverCd = 90 * sec
+var weavCd = 90 * sec
 
 var bardCd = 30 * sec
 var hammCd = 22 * sec
-var mindCd = 12 * sec // currently not in use
+// var mindCd = 12 * sec // currently not in use
 var qstaffCd = 5 * sec + 15 // 5,5s
 var dashCd = sec + 15 // 1,5s
 var bashCd = 9 * sec
@@ -165,11 +226,11 @@ var armDelay = 0
 var fTaliDelay = 0
 var aeTaliDelay = 0
 var cindDelay = 0
-var weaverDelay = 0
+var weavDelay = 0
 
 var bardDelay = 0
 var hammDelay = 0
-var mindDelay = 0 // currently not in use
+// var mindDelay = 0 // currently not in use
 var qstaffDelay = 0
 var dashDelay = 0
 var bashDelay = 0
@@ -177,6 +238,7 @@ var bashDelay = 0
 ?tt < 3
   lb = loc.begin
   ll = loc.loop
+
 ?tt = 1
   lavg = loc.averageTime
   lbt = loc.bestTime
@@ -187,273 +249,595 @@ var bashDelay = 0
   fTaliDelay = 0
   aeTaliDelay = 0
   cindDelay = 0
-  weaverDelay = 0
+  weavDelay = 0
 
   bardDelay = 0
   hammDelay = 0
-  mindDelay = 0 // currently not in use
+  // mindDelay = 0 // currently not in use
   qstaffDelay = 0
   dashDelay = 0
   bashDelay = 0
 
-// *******************************************************
-//               END OF "performanceV2.txt"               
-// *******************************************************
-
-// *******************************************************
-//                    MyBetterInfo.txt                    
-// *******************************************************
 
 
 // FUNCTIONS
 
-func colorToHex(colorName)
-  ?colorName = "red"
-    return #FF0000
-  :?colorName = "orange"
-    return #FF7518
-  :?colorName = "yellow"
-    return #FFFF00
-  :?colorName = "gold"
-    return #E49B0F
-  :?colorName = "blue"
-    return #0000FF
-  :?colorName = "cyan"
-    return #00FFFF
-  :?colorName = "magenta"
-    return #FF00FF
-  :?colorName = "pink"
-    return #E0115F
-  :?colorName = "purple"
-    return #800080
-  :?colorName = "violet"
-    return #7F00FF
-  :?colorName = "green"
-    return #008000
-  :?colorName = "darkGreen"
-    return #023020
-  :?colorName = "white"
-    return #FFFFFF
-  :?colorName = "gray"
-    return #808080
-  :?colorName = "black"
-    return #000000
-  :?colorName = "brown"
-    return #7B3F00
-  :?colorName = "turquoise" | colorName = "turquesa"
-    return #40E0D0
-  :?colorName = "rainbow" | colorName = "rgb"
-    return #rainbow
-  :
-    >c-20,0,#red,ERROR: colorToHex() got unexisting color: @colorName@
+func mkPanel(x,y,w,h, anchor,dock, col,style, child)
 
-
-func makeTextbox(x,y,w,h,txtStr,colorName,styleID)
-
-  //declarations:
   var panel
-  var txt
 
-  //assignations:
   panel = ui.AddPanel()
-  txt = ui.AddText(txtStr)
 
-
-  //adding style and text to the panel:
-  panel.style = styleID
-  panel.Add(txt)
-
-  //adding alignment
-  panel.anchor = top_left
-  panel.dock = top_left
-  txt.anchor = top_left
-  txt.dock = top_left
-
-  //adding color
-  ?colorName
-    txt.color = colorToHex(colorName)
-    panel.color = colorToHex(colorName)
-
-  //adding position
   panel.x = x
   panel.y = y
 
-  txt.x = 1
-  txt.y = 1
-  txt.w = w
-  txt.h = h
+  ?w
+    panel.w = w
+  ?h
+    panel.h = h
 
-  //adding wide and height
-  panel.w = txt.w + 1
-  panel.h = txt.h + 1
+  panel.anchor = anchor
+  panel.dock = dock
+
+  ?col
+    panel.color = col
+  ?style
+    panel.style = style
+
+  ?child
+    panel.Add(child)
 
   return panel
 
-func makeButton(x,y,w,h,anchor,dock,txtStr,colorName,styleID,actionFunc)
-  var btn
+func mkTxtbox(x,y,w,h, anchor,dock, txt, align, col)
 
+  //declarations:
+  var txtbox
+
+  //assignations:
+  txtbox = ui.AddText(txt)
+
+  //adding alignment
+  txtbox.anchor = anchor
+  txtbox.dock = dock
+
+  ?align
+    txtbox.align = align
+
+  //adding color
+  ?col
+    txtbox.color = col
+
+  //adding position
+  txtbox.x = x
+  txtbox.y = y
+
+  //adding width and height
+  ?w
+    txtbox.w = w
+  :
+    txtbox.w = string.Size(
+    ^            getLargestStr(
+    ^              string.Split(txt, "\n")))
+    
+  ?h
+    txtbox.h = h
+  :
+    txtbox.h = string.Split(txt, "\n").Count()
+
+
+  return txtbox
+
+func mkBtn(x,y,w,h, anchor,dock, txt, col,tcol,bcol,hcol, style, pressed,down,up, sound)
+  
+  var btn
   btn = ui.AddButton()
 
   btn.x = x
   btn.y = y
 
-  btn.text = txtStr
+  btn.text = txt
 
-  btn.w = string.Size(btn.text) + w
-  btn.h = h
+  ?w
+    btn.w = w
+  :
+    var txtSize = string.Size(txt)
+    var parity = txtSize % 2
+    ?parity = 0 // even
+      btn.w = (txtSize * 2) + 2 // *2 = always even, 2 for even margin
+    : // odd
+      btn.w = (txtSize * 2) + 3 // *2 + 1 = always odd, 3 for odd margin
+
+  ?h
+    btn.h = 3 + h
+  :
+    btn.h = 3
+
 
   ?anchor
     btn.anchor = anchor
   ?dock
     btn.dock = dock
 
+  ?style
+    btn.style = style
 
-  ?styleID
-    btn.style = styleID
+  ?tcol
+    btn.tcolor = tcol
+  :
+    btn.tcolor = col
+  ?bcol
+    btn.bcolor = bcol
+  :
+    btn.bcolor = col
+  ?hcol
+    btn.hcolor = hcol
+  :
+    btn.hcolor = col
 
-  ?colorName
-    var colorID = colorToHex(colorName)
-    btn.tcolor = colorID
-    btn.bcolor = colorID
-    btn.hcolor = colorID
-  
-  btn.SetPressed(actionFunc)
+  btn.SetPressed(pressed)
+  ?down
+    btn.SetDown(down)
+  ?up
+    btn.SetUp(up)
+
+  ?sound
+    button.sound = sound
 
   return btn
 
 
-func showDebuffs(inFoe,x,y,colorName)
-  ?(inFoe & fds)
-  ^|(!inFoe & ds)
-    var arrDebuffs
 
-    ?inFoe
-      arrDebuffs = string.Split(fds,",", true)
+// VARIABLES:
+
+//poison:
+var dPsword1 = "poison sword dP *max +13" // enchanted: speed
+var dPsword2 = "poison sword dP +0" // enchanted: debuff
+var psword = "poison sword D *max"
+var pshield = "poison shield A *max"
+var pBow = "poison bow -dP *max"
+var dPbow = "poison bow dP *max"
+var dPwand = "poison wand dP *max"
+
+//vigor:
+var dLsword = "vigor sword dL *max"
+var vsword = "vigor sword D *max Spring24"
+var vshield = "vigor shield A *max"
+var ahShield = "vigor shield ah *max"
+var ahHammer = "vigor hammer ah *max"
+var vwand = "vigor wand D *max"
+
+//aether:
+var aesword = "aether sword D *max"
+var dUsword1 = "aether sword dU *max +15 -big"
+var dUSWORD2 = "big aether sword dU *max +15"
+var aeshield = "aether shield -au *max"
+var auShield = "aether shield au *max"
+var aebow = "aether crossbow D *max"
+var dUstaff = "aether staff dU *max"
+var dUwand = "aether wand dU *max"
+
+//fire:
+var dFsword = "fire sword dF *max"
+var fsword = "fire sword D *max"
+var fshield = "fire shield A *max"
+var fbow = "fire crossbow dF *max"
+var dFwand = "fire wand dF *max"
+
+//ice:
+var dIsword = "ice sword dI *max"
+var isword = "ice sword D *max"
+var ishield = "ice shield A *max"
+var aiShield = "ice shield ai *max"
+var dIwand1 = "ice wand dI *max +16"
+var dIwand2 = "ice wand dI *max +11"
+var ibow = "ice crossbow D *max"
+
+//alternate:
+var altbow = "crossbow *max golden"
+
+//special weapons:
+var dshield = "dashing shield *max golden HoH24"
+var myqstaff = "quarterstaff golden"
+var fastBard = "bardiche *max" // enchanted: speed
+var rbow = "repeating crossbow *max golden"
+var cshield1 = "compound shield *max shiny"
+var cshield2 = "compound shield *max -shiny"
+var tshield = "towering shield *max golden"
+
+
+
+// Weapons damage and stats
+
+var bladeDmg = 310
+var bladeRDmg = 95
+var smiteMult = 8.8 // mult = multiplier
+
+var armDmg = 44
+var armRDmg = armDmg / 2
+var maxArmBuffs = 3
+
+var cindDmg = 32 // multiplied by the amount of Ignition buffs
+var maxIgnitions = 15
+
+var weavDmg = 1
+var weavUnmkChance = 0.12 // %
+var weavArmor = 1.35
+
+var hammDmg = 123
+
+var bardDmg = 52
+var bardCrit = 10.8
+var bardRDmg = (bardDmg + 17) * bardCrit
+
+
+
+// VARIABLES:
+
+// Times in seconds:
+var ttDigital = myFormatDigital(tt)
+var pb = myFormatDigital(lbt)
+var avg = myFormatDigital(lavg)
+
+// Times in seconds and frames:
+var ttSpeedrun = formatSpeedrun(tt)
+var pbSpeedrun = formatSpeedrun(lbt)
+var avgSpeedrun = formatSpeedrun(lavg)
+
+
+// Variable updating frequency:
+?tt % 30 = 0
+  ttDigital = myFormatDigital(tt)
+ttSpeedrun = formatSpeedrun(tt)
+
+?loc.loop
+  pb = myFormatDigital(lbt)
+  avg = myFormatDigital(lavg)
+
+  pbSpeedrun = formatSpeedrun(lbt)
+  avgSpeedrun = formatSpeedrun(lavg)
+
+
+
+// PUBLIC FUNCTIONS
+
+func speedOmeterUpdate(isSpeedrun)
+  ?isSpeedrun
+    return true
+  :
+    return loc.begin | loc.loop | (tt % 30 = 0)
+
+func speedOmeterToStr(isSlim, isSpeedrun)
+
+  ?isSlim
+    ?isSpeedrun
+      return
+      ^"☆#" + pbSpeedrun +     // ☆ = PB
+      ^"#|#≈#" + avgSpeedrun + // ≈ = AVG
+      ^"#|#▶#" + ttSpeedrun    // ▶ = CURR
+
     :
-      arrDebuffs = string.Split(ds,",",true)
+      return
+      ^"☆#" + pb +         // ☆ = PB
+      ^"#|#≈#" + avg +      // ≈ = AVG
+      ^"#|#▶#" + ttDigital // ▶ = CURR
 
-    ?arrDebuffs
-      >`@x@,@y@,@colorToHex(colorName)@,Debuffs:
-      var i = 0
-      for debuff : arrDebuffs
-        var arrInfo = string.Split(debuff,":",true)
+  :
+    ?isSpeedrun
+      return
+      ^"####SPEED-O-METER" + "\n" +
+      ^"·····················" + "\n" +
+      ^"#PB##" + pbSpeedrun + "#(" + lbt + "f)" + "\n" +
+      ^"#AVG#" + avgSpeedrun + "#(" + lavg + "f)" + "\n" +
+      ^"#CUR#" + ttSpeedrun + "#(" + tt + "f)"
 
-        >`@x@,@y+1 + i@,@colorToHex(colorName)@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
-        i++
+    :
+      return
+      ^"SPEED-O-METER" + "\n" +
+      ^"·············" + "\n" +
+      ^"##PB##" + pb + "\n" +
+      ^"##AVG#" + avg + "\n" +
+      ^"##CUR#" + ttDigital
+
+func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
+
+  >`@x@,@y@,@col@,@speedOmeterToStr(isSlim, isSpeedrun)@
 
   return
 
-func showBuffs(inFoe,x,y,colorName)
-  ?(inFoe & fbs)
-  ^|(!inFoe & bs)
-    var arrBuffs
+func asciiPrintSpeedOmeter(x, y, col, isSlim, isSpeedrun)
 
-    ?inFoe
-      arrBuffs = string.Split(fbs,",", true)
-    :
-      arrBuffs = string.Split(bs,",",true)
-
-    ?arrBuffs
-      >`@x@,@y@,@colorToHex(colorName)@,Buffs:
-      var i = 0
-      for buff : arrBuffs
-        var arrInfo = string.Split(buff,":",true)
-
-        >`@x@,@y+1 + i@,@colorToHex(colorName)@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
-        ^ (@myFormatDigital(int.Parse(arrInfo[3]))@)
-        i++
+  >`@x@,@y@,@col@,ascii
+@replaceInStr(speedOmeterToStr(isSlim, isSpeedrun), " ", "#")@
+asciiend
 
   return
 
+func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
 
-func showBigStrUI(str,maxwidth,x,y,colorID)
-
-  //declarations:
-  var panel
   var txt
+  var panel
 
-  //assignations:
-  panel = ui.AddPanel()
-  txt = ui.AddText(str)
+  // For the panel:
+  var pnlAnchor
+  var pnlDock
+  var style
+  
+  ?isSlim
+    pnlAnchor = top_center
+    pnlDock = top_center
+    style = -1
+  :
+    pnlAnchor = top_left
+    pnlDock = top_left
+    style = -2
 
+  txt = mkTxtbox(
+    ^1, 1, null, null, // x, y, w, h,
+    ^top_left, top_left, // pnlAnchor, dock,
+    ^speedOmeterToStr(isSlim, isSpeedrun), // txt
+    ^null, col) // align, col
 
-  //adding style and text to the panel:
-  panel.style = -1
-  panel.Add(txt)
-
-  //adding alignment
-  panel.anchor = top_left
-  panel.dock = top_left
-  txt.anchor = top_left
-  txt.dock = top_left
-
-  //adding color
-  ?colorID
-    txt.color = colorToHex(colorID)
-    panel.color = colorToHex(colorID)
-
-  //adding position
-  panel.x = x
-  panel.y = y
-
-  txt.x = 1
-  txt.y = 1
-
-  txt.w = maxwidth
-
-  //adding wide and height
-  panel.w = txt.w + 2
-  panel.h = txt.h + 2
+  panel = mkPanel(
+    ^x, y, txt.w + 2, txt.h + 2, // x, y, w, h,
+    ^pnlAnchor, pnlDock, // anchor, dock,
+    ^col, style, txt) // col, style, child
 
   return panel
 
 
-func showStrCentered(str,y,maxW,colorName)
-  ?string.Size(str) <= maxW
-    >c@-(string.Size(str)-1)/2@,@y@,@colorToHex(colorName)@,@str@
-  :
-    var arrStr = string.Break(str,maxW)
-    ?arrStr
-      for i = 0 .. arrStr.Count() - 1
-        >c@-(string.Size(str)-1)/2@,@y-((arrStr.Count()-1))/2+i@,@colorToHex(colorName)@,@arrStr[i]@
+
+// PUBLIC VARIABLES
+
+var DPSMeterEnabled = false
+
+
+// GLOBAL VARIABLES
+
+var currhp = 0
+var nethp = 0
+
+currhp = fhp + fa
+nethp  = foe.maxhp + foe.maxarmor
+
+var hits      = 0
+var dmg       = 0
+var totalDmg  = 0
+var startTime = 0
+var auxhp     = 0
+
+var FRM = "N/A"
+var FPH = "N/A"
+var HPS = "N/A"
+var DPF = "N/A"
+var DPS = "N/A"
+
+
+
+// PROCEDURE
+
+// Calculate only when desired:
+?DPSMeterEnabled
+
+  ?f = "boss" // only works when there's a boss
+
+    ?0 < currhp & currhp < nethp // boss lost hp/armor, but isn't dead
+
+      ?auxhp > currhp // if current hp updates
+        hits += 1 // we count a hit
+        dmg       = auxhp - currhp // we get the damage dealt from the difference
+        totalDmg  = totalDmg + dmg // and we accumulate it in this variable
+  
+    : // else, reset temporal variables
+      startTime = tt
+      hits      = 0
+      dmg       = 0
+      totalDmg  = 0
+
+
+    FRM = tt - startTime // total time minus the time the first hit was dealt
+    ?hits > 1
+      FPH = FRM      / (hits-1) // -1 is there to avoid stat flicking
+    :
+      FPH = "N/A"
+  
+    ?FPH ! "N/A"
+      HPS = sec      / FPH
+    :
+      HPS = "N/A"
+      
+    ?FRM > 0
+      DPF = totalDmg / FRM // damage accumulated - no. frames elapsed
+    :
+      DPF = "N/A"
+
+    ?DPF ! "N/A"
+      DPS = DPF  * sec
+    :
+      DPS = "N/A"
+
+
+
+// PRIVATE FUNCTIONS (do not use/modify!)
+
+func dpsUpdate()
+  ?DPSMeterEnabled
+    auxhp = currhp
 
   return
 
-// *******************************************************
-//               END OF "MyBetterInfo.txt"                
-// *******************************************************
 
-// *******************************************************
-//                       Combat.txt                       
-// *******************************************************
-
-// VARIABLES
+var hits_old
+var HPS_old
+var dmg_old
+var DPF_old
+var DPS_old
 
 
-// Status
 
-var midhp = maxhp / 2
-var lowhp = maxhp / 3
-var hihp = (4 * maxhp) / 5
+// PUBLIC FUNCTIONS
+
+func dpsMeterUpdate(mode)
+  var result = false
+
+  ?DPSMeterEnabled
+    ?f = "boss"
+      
+      ?mode = 1
+        ?(hits_old ! hits | HPS_old ! HPS |
+        ^dmg_old ! dmg | DPF_old ! DPF |
+        ^DPS_old ! DPS)
+          ?hits_old ! hits
+            hits_old = hits
+          ?HPS_old ! HPS
+            HPS_old = HPS
+          ?dmg_old ! dmg
+            dmg_old = dmg
+          ?DPF_old ! DPF
+            DPF_old = DPF
+          ?DPS_old ! DPS
+            DPS_old = DPS
+
+          result = true
+
+
+      :?mode = 2 &
+      ^DPS_old ! DPS
+        DPS_old = DPS
+
+        result = true
+
+  return result
+
+
+func uiDPSMeter(x,y,colorStr,mode)
+  var panel
+  var txt
+  
+  ?DPSMeterEnabled & (mode = 1 | mode = 2)
+
+    panel = ui.AddPanel()
+
+    var dpsStr
+    ?mode = 1
+      dpsStr = "###DPS METER###"   + "\n" +
+      ^        "···············"   + "\n" +
+      ^        "#hits#####" + hits_old + "\n" +
+      ^        "#hits/s###" + HPS_old  + "\n" +
+      ^        "#dmg#/hit#" + dmg_old  + "\n" +
+      ^        "#dmg#/f###" + DPF_old  + "\n" +
+      ^        "#dmg#/s###" + DPS_old  + "\n" +
+      ^        "···············"
+
+    :?mode = 2
+      dpsStr = "DPS#|#" + DPS_old
+
+    txt = ui.AddText(dpsStr)
+
+
+    panel.style = 3
+    panel.Add(txt)
+    
+    ?mode = 1
+      panel.anchor = top_left
+      panel.dock = top_left
+      txt.anchor = top_left
+      txt.dock = top_left
+
+    :?mode = 2
+      panel.anchor = top_center
+      panel.dock = top_center
+      txt.anchor = top_left
+      txt.dock = top_left
+      
+    
+    panel.color = colorStr
+    txt.color = colorStr
+
+
+    panel.x = x
+    panel.y = y
+    
+    txt.x = 1
+    txt.y = 1
+    
+    ?mode = 1
+      txt.w = 15
+      txt.h = 8
+
+    :?mode = 2
+      txt.w = string.Size(dpsStr)
+      txt.h = 1
+
+
+    panel.w = txt.w + 2
+    panel.h = txt.h + 2
+
+
+    dpsUpdate()
+
+
+  ?mode ! 1 & mode ! 2
+    >c0,0,#red,func uiDPSMeter() - incorrect mode: @mode@
+
+  return panel
+
 
 
 // FUNCTIONS
 
+// Helper functions
+
+func colToHex(colName)
+  ?colName = "red"
+    return #FF0000
+  :?colName = "orange"
+    return #FF7518
+  :?colName = "yellow"
+    return #FFFF00
+  :?colName = "gold"
+    return #E49B0F
+  :?colName = "blue"
+    return #0000FF
+  :?colName = "cyan"
+    return #00FFFF
+  :?colName = "magenta"
+    return #FF00FF
+  :?colName = "pink"
+    return #E0115F
+  :?colName = "purple"
+    return #800080
+  :?colName = "violet"
+    return #7F00FF
+  :?colName = "green"
+    return #008000
+  :?colName = "darkGreen"
+    return #023020
+  :?colName = "white"
+    return #FFFFFF
+  :?colName = "gray"
+    return #808080
+  :?colName = "black"
+    return #000000
+  :?colName = "brown"
+    return #7B3F00
+  :?colName = "turquoise" | colName = "turquesa"
+    return #40E0D0
+  :?colName = "rainbow" | colName = "rgb"
+    return #rainbow
+  :
+    >c-20,0,#red,ERROR: colToHex() got unexisting color: @colName@
 
 
 // Stats
 
-
-/* - arrInfo[0] is symbol
-   - arrInfo[1] is id
-   - arrInfo[2] is stack count
-   - arrInfo[3] is remaining duration on first stack */
-func getBuffInfo(nameid,inFoe,infoIndex)
-  // if inFoe = true, checks foe's buffs, else, player's buffs
+func getBuffInfo(nameid, inFoe, infoIndex)
   var info
   var buffFound
   var arrBuffs
 
+
+  // if inFoe = true, checks foe's buffs, else, player's buffs
   ?inFoe
     arrBuffs = string.Split(fbs,",", true)
   :
@@ -464,38 +848,41 @@ func getBuffInfo(nameid,inFoe,infoIndex)
       ?buff = nameid
         var arrInfo = string.Split(buff,":",true)
 
+
         ?0 <= infoIndex & infoIndex <= 3
           info = int.Parse(arrInfo[infoIndex])
 
+
         buffFound = true
+
 
     ?buffFound = true
       return info
     :
       return 0
 
-/* - arrInfo[0] is symbol
-   - arrInfo[1] is id
-   - arrInfo[2] is stack count
-   - arrInfo[3] is remaining duration on first stack */
 func getDebuffLvl(nameid,inFoe)
-  // if inFoe = true, checks foe's debuffs, else, player's debuffs
   var lvl
   var debuffFound
   var arrDebuffs
 
+
+  // if inFoe = true, checks foe's debuffs, else, player's debuffs
   ?inFoe
     arrDebuffs = string.Split(fds,",", true)
   :
     arrDebuffs = string.Split(ds,",", true)
+
 
   ?arrDebuffs & !debuffFound
     for debuff : arrDebuffs
       ?debuff = nameid
         var arrInfo = string.Split(debuff,":",true)
 
+
         lvl = int.Parse(arrInfo[2])
         debuffFound = true
+
 
     ?debuffFound = true
       return lvl
@@ -503,18 +890,221 @@ func getDebuffLvl(nameid,inFoe)
       return 0
 
 
+func showDebuffs(inFoe,x,y,col,isUI)
+  ?(inFoe & fds)
+  ^|(!inFoe & ds)
+    var arrDebuffs
+
+
+    ?inFoe
+      arrDebuffs = string.Split(fds,",", true)
+    :
+      arrDebuffs = string.Split(ds,",",true)
+
+
+    ?arrDebuffs
+      ?isUI
+        var debuffsTxtbox
+        var debuffsPanel
+        var debuffsStr = "Debuffs:\n"
+
+        for debuff : arrDebuffs
+          var arrInfo = string.Split(debuff,":",true)
+
+          debuffsStr += arrInfo[0] + "(" + arrInfo[1] + ") = " + arrInfo[2] + "\n"
+        
+        debuffsTxtbox = mkTxtbox(
+          ^1,1,null,null, // x,y,w,h
+          ^top_left,top_left, // anchor, dock
+          ^debuffsStr, // txt
+          ^null,col) // align, col
+        
+
+        debuffsPanel = mkPanel(
+        ^x,y,
+        ^debuffsTxtbox.w + 1, // w
+        ^debuffsTxtbox.h + 1, // h
+        ^top_left,top_left, // anchor, dock
+        ^col,1, // col, style
+        ^debuffsTxtbox) // child
+
+        return debuffsPanel
+
+      :
+        >`@x@,@y@,@col@,Debuffs:
+        var i = 0
+        for debuff : arrDebuffs
+          var arrInfo = string.Split(debuff,":",true)
+
+
+          >`@x@,@y+1 + i@,@col@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+          i++
+        
+        return
+
+  :
+    return
+
+func showBuffs(inFoe,x,y,col,isUI)
+  ?(inFoe & fbs)
+  ^|(!inFoe & bs)
+    var arrBuffs
+
+
+    ?inFoe
+      arrBuffs = string.Split(fbs,",", true)
+    :
+      arrBuffs = string.Split(bs,",",true)
+
+
+    ?arrBuffs
+      ?isUI
+        var buffsTxtbox
+        var buffsPanel
+        var buffsStr = "Buffs:\n"
+
+        for buff : arrBuffs
+          var arrInfo = string.Split(buff,":",true)
+
+          buffsStr += arrInfo[0] + "(" + arrInfo[1] + ") = " + arrInfo[2] + "\n"
+        
+        buffsTxtbox = mkTxtbox(
+          ^1,1,null,null, // x,y,w,h
+          ^top_left,top_left, // anchor, dock
+          ^buffsStr, // txt
+          ^null,col) // align, col
+        
+
+        buffsPanel = mkPanel(
+        ^x,y,
+        ^buffsTxtbox.w + 1, // w
+        ^buffsTxtbox.h + 1, // h
+        ^top_left,top_left, // anchor, dock
+        ^col,1, // col, style
+        ^buffsTxtbox) // child
+
+        return buffsPanel
+
+      :
+        >`@x@,@y@,@col@,Buffs:
+        var i = 0
+        for buff : arrBuffs
+          var arrInfo = string.Split(buff,":",true)
+
+
+          >`@x@,@y+1 + i@,@col@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+          i++
+        
+        return
+
+  :
+    return
+
+func showEffects(isBuff,inFoe,x,y,col,isUI)
+  ?isBuff
+    ?isUI
+      return showBuffs(inFoe,x,y,col,true)
+    :
+      showBuffs(inFoe,x,y,col,false)
+      return
+  :
+    ?isUI
+      return showDebuffs(inFoe,x,y,col,true)
+    :
+      showDebuffs(inFoe,x,y,col,false)
+      return
+
+
 func getFoeTotalHP()
   return fhp + fa
 
 
+// Strings
+
+func showBigStr(x,y,maxW,str,col,isUI)
+
+  ?isUI
+    var txtbox
+    var panel
+
+    txtbox = mkTxtbox(1,1,maxW,null,
+    ^top_left,top_left,
+    ^str,null,col)
+
+    panel = mkPanel(x,y,
+    ^txtbox.w + 2,
+    ^txtbox.h + 2,
+    ^top_left,top_left,
+    ^col,-1,txtbox)
+    
+    return panel
+  
+  :
+    var arr = string.Break(str, maxW)
+
+    for i = 0 .. arr.Count()-1
+      ?col
+        >`@x@,@y + i@,@col@,@arr[i]@
+      :
+        >`@x@,@y + i@,@arr[i]@
+
+    return
+
+func showStrCtr(y,maxW,str,col,isUI)
+
+  ?isUI
+    var txtbox
+    var panel
+
+    txtbox = mkTxtbox(1,1,maxW,null,
+    ^top_left,top_left,
+    ^str,center,col)
+
+    panel = mkPanel(
+    ^- (txtbox.w / 2),y,
+    ^txtbox.w + 2,
+    ^txtbox.h + 2,
+    ^center_center,center_centere,
+    ^col,-1,txtbox)
+    
+    return panel
+
+  :
+
+    var arr = string.Break(str, maxW)
+
+    for i = 0 .. arr.Count()-1
+      var x
+      x = - ( string.Size(arr[i]) - 1 ) / 2
+      ?col
+        >c@x@,@y + i@,@col@,@arr[i]@
+      :
+        >c@x@,@y + i@,@arr[i]@
+
+    return
+
+
+
+// VARIABLES
+
+// Status
+
+pmhp = maxhp // PRIVATE - to save sys variable accesses (and reduce lag)
+
+var midhp = pmhp / 2
+var lowhp = pmhp / 3
+var hihp = (4 * pmhp) / 5
+
+
+
+// FUNCTIONS
+
 
 // Lost items
-
 
 func canUseBlade()
   return tt >= bladeDelay & canAct
 
-// cannot be interrupted, doesn't need a cooldown check
 func useBlade()
   equip blade
   activate R
@@ -523,9 +1113,6 @@ func useBlade()
 
   return
 
-/* Checks if Blade of the Fallen God
-can be used in 2 screens of distance,
-according to a certain screen index. */
 func canUseBladeDS(nScreen)
   return canUseBlade()
   ^& si = nScreen
@@ -547,7 +1134,7 @@ func useBladeDS()
 
 func canUseArm()
   return tt >= armDelay &
-  ^3 < fd & fd < 7
+  ^3 <= fd & fd <= 7
   ^& canAct
 
 func useArm()
@@ -589,12 +1176,18 @@ func useMaskDS()
       return
 
 
-
 func canUseFTali()
   return
   ^summon.GetId() ! "cinderwisp" &
   ^tt >= fTaliDelay &
   ^canAct |
+  ^(il = "fire_talisman" & ils = 2) |
+  ^(ir = "fire_talisman" & irs = 2)
+
+func canHideFTali()
+  return summon.GetId() = "cinderwisp"
+  ^& tt >= fTaliDelay
+  ^& canAct |
   ^(il = "fire_talisman" & ils = 2) |
   ^(ir = "fire_talisman" & irs = 2)
 
@@ -610,26 +1203,12 @@ func useFTali(hand)
 
   return
 
-/* Checks if you can use the cinderwisp's "devour"
-ability. */
 func canUseCind()
-  return summon.count >= 1
-  ^& summon.GetId() = "cinderwisp"
+  return summon.GetId() = "cinderwisp"
   ^& tt >= cindDelay & canAct
 
-/* Checks if the estimated damage of
-cinderwisp's "devour" ability will kill the foe,
-leaving a damage margin.
-  - cindDmg: represents the damage the cinderwisp does,
-             which will be multiplied by each ignition
-             debuff applied.
-  - margin: number representing a health margin to add
-            to the remaining foe's health. This is
-            necessary because the ability has a cast time
-            that will alter the estimations done here.
-            Send 0 if you don't want to use a margin. */
-func canKillCind(cindDmg,margin)
-  return getFoeTotalHP() <= (getDebuffLvl(ignition,true) * cindDmg) + margin
+func canKillCind(foeTotalHP,nIgnitions,cindDmg,margin)
+  return foeTotalHP <= (nIgnitions * cindDmg) + margin
 
 func useCind()
   activate cinderwisp
@@ -657,23 +1236,20 @@ func useAETali(hand)
 
   return
 
-/* Checks if you can use the voidweaver's "devour"
-ability. */
-func canUseWeaver()
-  return summon.count >= 1
-  ^& summon.GetId() = "voidweaver"
-  ^& tt >= weaverDelay & canAct
+func canUseWeav()
+  return summon.GetId() = "voidweaver"
+  ^& tt >= weavDelay & canAct
 
-func useWeaver()
+func useWeav()
   activate voidweaver
-  weaverDelay = tt + weaverCd + castTime
+  weavDelay = tt + weavCd + castTime
   return
 
-func canUseWeaverDS(nScreen)
-  return canUseWeaver()
+func canUseWeavDS(nScreen)
+  return canUseWeav()
   ^& si = nScreen
 
-func useWeaverDS()
+func useWeavDS()
   ?slideCount = 0
     screen.Next()
     slideCount = 20
@@ -682,14 +1258,12 @@ func useWeaverDS()
     slideCount--
   
     ?slideCount = 0
-      useWeaver()
+      useWeav()
       screen.ResetOffset()
 
       return
 
 
-/* Checks if you can use the
-bashing shield's ability. */
 func canBash()
   return tt >= bashDelay & !aiI
   ^& 11 <= fd & fd <= 15
@@ -704,15 +1278,12 @@ func bash(lItem)
   return
 
 
-
-
 // Special Weapons
-
 
 func canUseHamm()
   return tt >= hammDelay &
   ^canAct |
-  ^(ir = heavy hammer &
+  ^(ir = "heavy hammer" &
   ^irs = 2)
 
 var hammCdSlower
@@ -735,12 +1306,13 @@ func useHamm()
 func canUseBard()
   return tt >= bardDelay &
   ^canAct |
-  ^(ir = bardiche &
+  ^(ir = "bardiche" &
   ^irs = 2)
 
 var bardCdSlower
 func canUseBard2()
   bardCdSlower = item.GetCooldown("bardiche") <= 0
+
   return bardCdSlower &
   ^canAct |
   ^(ir = "bardiche" &
@@ -753,11 +1325,10 @@ func useBard(yourBard)
 
     bardDelay = tt + bardCd + castTime
 
+
   return
 
 
-/* Checks if you can use the
-dashing shield's ability. */
 func canDash()
   return tt >= dashDelay & !aiI
   ^& 11 <= fd & fd <= 15
@@ -773,15 +1344,23 @@ func dash(lItem,yourDshield)
 
 
 func canUseQstaff()
-  ?tt >= qstaffDelay
 
+  ?tt >= qstaffDelay
     return canAct |
-    ^(ir = quarterstaff
+    ^(ir = "quarterstaff"
     ^& irs = 2)
+
   :
     return false
 
-// recieves a string
+func canUseQstaff_OG()
+  var qstaffCd_OG
+  qstaffCd_OG = item.GetCooldown("quarterstaff")
+
+  return canAct &
+  ^(qstaffCd_OG <= 0 /*| qstaffCd_OG > 165*/)
+  ^ | (ir = "quarterstaff" & irs = 2)
+
 func useQstaff(yourQstaff)
   equip @yourQstaff@
   activate R
@@ -790,70 +1369,65 @@ func useQstaff(yourQstaff)
 
   return
 
+
 func canUseMind()
   return item.GetCooldown("mind") <= 0 & canAct
 
 
-
-
 // Tools
-
 
 func canUseHatchet()
   return item.GetCooldown("hatchet") <= 0
   ^& canAct
   ^& harvest.distance < 5
-  ^& ir = hatchet
+  ^& ir = "hatchet"
 
 func useHatchet()
   activate R
   return
 
 
-
-
 // Potions
 
-
 func canUsePot()
-  return ip ! empty & canAct
+  return ip ! "empty" & canAct
 
-/* Determines if a damage buff potion
-is brewed. Generally used for bosses.
-Potions related:
-  - berserk
-  - lucky */
+func canUsePotHeal()
+  ?canUsePot()
+    ?ip = "healing" |
+    ^ip = "vampiric"
+      return hp < lowhp
+
+    :?ip = "defensive"
+      return hp < midhp
+    
+    :
+      return false
+  :
+    return false
+
 func canUsePotDmg()
   return canUsePot() &
-  ^(ip = berserk | ip = lucky)
+  ^(ip = "berserk" | ip = "lucky")
 
-/* Determines if a special potion
-can be activated, given a special
-condition that's different for each potion type.
-Valid potion types and conditions:
-  - cleansing | min. no. of debuffs to cleanse
-  - strength | min. amount of foe's armor
-  - lightning, | ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-  - experience | min. no. of foes to activate
-  - invisibility | NONE (will activate if foe = boss)
-    + (send true as condition for this type) */
 func canUsePotSpecial(type,cond)
+
   ?canUsePot()
 
     ?ip = type
-      ?ip = cleansing
+      ?ip = "cleansing"
         return hp < midhp &
         ^debuffs.count >= cond
         // ^^^ = no. of debuffs to cleanse
     
-      :?ip = strength
+      :?ip = "strength"
         return foe.armor & foe.armor > cond
 
-      :?ip = lightning
-      ^|ip = experience
+      :?ip = "lightning"
+      ^|ip = "experience"
         return foe.count >= cond
 
-      :?ip = invisibility
+      :?ip = "invisibility"
         return f = boss
 
       :
@@ -868,18 +1442,17 @@ func canUsePotSpecial(type,cond)
       ^is not valid or equipped: "@type@"
       return false
 
+
   : // potion hasn't been brewed, it's been used,
     return false //or just can't be activated atm
 
 
-
-
 // Others
-
 
 var moonTimer = 0
 var moonFrame
 func doMoondial(weapon1, weapon2, mode)
+
   ?mode = 0 // Normal moondialing
     moonTimer++
     moonFrame = moonTimer % 3
@@ -931,200 +1504,52 @@ func doMoondial(weapon1, weapon2, mode)
 
   return
 
-// *******************************************************
-//                  END OF "Combat.txt"                   
-// *******************************************************
-
-// *******************************************************
-//                     MyArsenal.txt                      
-// *******************************************************
-
-// VARIABLES:
 
 
-/* renamed:
-
-Dothaneel = vigor sword D *max
-Kubikiribocho = bardiche *max (enchanted: crit) */
-
-//poison:
-var dPsword1 = "poison sword dP *max +13" // enchanted: speed
-var dPsword2 = "poison sword dP +0" // enchanted: debuff
-var dPwand = "poison wand dP *max"
-//vigor:
-var dLsword = "vigor sword dL *max"
-var vsword = "vigor sword D *max"
-var vshield = "vigor shield A *max"
-var ahShield = "vigor shield ah *max"
-var ahHammer = "vigor hammer ah *max"
-var vwand1 = "vigor wand D *max +11"
-var vwand2 = "vigor wand D *max +9"
-//fire:
-var dFsword = "fire sword dF *max"
-var dFwand = "fire wand dF *max"
-//ice:
-var dIsword = "ice sword dI *max -big"
-var aiShield = "ice shield ai *max"
-var dIwand1 = "ice wand dI *max +16"
-var dIwand2 = "ice wand dI *max +0"
-//special weapons:
-var dshield = "dashing shield *max"
-var myqstaff = "quarterstaff golden"
-var fastBard = "bardiche *max" // enchanted: speed
-var cshield1 = "compound shield *max shiny"
-var cshield2 = "compound shield *max -shiny"
+?!loc.isQuest & (
+^l = "Waterfall" |
+//^l = "undead_crypt_intro" |
+^l = "cross_deadwood_river" |
+^l = "cross_bridge")
+  loc.Leave()
 
 
-
-// Weapons damage
-
-var bladeDmg = 310
-var bladeRDmg = 93
-var smiteMult = 7.6 // mult = multiplier
-
-var armDmg = 44
-var armRDmg = armDmg / 2
-var maxArmBuffs = 3
-
-var taliRDmg = 32 // multiplied by the amount of Ignition buffs
-var maxIgnitions = 15
-
-var hammDmg = 123
-
-/* WARNING: These stats are for 
-"Kubikiribocho" only, not for the
-other bardiche! */
-var bardDmg = 52
-var bardCrit = 10.8
-var bardRDmg = (bardDmg + 17) * bardCrit
-
-
-// *******************************************************
-//                 END OF "MyArsenal.txt"                 
-// *******************************************************
-
-// *******************************************************
-//                    Speed_O_Meter.txt                   
-// *******************************************************
-
-
-// VARIABLES
-
-// Times in seconds:
-var ttDigital = myFormatDigital(tt)
-var pb = myFormatDigital(lbt)
-var avg = myFormatDigital(lavg)
-
-// Variable updating frequency:
-?tt % 30 = 0
-  ttDigital = myFormatDigital(tt)
-?ll
-  pb = myFormatDigital(lbt)
-  avg = myFormatDigital(lavg)
-
-
-
-// FUNCTIONS
-
-func speedOmeterUpdate(isSpeedrun)
-  ?isSpeedrun
-    return true
-  :
-    return tt % 30 = 0
-
-func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
-  var txt
-
-  ?isSpeedrun
-    txt = ui.AddText(
-    ^"   SPEED-O-METER" + "\n" +
-    ^"···················" + "\n" +
-    ^" CUR " + ttDigital + " (" + tt + "f)" + "\n" +
-    ^" PB  " + pb + " (" + lbt + "f)" + "\n" +
-    ^" AVG " + avg + " (" + lavg + "f)"               )
-
-  :
-    txt = ui.AddText(
-    ^"SPEED-O-METER" + "\n" +
-    ^"·············" + "\n" +
-    ^"  CUR " + ttDigital + "\n" +
-    ^"  PB  " + pb + "\n" +
-    ^"  AVG " + avg              )
-
-  txt.anchor = top_left
-  txt.dock = top_left
-
-  txt.x = 1
-  txt.y = 1
-
-  ?isSpeedrun
-    txt.w = 19
-  :
-    txt.w = 13
-  txt.h = 5
-
-
-
-  var panel
-
-  panel = ui.AddPanel()
-  panel.Add(txt)
-  
-  panel.style = -2
-  
-  panel.anchor = top_left
-  panel.dock = top_left
-  
-  panel.x = x
-  panel.y = y
-  
-  panel.w = txt.w + 2
-  panel.h = txt.h + 2
-
-  ?colorStr
-    txt.color = colorStr
-    panel.color = colorStr
-
-  return panel
-
-// *******************************************************
-//               END OF "Speed_O_Meter.txt"               
-// *******************************************************
 
 ?l = "Halls"
 
   // VARIABLES
 
-
   var pausedOnce
   var runCount = 0
   var keepMask = true
-  var keepFTali = false
 
   var canDebI
   var canDebP
   var canDebF
 
   var smiteScr = 1
-  var weaverScr = 4
+  var weavScr = 4
 
   ?smiteScr = 3
-    weaverScr = 2
+    weavScr = 2
 
-  ?lb | ll
-    pausedOnce = false
+  var keepFTali = false
 
   ?f = "boss"
     keepFTali = true
 
+  ?lb | ll
+    pausedOnce = false
+
   ?ll
-    keepFTali = false
     keepMask = false
+    keepFTali = false
     ?tt = 1
       runCount++
 
       ?ls > 5 & smiteScr ! 4
         smiteScr++
+
 
 
   // FUNCTIONS:
@@ -1140,9 +1565,7 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
     Finish when:
     - all possible debuffs have been applied. */
     canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
-    
     canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
-    
     canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
     
     ?canDebI | canDebP | canDebF
@@ -1165,7 +1588,7 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
         //Right hand:
         ?canDebI
           equipR @dIsword@
-    
+
     :?php ! pmhp
       ?keepMask
         equipL @dLsword@
@@ -1181,14 +1604,11 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
         ?bs = "berserk"
           doMoondial(Dothaneel, vsword, 2)
         :
-          doMoondial(Dothaneel, vsword, 3)
+          doMoondial(Dothaneel, vsword, 0)
 
     return
 
-
-  // LOADOUTS:
-
-  func ldtF(mode)
+  func ldtF(mode) // loadouts
 
     ?mode = "default"
       equipL triskelion
@@ -1211,6 +1631,9 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
       ?!keepMask
         equipR triskelion
 
+    :?mode = "extend"
+      equipL triskelion
+      equipR mask
 
     :?mode = "meleeDmg"
       ?keepMask
@@ -1218,15 +1641,14 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
       :
         equipL @vsword@
         equipR Dothaneel
-
-    :?mode = "magicDmg"
+    :?mode = "wandDmg"
       ?keepMask
-        equipL @vwand1@
+        equipL theVwand
       :
-        equipL @vwand2@
-        equipR @vwand1@
+        equipL @vwand@
+        equipR theVwand
 
-    :?mode = "magicDeb"
+    :?mode = "magic"
       ?keepMask
         ?canDebI
           equipL @dIwand1@
@@ -1247,24 +1669,44 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
         ?canDebI
           equipR @dIwand1@
 
-
     :
       >c-10,0,#red,
       ^ERROR: ldtF() recieved incorrect mode: @mode@
+
     return
+
 
 
   // PROCEDURE:
 
-  var somui = showSpeedOmeterUI(1,6,colorToHex("pink"),false)
+  var somui = speedOmeterUI(0, 1, colToHex("pink"), true, false)
   ?speedOmeterUpdate(false)
-    showSpeedOmeterUI(1,6,colorToHex("pink"),false)
+    somui.Recycle()
+    somui = null
+
+    somui = speedOmeterUI(0, 1, colToHex("pink"), true, false)
 
 
-  ?ils = 3
+  DPSMeterEnabled = true
+  var dpsPanel
+  ?dpsMeterUpdate(2)
+    ?dpsPanel
+      dpsPanel.Recycle()
+      dpsPanel = null
+
+    dpsPanel = uiDPSMeter(0, 4, "#yellow", 2)
+
+
+
+  /* Mano izquierda:
+  --- hacer AAC ---
+  - cuando state = 3
+  --- NO hacer AAC ---
+  - Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
+  ?ils = 3 & !(keepMask & il = "sword D +21")
     equipL wand 0*
     equipL @il@
-  ?irs = 3
+  ?irs = 3 & ir ! "sword D +21"
     equipR @cshield1@
     equipR @ir@
 
@@ -1298,6 +1740,7 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
     :
       equipL triskelion
       useAETali("r")
+
   :?canUseFTali() & keepFTali
     ?keepMask
       useFTali("l")
@@ -1310,13 +1753,11 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
 
   :?pickup.distance ! 9999
     ldtF("magnet")
-
   :
     fd = foe.distance
-    aiE = ai.enabled
 
     ?canUseQstaff()
-      ?aiE &
+      ?ai.enabled &
       ^ir ! "heavy hammer" &
       ^ir ! "bardiche" &
       ^ir ! Kubikiribocho & (
@@ -1328,11 +1769,11 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
       ?fd <= 33
         useBladeDS()
 
-// **********************************
-    ?canUseWeaver()
-      ?si = weaverScr & fd < 15
-        useWeaver()
-// **********************************
+  // **********************************
+    ?canUseWeav()
+      ?si = weavScr & fd < 15
+        useWeav()
+  // **********************************
 
     ?fd > 35
       pa = armor
@@ -1348,45 +1789,38 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
         ldtF("default")
       :?pa < 14
         ldtF("armorRecover")
-
       :
-        equipL triskelion
-        equipR mask
+        ldtF("extend")
 
     :?fd > 15
-      fs = foe.state
-      fds = foe.debuffs.string
-      
       ldtF("engage")
-      ?php ! pmhp & f = "pallas" & fs = 0
+
+      ?hp ! maxhp & f = "pallas" & foe.state = 0
         ?!keepMask
           equipR ouroboros
         :
           equipL ouroboros
-
+      :
         var isAbtToDash
         isAbtToDash = (fd <= 17)
         ?keepMask & isAbtToDash
           equipR @vshield@
-
-
-
+        
         canDebI = (fds ! "chill" &
         ^f ! "immune_to_debuff_chill")
-        
         bs = buffs.string
-        
+
         ?!keepMask & canDebI & isAbtToDash &
-        ^getFoeTotalHP() > (getBuffInfo("smite", false, 2) * smiteMult)
+        ^getFoeTotalHP() > getBuffInfo("smite", false, 2) * smiteMult
           equipR @aiShield@
+
 
     :?canBash()
       bash(dLsword)
     :?canDash()
       dash(dLsword,dshield)
-
     :
-      fc = foe.GetCount(10)
+      fc = foe.count
 
       ?canUseHamm() & !canUseBlade() &
       ^((smiteScr < 4 & si = 5) |
@@ -1397,17 +1831,14 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
         fight1v1()
 
       :?f ! "pallas"
-        fds = foe.debuffs.string
         canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
-
         canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
-
         canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
-  
+        
         ?canDebI | canDebP | canDebF
-          ldtF("magicDeb")
+          ldtF("magic")
         :
-          ldtF("magicDmg")
+          ldtF("wandDmg")
 
       : // f = "pallas"
         fs = foe.state
@@ -1424,7 +1855,3 @@ func showSpeedOmeterUI(x,y,colorStr,isSpeedrun)
             useMask()
           :
             fight1v1()
-
-// *******************************************************
-//                  END OF "5-Halls.txt"                  
-// *******************************************************

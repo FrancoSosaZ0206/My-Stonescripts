@@ -1509,7 +1509,7 @@ func doMoondial(weapon1, weapon2, mode)
 
 ?!loc.isQuest & (
 ^l = "Waterfall" |
-^l = "undead_crypt_intro" |
+//^l = "undead_crypt_intro" |
 ^l = "cross_deadwood_river" |
 ^l = "cross_bridge")
   loc.Leave()
@@ -1518,7 +1518,7 @@ func doMoondial(weapon1, weapon2, mode)
 
 ?l = "Caves"
 
-  // VARIABLES:
+  // VARIABLES
 
   var runCount = 0
   var keepMask = true
@@ -1529,8 +1529,11 @@ func doMoondial(weapon1, weapon2, mode)
   var canDebP
   var canDebF
 
+  var keepFTali = false
+
   ?ll | ls <= 5
     keepMask = false
+    keepFTali = false
     ?tt = 1
       runCount++
 
@@ -1553,22 +1556,19 @@ func doMoondial(weapon1, weapon2, mode)
 
   // FUNCTIONS:
 
-  // Useful for miniboss too
   func fight1v1()
     fds = foe.debuffs.string
-
+    bs = buffs.string
 
     /* How to apply debuffs:
     - apply all except the ones the foe is immune to.
     Finish when:
     - all possible debuffs have been applied. */
     canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
-    
     canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
-    
     canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
     
-    ?canDebI | canDebP | canDebF
+    ?(bs = "berserk" | keepMask) & (canDebI | canDebP | canDebF)
       ?keepMask
         ?canDebI
           equipL @dIsword@
@@ -1592,7 +1592,6 @@ func doMoondial(weapon1, weapon2, mode)
       ?keepMask
         equipL Bifrost
       :
-        bs = buffs.string
         ?bs = "berserk"
           doMoondial(Bifrost, isword, 2)
         :
@@ -1600,10 +1599,7 @@ func doMoondial(weapon1, weapon2, mode)
 
     return
 
-
-  // LOADOUTS:
-
-  func ldtF(mode)
+  func ldtF(mode) // loadouts
     ?mode = "default"
       equipL triskelion
       ?!keepMask
@@ -1657,11 +1653,26 @@ func doMoondial(weapon1, weapon2, mode)
     return
 
 
+
   // PROCEDURE:
 
-  var somui = showSpeedOmeterUI(1,6,colorToHex("pink"),false)
+  var somui = speedOmeterUI(0, 1, colToHex("pink"), true, false)
   ?speedOmeterUpdate(false)
-    showSpeedOmeterUI(1,6,colorToHex("pink"),false)
+    somui.Recycle()
+    somui = null
+
+    somui = speedOmeterUI(0, 1, colToHex("pink"), true, false)
+
+
+  DPSMeterEnabled = true
+  var dpsPanel
+  ?dpsMeterUpdate(2)
+    ?dpsPanel
+      dpsPanel.Recycle()
+      dpsPanel = null
+
+    dpsPanel = uiDPSMeter(0, 4, "#yellow", 2)
+
 
 
   /* Mano izquierda:
@@ -1673,24 +1684,25 @@ func doMoondial(weapon1, weapon2, mode)
     equipL wand 0*
     equipL @il@
   ?irs = 3 & ir ! "sword D +21"
-    equipR @cshield2@
+    equipR @cshield1@
     equipR @ir@
 
   ?(hp < maxhp) & runCount > 1
     loc.Leave()
 
-  ?lb
+  ?lb // AUTO BREWING
     rs = res.stone
     rw = res.wood
     rb = res.bronze
 
     ?rb >= 10
-      ?rs >= 10
-        ?ip ! "lucky"
-          brew stone + bronze
-      :?rw >= 10
+      ?rw >= 10
         ?ip ! "berserk"
           brew wood + bronze
+
+      :?rs >= 10
+        ?ip ! "lucky"
+          brew stone + bronze
       :
         loc.Leave()
     :
@@ -1703,17 +1715,26 @@ func doMoondial(weapon1, weapon2, mode)
     equipL triskelion
     equipR @cshield1@
 
-  :?canUseTali()
-    equipL triskelion
-    useTali("r")
-    
+  :?canUseAETali() & !keepFTali
+    ?keepMask
+      useAETali("l")
+    :
+      equipL triskelion
+      useAETali("r")
+
+  :?canUseFTali() & keepFTali
+    ?keepMask
+      useFTali("l")
+    :
+      equipL triskelion
+      useFTali("r")
+
   :?canUsePot() & (keepMask
   ^| (ls <= 5 & tt < 60 & ip = "berserk"))
     activate potion
 
   :?pickup.distance < 15
     ldtF("magnet")
-
   :
     fd = foe.distance
     aiE = ai.enabled
@@ -1729,10 +1750,11 @@ func doMoondial(weapon1, weapon2, mode)
       useMaskDS()*/
 
     ?canUseQstaff() & aiE &
-    ^ir ! "bardiche" & ir ! Kubikiribocho &
-    ^ir ! "heavy hammer" & (
-    ^((canBash() | canDash()) & fd > 15)
-    ^| !(canBash() | canDash()))
+    ^ir ! "heavy hammer" &
+    ^ir ! "bardiche" &
+    ^ir ! Kubikiribocho & (
+    ^(!canBash() & !canDash()) |
+    ^(fd < 11 | fd > 15))
       useQstaff(myqstaff)
 
     :?fd > 35
@@ -1745,19 +1767,18 @@ func doMoondial(weapon1, weapon2, mode)
         ldtF("extend")
 
     :?fd > 15
-      aiE = ai.enabled
       ?!aiI & aiE
         ldtF("engage")
-        
+
         var isAbtToDash
         isAbtToDash = (fd <= 17)
         ?keepMask & isAbtToDash
           equipR @ishield@
-
+        
         canDebI = (fds ! "chill" &
         ^f ! "immune_to_debuff_chill")
         bs = buffs.string
-        
+
         ?!keepMask & canDebI & isAbtToDash &
         ^getFoeTotalHP() > getBuffInfo("smite", false, 2) * smiteMult
           equipR @aiShield@
@@ -1774,8 +1795,18 @@ func doMoondial(weapon1, weapon2, mode)
         ?canUseMind()
           ldtF("escape")
         :
+          fds = foe.debuffs.string
+          canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
+          canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
+          canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
+
           ?fd > 7
-            ldtF("magic")
+            ?canDebI | canDebP | canDebF
+              ldtF("magic")
+            :?keepMask
+              equipL @dIwand1@
+            :
+              equip @ibow@
           :
             ldtF("meleeDef")
 
@@ -1783,15 +1814,17 @@ func doMoondial(weapon1, weapon2, mode)
         bash(isword)
       :?canDash()
         dash(isword,dshield)
-
       :
         ?f = "cool_bat"
           fight1v1()
 
+          ?foe.state = 4
+            keepFTali = true
+
         :?f ! "spider_boss_harder"
           fc = foe.count
 
-          ?fc = 1
+          ?fc = 1 & fd < 7
             bs = buffs.string
             ?bs = "berserk"
               doMoondial(Bifrost, isword, 2)
@@ -1799,17 +1832,32 @@ func doMoondial(weapon1, weapon2, mode)
               doMoondial(Bifrost, isword, 0)
 
           :?fc >= 5 & canUseHamm()
-          ^& !canUseBlade() &
-          ^ls > 5
+          ^& !canUseBlade() & ls > 5
+          ^& keepMask
             useHamm()
           :
-            ldtF("magic")
+            fds = foe.debuffs.string
+            canDebI = (fds ! "chill:6" & f ! "immune_to_debuff_chill")
+            canDebP = (fds ! "damage" & f ! "immune_to_debuff_damage")
+            canDebF = (fds ! "dot" & f ! "immune_to_debuff_dot")
+
+            ?canDebI | canDebP | canDebF
+              ldtF("magic")
+
+            :?keepMask
+              equipL @dIwand1@
+            :
+              equipL @dIwand2@
+              equipR @dIwand1@
+
 
         :?f = "spider_boss_harder"
         ^& fs ! 4 // dying
-          ?canUseCind()
+          ?canUseCind() & keepMask & DPS ! "N/A"
             ?fds = "ignition:15" |
-            ^canKillCind(taliRDmg,500)
+            ^canKillCind(getFoeTotalHP(),
+            ^              getDebuffLvl("ignition",true),
+            ^              cindDmg, DPS)
               useCind()
 
           ?canUsePotDmg()
@@ -1818,10 +1866,7 @@ func doMoondial(weapon1, weapon2, mode)
             useMask()
 
           :?fd < 11
-            fmhp = foe.maxhp
-
-            ?canUseBard() &
-            ^(keepMask | fmhp <= bardRDmg)
+            ?canUseBard() & keepMask
               useBard(Kubikiribocho)
             :
               fight1v1()

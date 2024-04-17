@@ -37,9 +37,6 @@ var canDebF
 
 var keepFTali = false
 
-?p.f = "spider_boss_harder"
-  keepFTali = true
-
 ?p.ll | p.ls <= 5
   keepMask = false
   keepFTali = false
@@ -67,18 +64,17 @@ var keepFTali = false
 
 func fight1v1()
   p.fds = foe.debuffs.string
+  p.bs = buffs.string
 
   /* How to apply debuffs:
   - apply all except the ones the foe is immune to.
   Finish when:
   - all possible debuffs have been applied. */
   canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
-  
   canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
-  
   canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
   
-  ?canDebI | canDebP | canDebF
+  ?(p.bs = "berserk" | keepMask) & (canDebI | canDebP | canDebF)
     ?keepMask
       ?canDebI
         equipL @a.dIsword@
@@ -102,7 +98,6 @@ func fight1v1()
     ?keepMask
       equipL Bifrost
     :
-      p.bs = buffs.string
       ?p.bs = "berserk"
         c.doMoondial(Bifrost, a.isword, 2)
       :
@@ -110,11 +105,7 @@ func fight1v1()
 
   return
 
-
-
-// LOADOUTS:
-
-func ldtF(mode)
+func ldtF(mode) // loadouts
   ?mode = "default"
     equipL triskelion
     ?!keepMask
@@ -205,19 +196,19 @@ var dpsPanel
 ?(hp < maxhp) & runCount > 1
   loc.Leave()
 
-?p.lb
+?p.lb // AUTO BREWING
   p.rs = res.stone
   p.rw = res.wood
   p.rb = res.bronze
 
   ?p.rb >= 10
-    ?p.rs >= 10
-      ?p.ip ! "lucky"
-        brew stone + bronze
-
-    :?p.rw >= 10
+    ?p.rw >= 10
       ?p.ip ! "berserk"
         brew wood + bronze
+
+    :?p.rs >= 10
+      ?p.ip ! "lucky"
+        brew stone + bronze
     :
       loc.Leave()
   :
@@ -265,10 +256,11 @@ var dpsPanel
     c.useMaskDS()*/
 
   ?c.canUseQstaff() & p.aiE &
-  ^p.ir ! "bardiche" & p.ir ! Kubikiribocho &
-  ^p.ir ! "heavy hammer" & (
-  ^((c.canBash() | c.canDash()) & p.fd > 15)
-  ^| !(c.canBash() | c.canDash()))
+  ^p.ir ! "heavy hammer" &
+  ^p.ir ! "bardiche" &
+  ^p.ir ! Kubikiribocho & (
+  ^(!c.canBash() & !c.canDash()) |
+  ^(p.fd < 11 | p.fd > 15))
     c.useQstaff(a.myqstaff)
 
   :?p.fd > 35
@@ -281,7 +273,6 @@ var dpsPanel
       ldtF("extend")
 
   :?p.fd > 15
-    p.aiE = ai.enabled
     ?!p.aiI & p.aiE
       ldtF("engage")
 
@@ -310,10 +301,9 @@ var dpsPanel
       ?c.canUseMind()
         ldtF("escape")
       :
+        p.fds = foe.debuffs.string
         canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
-
         canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
-        
         canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
 
         ?p.fd > 7
@@ -334,6 +324,9 @@ var dpsPanel
       ?p.f = "cool_bat"
         fight1v1()
 
+        ?foe.state = 4
+          keepFTali = true
+
       :?p.f ! "spider_boss_harder"
         p.fc = foe.count
 
@@ -345,33 +338,32 @@ var dpsPanel
             c.doMoondial(Bifrost, a.isword, 0)
 
         :?p.fc >= 5 & c.canUseHamm()
-        ^& !c.canUseBlade() &
-        ^p.ls > 5
+        ^& !c.canUseBlade() & p.ls > 5
+        ^& keepMask
           c.useHamm()
         :
           p.fds = foe.debuffs.string
-
           canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
-
           canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
-          
           canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
 
           ?canDebI | canDebP | canDebF
             ldtF("magic")
+
           :?keepMask
             equipL @a.dIwand1@
           :
-            equip @a.ibow@
+            equipL @a.dIwand2@
+            equipR @a.dIwand1@
 
 
       :?p.f = "spider_boss_harder"
       ^& p.fs ! 4 // dying
-        ?c.canUseCind()
+        ?c.canUseCind() & keepMask & dpsm.DPS ! "N/A"
           ?p.fds = "ignition:15" |
           ^c.canKillCind(i.getFoeTotalHP(),
           ^              i.getDebuffLvl("ignition",true),
-          ^              a.cindDmg, 500)
+          ^              a.cindDmg, dpsm.DPS)
             c.useCind()
 
         ?c.canUsePotDmg()
@@ -380,8 +372,7 @@ var dpsPanel
           c.useMask()
 
         :?p.fd < 11
-          ?c.canUseBard() &
-          ^(keepMask | foe.maxhp <= a.bardRDmg)
+          ?c.canUseBard() & keepMask
             c.useBard(Kubikiribocho)
           :
             fight1v1()

@@ -405,13 +405,12 @@ var vsword = "vigor sword D *max Spring24"
 var vshield = "vigor shield A *max"
 var ahShield = "vigor shield ah *max"
 var ahHammer = "vigor hammer ah *max"
-var vwand1 = "vigor wand D *max +10"
-var vwand2 = "vigor wand D *max +9"
+var vwand = "vigor wand D *max"
 
 //aether:
 var aesword = "aether sword D *max"
-var dUsword1 = "aether sword dU *max +15 -big"
-var dUSWORD2 = "big aether sword dU *max +15"
+var dUsword1 = "aether sword dU *max -big golden"
+var dUSWORD2 = "big aether sword dU *max golden"
 var aeshield = "aether shield -au *max"
 var auShield = "aether shield au *max"
 var aebow = "aether crossbow D *max"
@@ -896,12 +895,10 @@ func showDebuffs(inFoe,x,y,col,isUI)
   ^|(!inFoe & ds)
     var arrDebuffs
 
-
     ?inFoe
       arrDebuffs = string.Split(fds,",", true)
     :
       arrDebuffs = string.Split(ds,",",true)
-
 
     ?arrDebuffs
       ?isUI
@@ -912,7 +909,8 @@ func showDebuffs(inFoe,x,y,col,isUI)
         for debuff : arrDebuffs
           var arrInfo = string.Split(debuff,":",true)
 
-          debuffsStr += arrInfo[0] + "(" + arrInfo[1] + ") = " + arrInfo[2] + "\n"
+          debuffsStr += arrInfo[0] + "(" + arrInfo[1] + ")#=#" +
+          ^arrInfo[2] + "#(" + arrInfo[3] + ")\n"
         
         debuffsTxtbox = mkTxtbox(
           ^1,1,null,null, // x,y,w,h
@@ -937,8 +935,8 @@ func showDebuffs(inFoe,x,y,col,isUI)
         for debuff : arrDebuffs
           var arrInfo = string.Split(debuff,":",true)
 
-
           >`@x@,@y+1 + i@,@col@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+          ^#(@arrInfo[3]@)
           i++
         
         return
@@ -951,12 +949,10 @@ func showBuffs(inFoe,x,y,col,isUI)
   ^|(!inFoe & bs)
     var arrBuffs
 
-
     ?inFoe
       arrBuffs = string.Split(fbs,",", true)
     :
       arrBuffs = string.Split(bs,",",true)
-
 
     ?arrBuffs
       ?isUI
@@ -967,7 +963,8 @@ func showBuffs(inFoe,x,y,col,isUI)
         for buff : arrBuffs
           var arrInfo = string.Split(buff,":",true)
 
-          buffsStr += arrInfo[0] + "(" + arrInfo[1] + ") = " + arrInfo[2] + "\n"
+          buffsStr += arrInfo[0] + "(" + arrInfo[1] + ")#=#" +
+          ^arrInfo[2] + "#(" + arrInfo[3] + ")\n"
         
         buffsTxtbox = mkTxtbox(
           ^1,1,null,null, // x,y,w,h
@@ -992,8 +989,8 @@ func showBuffs(inFoe,x,y,col,isUI)
         for buff : arrBuffs
           var arrInfo = string.Split(buff,":",true)
 
-
           >`@x@,@y+1 + i@,@col@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+          ^#(@arrInfo[3]@)
           i++
         
         return
@@ -1509,7 +1506,7 @@ func doMoondial(weapon1, weapon2, mode)
 
 ?!loc.isQuest & (
 ^l = "Waterfall" |
-^l = "undead_crypt_intro" |
+//^l = "undead_crypt_intro" |
 ^l = "cross_deadwood_river" |
 ^l = "cross_bridge")
   loc.Leave()

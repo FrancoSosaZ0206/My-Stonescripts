@@ -405,8 +405,7 @@ var vsword = "vigor sword D *max Spring24"
 var vshield = "vigor shield A *max"
 var ahShield = "vigor shield ah *max"
 var ahHammer = "vigor hammer ah *max"
-var vwand1 = "vigor wand D *max +10"
-var vwand2 = "vigor wand D *max +9"
+var vwand = "vigor wand D *max"
 
 //aether:
 var aesword = "aether sword D *max"
@@ -1509,10 +1508,33 @@ func doMoondial(weapon1, weapon2, mode)
 
 ?!loc.isQuest & (
 ^l = "Waterfall" |
-^l = "undead_crypt_intro" |
+//^l = "undead_crypt_intro" |
 ^l = "cross_deadwood_river" |
 ^l = "cross_bridge")
   loc.Leave()
+
+
+
+
+var prebos = -1
+var endbos = -1
+var thebos = f
+
+fs = foe.state
+ft = foe.time
+fn = foe.name
+
+?f = "boss" & thebos ! fn
+^ & (irs = 2 | ils = 2)
+  prebos = tt
+  thebos = fn
+?f = "boss" & fhp < 1 & fs ! 125 & fs ! 108
+^ & (f = "elementalist" & ft = 1 | ft = 0)
+  endbos = tt
+?endbos ! -1 & ((tt - endbos) % 10 >= 5 | key = primary)
+^ & (tt - 120) <= endbos & endbos - prebos > 0
+  >c-20,10,#339999,@thebos@#killed
+^#in#@endbos - prebos@#frames!
 
 
 ?totaltime - endbos = 1 & loc = "harder Angry"

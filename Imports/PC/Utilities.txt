@@ -110,12 +110,12 @@ func formatSpeedrun(frames)
 
     secs -= mins*60
 
-    frmStr = frms + "f"
-
     ?frms < 10
-      frmStr = "0" + frms + "f"
+      frmStr = "0" + frms
     :
-      frmStr = frms + "f"
+      frmStr = frms
+
+    frmStr += "f"
 
     ?secs < 10
       secStr = "0" + secs

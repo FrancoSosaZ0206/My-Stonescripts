@@ -1,334 +1,396 @@
 ﻿// *******************************************************
-//                       FILE INFO
+//                       7-Ridge.txt                      
 // *******************************************************
-
 
 // Script for Icy Ridge
 
 
-//IMPORTS
 
+// IMPORTS
 
-var u = import MyScripts/Imports/utilities
+var u = import MyScripts/Imports/PC/Utilities
+var uimkr = import MyScripts/Imports/PC/UI_Maker
 var p
-p = import MyScripts/Imports/performanceV2
+p = import MyScripts/Imports/PC/PerformanceV2
+var a = import MyScripts/Imports/PC/MyArsenal
 var i
-i = import MyScripts/Imports/MyBetterInfo
-var c = import MyScripts/Imports/combat
-var a = import MyScripts/Imports/MyArsenal
+i = import MyScripts/Imports/PC/MyBetterInfo
+var c = import MyScripts/Imports/PC/Combat
 
+var som
+som = import MyScripts/Imports/PC/Speed_O_Meter
+var dpsm
+dpsm = import MyScripts/Imports/PC/DPS_Meter_MODIFIED
 
 
 
 // VARIABLES
 
+var blowing
 
+var keepMask = true
 
-
+var maskScr = 4
 var smiteScr = 1
-?smiteScr = 1
-  ?loc.loop
+var weavScr = 3
+
+var canDebI
+var canDebP
+var canDebF
+
+var keepFTali = false
+
+?p.f = "boss"
+  keepFTali = true
+
+?p.ll
+  keepFTali = false
+  keepMask = false
+  ?smiteScr = 1 & p.ls > 10
     smiteScr = 2
 
 
-var blowing
 
-
-// LOADOUTS:
-
+// FUNCTIONS
 
 func ldtF(mode)
 
-
-  ?mode = default
+  ?mode = "default"
     equipL triskelion
-    equipR @a.cshield@
-  :?mode = engage
+    ?!keepMask
+      equipR @a.cshield1@
+  :?mode = "armorRegen"
     equipL triskelion
-    equipR @a.fshield@
-  :?mode = escape
+    ?!keepMask
+      equipR @a.cshield2@
+  :?mode = "engage"
+    equipL triskelion
+    ?!keepMask
+      equipR @a.fshield@
+  :?mode = "escape"
     equipL mind
-    equipR @a.fshield@
-  :?mode = magnet
+    ?!keepMask
+      equipR @a.fshield@
+  :?mode = "magnet"
     equipL star
-    equipR triskelion
+    ?!keepMask
+      equipR triskelion
 
+  :?mode = "extend"
+    equipL triskelion
+    equipR mask
 
-  :?mode = aidPassive
-    equipL ouroboros
-    equipR triskelion
-  :?mode = aidActive
-    equipL @a.fsword1@
-    equipR @a.vsword1@
+  :?mode = "magic"
+    ?keepMask
+      ?canDebI
+        equipL @a.dIwand1@
+      :?canDebP
+        equipL @a.dPwand@
+      :?canDebF
+        equipL @a.dFwand@
+    :
+      //Left hand:
+      ?canDebP
+        equipL @a.dPwand@
+      :?canDebF
+        equipL @a.dPwand@
+      :?canDebI
+        equipL @a.dIwand2@
+      
+      //Right hand:
+      ?canDebI
+        equipR @a.dIwand1@
 
+  :?mode = "meleeDmg"
+    equipL Vantum Phoenix
+    ?!keepMask
+      ?p.fd <= 5
+        equipR moon
+      :
+        equipR @a.auShield@
+  :?mode = "meleeDef1"
+    equipL @a.dFsword@
+    ?!keepMask
+      equipR @a.fshield@
 
-  :?mode = rangedDmg
-    equip @a.fbow1@
-  :?mode = rangedF
-    equip @a.fbow2@
+  :?mode = "unmkDmg"
+    ?!keepMask
+      equipL @a.dUsword1@
+      equipR @a.dUSWORD2@
+    :
+      ?foe.GetCount(10) > 1
+        equipL @a.dUSWORD2@
+      :
+        equipL @a.dUsword1@
 
-
-  :?mode = magicI
-    equip @a.istaff@
-  :?mode = magicP
-    equip @a.pstaff@
-
-
-  :?mode = meleeDmg
-    equipL @a.fsword2@
-    equipR @a.fsword3@
-  :?mode = meleeDef1
-    equipL @a.fsword1@
-    equipR @a.fshield@
-  :?mode = meleeDef2
-    equipL @a.fsword2@
-    equipR @a.fshield@
-
-
-  :?mode = fDeb
-    equipL @a.fsword2@
-    equipR @a.fsword1@
-  :?mode = iDeb
-    equipL @a.fsword2@
-    equipR @a.isword1@
-  :?mode = pDeb
-    equipL @a.fsword2@
-    equipR @a.psword1@
-
-
-  :?mode = AOEDeb
-    equipL @a.fsword2@
-    equipR @a.fsword1@
-
-
-  :?mode = unmkDmg
-    equipL @a.aeSWORD1@
-    equipR @a.aeSWORD2@
-  :?mode = unmkDef
-    equipL @a.aeSWORD1@
-    equipR @a.aeshield2@
-
+  :?mode = "unmkDef"
+    equipL @a.dUSWORD2@
+    ?!keepMask
+      equipR @a.auShield@
 
   :
     >c-10,0,#red,
     ^ERROR: ldtF() recieved incorrect mode: @mode@
+
   return
 
+func fight1v1()
+  p.fds = foe.debuffs.string
+
+  /* How to apply debuffs:
+  - apply all except the ones the foe is immune to.
+  Finish when:
+  - all possible debuffs have been applied. */
+  canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
+  canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
+  canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
+  
+  ?canDebI | canDebP | canDebF
+    ?keepMask
+      ?canDebI
+        equipL @a.dIsword@
+      :?canDebP
+        equipL @a.dPsword1@
+      :?canDebF
+        equipL @a.dFsword@
+    :
+      //Left hand:
+      ?canDebP
+        equipL @a.dPsword1@
+      :?canDebF
+        equipL @a.dFsword@
+      :?canDebI
+        equipL @a.dIwand1@
+
+      //Right hand:
+      ?canDebI
+        equipR @a.dIsword@
+
+  :?keepMask
+    equipL Vantum Phoenix
+  :
+    p.bs = buffs.string
+    ?p.bs = "berserk"
+      c.doMoondial(Vantum Phoenix, a.fsword, 2)
+    :
+      c.doMoondial(Vantum Phoenix, a.fsword, 0)
+
+  return
 
 
 
 // PROCEDURE:
 
+var somui = som.speedOmeterUI(0, 1, i.colToHex("pink"), true, false)
+?som.speedOmeterUpdate(false)
+  somui.Recycle()
+  somui = null
 
-var tui = i.showTimeUI(13,1,pink)
-var cdui = i.showCdownUI(1,1,orange)
-
-
-?p.tt % 30 = 0
-  tui = i.showTimeUI(13,1,pink)
-?i.cdUpdate()
-  cdui = i.showCdownUI(1,1,orange)
+  somui = som.speedOmeterUI(0, 1, i.colToHex("pink"), true, false)
 
 
+dpsm.DPSMeterEnabled = true
+var dpsPanel
+?dpsm.dpsMeterUpdate(2)
+  ?dpsPanel
+    dpsPanel.Recycle()
+    dpsPanel = null
 
+  dpsPanel = dpsm.uiDPSMeter(0, 4, "#yellow", 2)
+
+
+/* Mano izquierda:
+--- hacer AAC ---
+- cuando state = 3
+--- NO hacer AAC ---
+- Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
+?p.ils = 3 & !(keepMask & p.il = "sword D +21")
+  equipL wand 0*
+  equipL @p.il@
+?p.irs = 3 & p.ir ! "sword D +21"
+  equipR @a.cshield1@
+  equipR @p.ir@
 
 ?hp < maxhp
   loc.Leave()
 
+?p.lb // AUTO BREWING
+  p.rs = res.stone
+  p.rw = res.wood
+  p.rb = res.bronze
 
-?loc.begin
-  ?p.ip ! berserk
-    brew wood + bronze // berserk potion
+  ?p.rb >= 10
+    ?p.rw >= 10
+      ?p.ip ! "berserk"
+        brew wood + bronze
 
+    :?p.rs >= 10
+      ?p.ip ! "lucky"
+        brew stone + bronze
+    :
+      loc.Leave()
+  :
+    loc.Leave()
 
-?c.canUseTali()
-  c.useTali(l)
+?keepMask
+  equipR mask
 
+?p.lb | p.ll
+  equipL triskelion
+  equipR @a.cshield1@
+
+:?c.canUseAETali() & !keepFTali
+  ?keepMask
+    c.useAETali("l")
+  :
+    equipL triskelion
+    c.useAETali("r")
+
+:?c.canUseFTali() & keepFTali
+  ?keepMask
+    c.useFTali("l")
+  :
+    equipL triskelion
+    c.useFTali("r")
+
+:?c.canUsePotDmg() & keepMask
+  activate potion
 
 :?pickup.distance ! 9999
   ?c.canUseQstaff()
     c.useQstaff(a.myqstaff)
   :
-    ldtF(magnet)
-
-
+    ldtF("magnet")
 :
   p.fd = foe.distance
   p.fs = foe.state
 
-
-  ?p.f ! yeti
+  ?p.f ! "yeti"
     p.si = screen.i
+    p.bs = buffs.string
+
     ?c.canUseBladeDS(smiteScr)
-      ?p.fd <= 33
+      ?p.fd <= 33 & i.getBuffInfo("smite", false, 2) < 25
         c.useBladeDS()
 
+    ?c.canUseMaskDS(maskScr)
+      ?i.getBuffInfo("smite", false, 2) >= 25
+        c.useMaskDS()
 
-    ?c.canUseQstaff() & p.fd > 9
+    ?c.canUseQstaff() &
+    ^p.ir ! "bardiche" &
+    ^p.ir ! Kubikiribocho &
+    ^p.ir ! "heavy hammer" & (
+    ^((c.canBash() | c.canDash()) & p.fd > 15)
+    ^| !(c.canBash() | c.canDash()))
       c.useQstaff(a.myqstaff)
-    :?p.fd > 35
-      ldtF(default)
-    :?p.fd > 15
-      ldtF(engage)
-    :?c.canBash()
-      c.bash(a.isword2)
-    :?c.canDash()
-      c.dash(a.isword2,a.dshield)
 
+    :?p.fd > 35
+      p.pa = armor
+      ?14 <= p.pa & p.pa <= 29
+        ldtF("default")
+      :?p.pa < 14
+        ldtF("armorRegen")
+      :
+        equipL triskelion
+        equipR mask
+
+    :?p.fd > 15
+      ldtF("engage")
+      
+      var isAbtToDash
+      isAbtToDash = (p.fd <= 17)
+      ?keepMask & isAbtToDash
+        equipR @a.fshield@
+
+      p.fds = foe.debuffs.string
+      canDebI = (p.fds ! "chill" &
+      ^f ! "immune_to_debuff_chill")
+
+      ?!keepMask & canDebI & isAbtToDash &
+      ^i.getFoeTotalHP() > i.getBuffInfo("smite", false, 2) * a.smiteMult
+        equipR @a.aiShield@
+
+    :?c.canBash()
+      c.bash(a.dIsword)
+    :?c.canDash()
+      c.dash(a.dIsword, a.dshield)
 
     :
       p.fc = foe.count
       p.fn = foe.name
 
+      ?c.canUseHamm() & keepMask & (
+      ^(smiteScr = 1 & p.si = 3) |
+      ^(smiteScr = 2 & p.si = 1)   )
+        c.useHamm()
 
-      ?p.f = spawner | p.fn = "Ice Wall"
-        ?p.fd <= 6
-          ldtF(unmkDmg)
+
+      :?p.f = "spawner" | p.fn = "Ice Wall"
+        /******************/
+        ?c.canUseWeav()
+          ?p.si = weavScr & p.fd < 7
+            c.useWeav()
+        // ****************/
+
+        ?p.fd <= 6 | p.aiI
+          ldtF("unmkDmg")
+        :?p.fd > 10
+          equipL triskelion
+          equipR @a.dUsword1@
         :
-          ldtF(unmkDef)
+          ldtF("unmkDef")
       :
         ?p.fn = "Giant Ice Elemental" // the miniboss
+          p.bs = buffs.string
+
+          ?c.canUseMask()
+            c.useMask()
+          :?c.canUseBard() & p.bs = "berserk" & keepMask
+            c.useBard(Kubikiribocho)
+          :
+            fight1v1()
+
+        :?p.fc = 1
+          fight1v1()
+
+        :
           p.fds = foe.debuffs.string
-          ?p.fds ! "damage"
-            ldtF(pDeb)
+          canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
+          canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
+          canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
+    
+          ?canDebI | canDebP | canDebF
+            ldtF("magic")
           :
-            ?p.fds ! "dot"
-              ldtF(fDeb)
+            ?p.fd <= 6
+              ldtF("unmkDmg")
             :
-              ?p.fhp > 500
-                ldtF(rangedDmg)
-              :
-                ldtF(meleeDmg)
-        :
-          ?p.f = ice_elemental | p.f = ice_elemental_elite
-            ?armor < 10
-              ldtF(meleeDef1)
-            :?p.fc > 1
-              ldtF(magicI)
-            :
-              ldtF(meleeDmg)
-          :
-            ?c.canUseHamm() & (
-            ^(smiteScr = 1 & p.si = 3) |
-            ^(smiteScr = 2 & p.si = 1))
-            ^& p.fd <= 5
-              c.useHamm()
+              ldtF("unmkDef")
 
 
-            :?p.fc = 1
-              ?p.fds ! "chill:6"
-                ldtF(iDeb)
-              :
-                ?p.fds ! "damage"
-                  ldtF(pDeb)
-                :
-                  ?p.fds ! "dot"
-                    ldtF(fDeb)
-                  :
-                    ldtF(meleeDmg)
-            :
-              p.fds = foe.debuffs.string
-              ?p.fds ! "chill:6"
-                ldtF(magicI)
-              :
-                ?p.fds ! "damage"
-                  ldtF(magicP)
-                :
-                  ?p.fds ! "dot"
-                    ldtF(meleeDef1)
-                  :
-                    ?p.fd <= 6
-                      ldtF(unmkDmg)
-                    :
-                      ldtF(unmkDef)
+  :?p.f = "yeti" & p.fs ! 4
+    p.ft = foe.time
 
+    ?c.canUseQstaff() &
+    ^p.fd > 15 & p.fs ! 1
+      c.useQstaff(a.myqstaff)
 
+    ?p.fs = 1 & p.ft = 1
+      loc.Pause()
 
+    :?c.canBash()
+      c.bash(Vantum Phoenix)
+    :?c.canDash()
+      c.dash(Vantum Phoenix, a.dshield)
 
-  : // foe = yeti
-
-
-    ?(p.fs = 133 | p.fs = 143)
-    ^ & foe.time/u.sec <= 3
-      blowing = true
+    :?p.fa > 0 & c.canUsePotDmg()
+      activate potion
     :
-      blowing = false
+      fight1v1()
 
-
-    ?(c.canBash() | c.canDash())
-    ^& (p.fhp < 500 | !blowing)
-    ^& p.fs ! 1
-      ?c.canBash()
-        c.bash(a.fsword1)
-      :?c.canDash()
-        c.dash(a.fsword1,a.dshield)
-
-
-    :?p.fs = 0 & p.fa > 0
-      ?c.canUseHamm()
-        c.useHamm()
-      :?p.fa > 0
-        equipL @a.althammer1@
-        equipR @a.althammer2@
-
-
-    :?p.fa <= 0 &
-    ^(c.canUseMask() | c.canUseBard())
-      ?c.canUseMask()
-        c.useMask()
-      :?c.canUseBard()
-        c.useBard()
-
-
-    :?p.fs = 1 | p.fs = 4
-      ldtF(default)
-    :
-      p.fds = foe.debuffs.string
-
-
-      ?c.canUseCind()
-        ?fds = "ignition:10" |
-        ^c.canKillCind(a.taliRDmg,500)
-          c.useCind()
-
-
-      ?!blowing
-        ?c.canUsePotDmg()
-          activate potion
-        :
-          ?c.canUseBard()
-            c.useBard()
-          :?p.fds ! "chill:6"
-            ldtF(iDeb)
-          :
-            ?p.fds ! "dot"
-              ldtF(fDeb)
-            :
-              ?c.canUseArm()
-                ?buffs.string ! "pick_pocket:3"
-                  equip arm
-                :
-                  c.useArm()
-              :
-                ldtF(meleeDmg)
-
-
-      :?p.fd > 5 // blowing
-        ?p.fds ! "chill:6"
-          ldtF(magicI)
-        :
-          ?p.fds ! "dot"
-            ldtF(rangedF)
-          :
-            ldtF(rangedDmg)
-
-
-?c.canAAC(lh)
-  c.useAAC(lh,a.altsword1)
-?c.canAAC(rh)
-  c.useAAC(rh,a.altshield)
 
 
 // *******************************************************
-//                      END OF FILE
+//                  END OF "7-Ridge.txt"                  
 // *******************************************************

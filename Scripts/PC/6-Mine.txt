@@ -2,59 +2,63 @@
 //                       6-Mine.txt                       
 // *******************************************************
 
-
 // Script for Boiling Mine
 
 
-//IMPORTS
 
+// IMPORTS
 
-var u = import MyScripts/Imports/utilities
+var u = import MyScripts/Imports/PC/Utilities
+var uimkr = import MyScripts/Imports/PC/UI_Maker
 var p
-p = import MyScripts/Imports/performanceV2
+p = import MyScripts/Imports/PC/PerformanceV2
+var a = import MyScripts/Imports/PC/MyArsenal
 var i
-i = import MyScripts/Imports/MyBetterInfo
-var c = import MyScripts/Imports/combat
-var a = import MyScripts/Imports/MyArsenal
-
+i = import MyScripts/Imports/PC/MyBetterInfo
+var c = import MyScripts/Imports/PC/Combat
 
 var som
-som = import MyScripts/Imports/Speed_O_Meter
-
+som = import MyScripts/Imports/PC/Speed_O_Meter
+var dpsm
+dpsm = import MyScripts/Imports/PC/DPS_Meter_MODIFIED
 
 
 
 // VARIABLES
 
-
 var runCount = 0
-var smiteScr = 1
 var keepMask = true
 
+var smiteScr = 1
+var weavScr = 4
 
+var canDebI
+var canDebP
+var canDebF
 
+var keepFTali = false
 
+?p.f = "boss"
+  keepFTali = true
 
+var fBowCount = 0
 
 ?p.ll
   keepMask = false
-
+  keepFTali = false
+  fBowCount = 0
 
   ?p.tt = 1
     runCount++
-
 
     ?p.ls > 5 & runCount >= 2 & smiteScr ! 3
       smiteScr++
 
 
 
+// FUNCTIONS
 
-// LOADOUTS:
-
-
-func ldtF(mode)
-
+func ldtF(mode) // loadouts
 
   ?mode = "default"
     equipL triskelion
@@ -77,11 +81,13 @@ func ldtF(mode)
     ?!keepMask
       equipR triskelion
 
+  :?mode = "extend"
+    equipL triskelion
+    equipR mask
 
   :?mode = "aidActive"
     equipL @a.ahHammer@
     equipR @a.ahShield@
-
 
   :?mode = "meleeDmg"
     equipL Void Slayer
@@ -96,19 +102,6 @@ func ldtF(mode)
     ?!keepMask
       equipR @a.dUshield@
 
-
-
-
-  :?mode = "hammerDmg"
-    equipL @a.aehammer1@
-    ?!keepMask
-      equipR @a.aehammer2@
-  :?mode = "hammerDef"
-    equipL @a.aehammer1@
-    ?!keepMask
-      equipR @a.dUshield@
-
-
   :?mode = "rangedDmg"
     equip @a.aebow@
   :?mode = "rangedP"
@@ -116,118 +109,187 @@ func ldtF(mode)
   :?mode = "rangedF"
     equip @a.fbow@
 
-
   :?mode = "magic"
     ?keepMask
-      ?p.fds ! "chill:6" &
-      ^p.f ! "immune_to_debuff_chill"
+      ?canDebI
         equipL @a.dIwand1@
-      :?p.fds ! "damage" &
-      ^p.f ! "immune_to_debuff_damage"
+      :?canDebP
         equipL @a.dPwand@
-      :?p.fds ! "dot" &
-      ^p.f ! "immune_to_debuff_dot"
+      :?canDebF
         equipL @a.dFwand@
-      :
-        equipL @a.dPwand@
     :
-      ?p.fds ! "damage" &
-      ^p.f ! "immune_to_debuff_damage"
+      //Left hand:
+      ?canDebP
         equipL @a.dPwand@
-      :?p.fds ! "dot" &
-      ^p.f ! "immune_to_debuff_dot"
-        equipL @a.dFwand@
-      :
+      :?canDebF
         equipL @a.dPwand@
-      equipR @a.dIwand1@
-
+      :?canDebI
+        equipL @a.dIwand2@
+      
+      //Right hand:
+      ?canDebI
+        equipR @a.dIwand1@
 
   :
     >`0,2,#red,ERROR: ldtF() recieved incorrect mode: @mode@
+
   return
 
+func fight1v1()
+  p.fds = foe.debuffs.string
+  p.php = hp
+  p.pmhp = maxhp
+
+  /* How to apply debuffs:
+  - apply all except the ones the foe is immune to.
+  Finish when:
+  - all possible debuffs have been applied. */
+  canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
+  canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
+  canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
+  
+  ?canDebI | canDebP | canDebF
+    ?keepMask
+      ?canDebI
+        equipL @a.dIsword@
+      :?canDebP
+        equipL @a.dPsword1@
+      :?canDebF
+        equipL @a.dFsword@
+    :
+      //Left hand:
+      ?canDebP
+        equipL @a.dPsword1@
+      :?canDebF
+        equipL @a.dFsword@
+      :?canDebI
+        equipL @a.dIwand1@
+
+      //Right hand:
+      ?canDebI
+        equipR @a.dIsword@
+
+  :?p.php ! p.pmhp
+    ?keepMask
+      equipL @a.dLsword@
+    :
+      equipL triskelion
+      equipR @a.dLsword@
+
+  :
+    ?keepMask
+      equipL Void Slayer
+    :
+      ldtF("meleeDmg")
+      /*p.bs = buffs.string
+      ?p.bs = "berserk"
+        c.doMoondial(Void Slayer, a.aesword, 2)
+      :
+        c.doMoondial(Void Slayer, a.aesword, 0)*/
+
+  return
 
 
 
 // PROCEDURE:
 
-
-var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
+var somui = som.speedOmeterUI(0, 1, i.colToHex("pink"), true, false)
 ?som.speedOmeterUpdate(false)
-  som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
-?somui
   somui.Recycle()
   somui = null
 
+  somui = som.speedOmeterUI(0, 1, i.colToHex("pink"), true, false)
+
+
+dpsm.DPSMeterEnabled = true
+var dpsPanel
+?dpsm.dpsMeterUpdate(2)
+  ?dpsPanel
+    dpsPanel.Recycle()
+    dpsPanel = null
+
+  dpsPanel = dpsm.uiDPSMeter(0, 4, "#yellow", 2)
+
+
+/*p.bs = buffs.string
+i.showBuffs(false, 2, 7, "#cyan", false)*/
 
 
 
-?p.ils = 3
+/* Mano izquierda:
+--- hacer AAC ---
+- cuando state = 3
+--- NO hacer AAC ---
+- Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
+?p.ils = 3 // & !(keepMask & p.il = "sword D +21")
   equipL wand 0*
   equipL @p.il@
-?p.irs = 3
+?p.irs = 3 // & p.ir ! "sword D +21"
   equipR @a.cshield1@
   equipR @p.ir@
 
-
-
-
-?p.lb
+/*?p.lb // AUTO BREWING:
   p.rs = res.stone
-
 
   ?p.rs >= 20
     ?p.ip ! "strength"
       brew stone
   :
-    loc.Leave()
-
+    loc.Leave() */
 
 ?keepMask
   equipR mask
 
-
 ?p.lb | p.ll
   equipL triskelion
   equipR @a.cshield1@
-:?c.canUseTali()
-  equipL triskelion
-  c.useTali("r")
 
+:?c.canUseAETali() & !keepFTali
+  ?keepMask
+    c.useAETali("l")
+  :
+    equipL triskelion
+    c.useAETali("r")
+
+:?c.canUseFTali() & keepFTali
+  ?keepMask
+    c.useFTali("l")
+  :
+    equipL triskelion
+    c.useFTali("r")
 
 :?c.canUsePot() & keepMask
   activate potion
 
-
 :?pickup.distance < 15
   ldtF("magnet")
-
-
 :
   p.fd = foe.distance
   p.aiE = ai.enabled
-
 
   ?c.canUseBladeDS(smiteScr)
     ?p.fd <= 33
       c.useBladeDS()
 
+  /****************************/
+  ?c.canUseWeav()
+    ?p.si = weavScr & p.fd < 15
+    ^& keepMask
+      c.useWeav()
+  // **************************/
 
   ?p.fd > 35
     p.pa = armor
-
 
     ?c.canUseQstaff() & p.aiE
     ^& p.ir ! "bardiche" & p.ir ! Kubikiribocho
     ^& p.ir ! "heavy hammer"
       c.useQstaff(a.myqstaff)
 
-
     :?14 <= p.pa & p.pa <= 29
       ldtF("default")
     :?p.pa < 14
       ldtF("armorRegen")
-
 
     :
       equipL triskelion
@@ -235,31 +297,39 @@ var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
   :
     p.fds = foe.debuffs.string
 
-
     ?p.f ! "bronze_guardian"
       ?p.fd > 15
         ?c.canUseQstaff() & p.aiE
         ^& p.ir ! "bardiche" &
         ^  p.ir ! Kubikiribocho &
-        ^  p.ir ! "heavy hammer"
+        ^  p.ir ! "heavy hammer" &
+        ^(p.f ! "explode" & p.fd > 17)
           c.useQstaff(a.myqstaff)
-
 
         :
           ldtF("engage")
-          ?keepMask & p.fd <= 17
-            equipR @a.aeshield@
 
+          var isAbtToDash
+          isAbtToDash = (p.fd <= 17)
+          ?keepMask & isAbtToDash
+            equipR @a.aeshield@
+          
+          canDebI = (p.fds ! "chill" &
+          ^f ! "immune_to_debuff_chill")
+          p.bs = buffs.string
+
+          ?!keepMask & canDebI & isAbtToDash &
+          ^i.getFoeTotalHP() > i.getBuffInfo("smite", false, 2) * a.smiteMult
+            equipR @a.aiShield@
 
       :?c.canBash()
         c.bash(Void Slayer)
       :?c.canDash()
         c.dash(Void Slayer,a.dshield)
 
-
-      :?p.f = "explode" // the miniboss - it should've already dashed
-        ldtF("escape") // so we should instantly escape from explosion with mindstone
-
+      :?p.f = "explode" // minecart miniboss
+        ?armor < 80 // we don't need to escape
+          ldtF("escape") // if we can tank the damage.
 
       :?c.canUseQstaff() & p.aiE
       ^& p.ir ! "bardiche"
@@ -267,60 +337,61 @@ var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
       ^& p.ir ! "heavy hammer"
         c.useQstaff(a.myqstaff)
 
-
       :
-        ?foe.count >= 5 & c.canUseHamm() &
+        ?c.canUseHamm() & keepMask
+        ^& p.fd < 15 &
         ^((smiteScr = 1 & p.si = 3) |
-        ^smiteScr = 3 & p.si = 2)
+        ^ smiteScr = 3 & p.si = 2    )
           c.useHamm()
+
+        :?p.fc = 1
+          fight1v1()
+
         :
-          ?p.fds = "chill:6"
-            ?p.fd < 7
-              ?armor > 15
-                ldtF("meleeAOE")
-              :
-                ?p.fa > 0
-                  ldtF("hammerDef")
-                :
-                  ldtF("meleeDef")
-          :
+          canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
+          canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
+          canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
+
+          ?canDebI | canDebP | canDebF
             ldtF("magic")
 
-
+          :?p.fd < 7
+            ?armor > 15
+              ldtF("meleeAOE")
+            :
+              ldtF("meleeDef")
 
 
     : // p.f = "bronze_guardian"
       p.fs = foe.state
       p.ft = foe.time
 
-
       ?p.fs = 4 // dying
         ldtF("magnet")
+
       :?p.fs ! 1 // boss appearing cinematic
-        ?c.canUseCind()
-          ?p.fds = "ignition:10" |
-          ^c.canKillCind(a.taliRDmg,500)
+        ?c.canUseCind() & keepMask
+          ?p.fds = "ignition:15" |
+          ^c.canKillCind(i.getFoeTotalHP(),
+          ^              i.getDebuffLvl("ignition",true),
+          ^              a.cindDmg, 500)
             c.useCind()
         
         ?c.canUsePotDmg() |
         ^c.canUsePotSpecial("strength",0)
           activate potion
-        :?c.canUseHamm()
+        :?c.canUseHamm() & keepMask
           c.useHamm()
-        :?c.canUseMask()
+        :?c.canUseMask() & keepMask
           c.useMask()
-
 
         :?p.fs = 32 & p.ft >= u.sec // boss's hammer attack
           ldtF("escape")
 
-
         :?p.fs = 33 & p.ft < 6*u.sec // boss's hammer's stuck
-
 
           ?p.ft > 5 & c.canUseQstaff()
             c.useQstaff(a.myqstaff)
-
 
           :?p.fd > 15
             equipL triskelion // get close fast to boss
@@ -331,59 +402,46 @@ var somui = som.showSpeedOmeterUI(1,6,i.colorToHex("pink"),false)
           :?c.canDash()
             dash(VoidSlayer,a.dshield)
 
-
           :
             ?c.canUseBard() & keepMask
               c.useBard(Kubikiribocho)
             :
-              ?p.fa > 0
-                ldtF("hammerDmg")
-
-
-              :
-                p.php = hp
-                p.pmhp = maxhp
-
-
-                ?keepMask
-                  ?p.fds ! "damage"
-                    equipL @a.dPsword1@
-                  :?p.fds ! "dot"
-                    equipL @a.dFsword@
-                  :?p.php ! p.pmhp
-                    equipL @a.dLsword@
-                  :
-                    equipL Void Slayer
-
-
-                :
-                  //Left hand:
-                  ?p.fds ! "dot"
-                    equipL @a.dFsword@
-                  :?p.php ! p.pmhp
-                    equipL @a.dLsword@
-                  :
-                    equipL @a.aesword@
-
-
-                  //Right hand:
-                  ?p.fds ! "damage"
-                    equipR @a.dPsword1@
-                  :
-                    equipR Void Slayer
-
+              fight1v1()
 
         :
-          ?keepMask
-            equipL @a.altbow@
+          /*>c-20,0,#red,fBowCount#=#@fBowCount@
+          ^\nitem.right#=#@p.ir@
+          ^\n^########^.state#=#@p.irs@
+          ^\n\nfoe.armor#=#@p.fa@
+          */
+
+          ?p.irs = 3
+            fBowCount++
+          ?fBowCount = 0
+            ldtF("rangedF")
+
           :
-            ?p.fds ! "damage"
-              ldtF("rangedP")
-            :
-              ?p.fds ! "dot"
-                ldtF("rangedF")
+            ?p.fa < 1
+              ?c.canUseMask() & !keepMask
+                c.useMask()
+              :?c.canUseHamm() & !keepMask & p.ip = "strength"
+                c.useHamm()
               :
-                ldtF("rangedDmg")
+                var pBowCount = fBowCount + 1
+                ?p.fds ! "damage" & pBowCount ! fBowCount
+                ^& p.ip = "strength"
+                  ldtF("rangedP")
+
+                :?keepMask
+                  equipL @a.altbow@
+                :
+                  ldtF("rangedDmg")
+
+            :?keepMask
+              equipL @a.altbow@
+            :
+              ldtF("rangedDmg")
+
 
 
 // *******************************************************

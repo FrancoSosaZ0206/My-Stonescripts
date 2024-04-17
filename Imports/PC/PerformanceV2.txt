@@ -8,18 +8,15 @@
   Performance library (version 2)
   Made by MetalEagle26 (Tom Crow)
 
-
 DESCRIPTION
   This library provides some custom
   variables to help improve the
   performance of your scripts
   and reduce lag!
 
-
 HOW TO IMPORT
   var p
   p = import PerformanceV2
-
 
 HOW TO USE
   ?p.bardDelay // example */

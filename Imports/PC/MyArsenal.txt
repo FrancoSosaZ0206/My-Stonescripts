@@ -38,8 +38,11 @@ Dothaneel = vigor sword D *max
 Void Slayer = aether sword D *max
 Vantum Phoenix = fire sword D *max
 Bifrost = ice sword D *max
+
 Speedy Hammer = stone hammer *max
-Kubikiribocho = bardiche *max (enchanted: crit) */
+Kubikiribocho = bardiche *max (enchanted: crit)
+
+theVwand = vigor wand D golden */
 
 
 //poison:
@@ -57,13 +60,12 @@ var vsword = "vigor sword D *max Spring24"
 var vshield = "vigor shield A *max"
 var ahShield = "vigor shield ah *max"
 var ahHammer = "vigor hammer ah *max"
-var vwand1 = "vigor wand D *max +10"
-var vwand2 = "vigor wand D *max +9"
+var vwand = "vigor wand D *max"
 
 //aether:
 var aesword = "aether sword D *max"
-var dUsword1 = "aether sword dU *max +15 -big"
-var dUSWORD2 = "big aether sword dU *max +15"
+var dUsword1 = "aether sword dU *max -big golden"
+var dUSWORD2 = "big aether sword dU *max golden"
 var aeshield = "aether shield -au *max"
 var auShield = "aether shield au *max"
 var aebow = "aether crossbow D *max"

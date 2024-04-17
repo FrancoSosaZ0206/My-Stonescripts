@@ -109,12 +109,10 @@ func showDebuffs(inFoe,x,y,col,isUI)
   ^|(!inFoe & ds)
     var arrDebuffs
 
-
     ?inFoe
       arrDebuffs = string.Split(fds,",", true)
     :
       arrDebuffs = string.Split(ds,",",true)
-
 
     ?arrDebuffs
       ?isUI
@@ -125,7 +123,8 @@ func showDebuffs(inFoe,x,y,col,isUI)
         for debuff : arrDebuffs
           var arrInfo = string.Split(debuff,":",true)
 
-          debuffsStr += arrInfo[0] + "(" + arrInfo[1] + ") = " + arrInfo[2] + "\n"
+          debuffsStr += arrInfo[0] + "(" + arrInfo[1] + ")#=#" +
+          ^arrInfo[2] + "#(" + arrInfo[3] + ")\n"
         
         debuffsTxtbox = mkTxtbox(
           ^1,1,null,null, // x,y,w,h
@@ -150,8 +149,8 @@ func showDebuffs(inFoe,x,y,col,isUI)
         for debuff : arrDebuffs
           var arrInfo = string.Split(debuff,":",true)
 
-
           >`@x@,@y+1 + i@,@col@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+          ^#(@arrInfo[3]@)
           i++
         
         return
@@ -164,12 +163,10 @@ func showBuffs(inFoe,x,y,col,isUI)
   ^|(!inFoe & bs)
     var arrBuffs
 
-
     ?inFoe
       arrBuffs = string.Split(fbs,",", true)
     :
       arrBuffs = string.Split(bs,",",true)
-
 
     ?arrBuffs
       ?isUI
@@ -180,7 +177,8 @@ func showBuffs(inFoe,x,y,col,isUI)
         for buff : arrBuffs
           var arrInfo = string.Split(buff,":",true)
 
-          buffsStr += arrInfo[0] + "(" + arrInfo[1] + ") = " + arrInfo[2] + "\n"
+          buffsStr += arrInfo[0] + "(" + arrInfo[1] + ")#=#" +
+          ^arrInfo[2] + "#(" + arrInfo[3] + ")\n"
         
         buffsTxtbox = mkTxtbox(
           ^1,1,null,null, // x,y,w,h
@@ -205,8 +203,8 @@ func showBuffs(inFoe,x,y,col,isUI)
         for buff : arrBuffs
           var arrInfo = string.Split(buff,":",true)
 
-
           >`@x@,@y+1 + i@,@col@,  @arrInfo[0]@ (@arrInfo[1]@) = @arrInfo[2]@
+          ^#(@arrInfo[3]@)
           i++
         
         return

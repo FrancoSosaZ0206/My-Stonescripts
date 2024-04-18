@@ -39,23 +39,23 @@ var l = loc
 
 
 :?l = "Rocky"
-  import Scripts/PC/1-Rocky
+  import Scripts/Mobile/1-Rocky
 :?l = "Deadwood"
-  import Scripts/PC/2-Deadwood
+  import Scripts/Mobile/2-Deadwood
 :?l = "Caves"
-  import Scripts/PC/3-Caves
+  import Scripts/Mobile/3-Caves
 :?l = "Mushroom"
-  import Scripts/PC/4-Mushroom
+  import Scripts/Mobile/4-Mushroom
 :?l = "Halls"
-  import Scripts/PC/5-Halls
-:?l = "Gate"
-  import Scripts/PC/Gate
+  import Scripts/Mobile/5-Halls
+:?l = "undead_crypt_intro"
+  import Scripts/Mobile/Gate
 :?l = "Mine"
-  import Scripts/PC/6-Mine
+  import Scripts/Mobile/6-Mine
 :?l = "Ridge"
-  import Scripts/PC/7-Ridge
+  import Scripts/Mobile/7-Ridge
 :?l = "Temple"
-  import Scripts/PC/8-Temple
+  import Scripts/Mobile/8-Temple
 
 
 

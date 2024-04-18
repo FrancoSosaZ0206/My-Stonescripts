@@ -33,8 +33,8 @@ var l = loc
 ^l = "Waterfall" |
 // ^l = "undead_crypt_intro" | // Haunted Gate
 ^l = "cross_deadwood_river" |
-^l = "cross_bridge") |
-// ^l = "ulaa_shop"
+^l = "cross_bridge")/* |
+^l = "ulaa_shop"*/
   loc.Leave()
 
 

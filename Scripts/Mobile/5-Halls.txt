@@ -1,7 +1,7 @@
-﻿var mind = import UI/MindstoneButton
+﻿/*var mind = import UI/MindstoneButton
 mind.SetXY(1,6)
 
-import Cosmetics/PetStonehead
+import Cosmetics/PetStonehead*/
 
 
 

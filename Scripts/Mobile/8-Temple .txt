@@ -9,13 +9,6 @@ import Cosmetics/PetStonehead*/
 
 // VARIABLES:
 
-//Units
-
-var sec = 30 // frames
-var scr = 69 // 1 screen = 69 units
-
-// VARIABLES:
-
 // Units
 
 var sec = 30

@@ -1719,7 +1719,7 @@ func doMoondial(weapon1, weapon2, mode)
 
 
     showStrCtr(6,30,
-    ^"Harvest boulders?","#yellow",
+    ^"Harvest trees?","#yellow",
     ^false)
 
   :

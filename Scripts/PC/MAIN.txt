@@ -5,7 +5,7 @@
 
 
 /* MAIN SCRIPT, PC VERSION
-  Made by Franco N. Sosa (Tom Crow)
+  Made by MetalEagle26 (Tom Crow)
 
 HOW TO IMPORT
   Just drop this code into your mindstone, or

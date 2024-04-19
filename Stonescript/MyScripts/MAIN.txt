@@ -62,8 +62,7 @@ var l = loc // We don't need to import the whole Performance lib to get this.
 :
   // IMPORTS (more)
 
-  var i
-  i = import MyScripts/Lib/MyBetterInfo
+  var i = import MyScripts/Lib/MyBetterInfo
   var som
   som = import MyScripts/Lib/Speed_O_Meter
   var dpsm
@@ -85,12 +84,12 @@ var l = loc // We don't need to import the whole Performance lib to get this.
   dpsm.refreshRate = 5
 
   var dpsPanel
-  ?dpsm.Update(/*2*/)
+  ?dpsm.Update()
     ?dpsPanel
       dpsPanel.Recycle()
       dpsPanel = null
 
-    dpsPanel = dpsm.mkUI(0, 3, "#rainbow", 2)
+    dpsPanel = dpsm.mkUI(0, 3, "#yellow", 2)
 
 
   ?l = "Rocky"

@@ -27,14 +27,9 @@ HOW TO USE
 
 
 
-// IMPORTS
-
-var u = import MyScripts/Lib/Utilities
-
-
-
 // VARIABLES - definitions
 
+var sec = 30 // frames
 
 //Location
 var l = loc
@@ -112,23 +107,23 @@ var canAct
 canAct = item.CanActivate()
 
 // Cooldowns
-var bladeCd = 80 * u.sec
-var maskCd = 48 * u.sec
-var armCd = 39 * u.sec
-var fTaliCd = 5 * u.sec
-var aeTaliCd = 5 * u.sec
-var cindCd = 90 * u.sec
-var weavCd = 90 * u.sec
+var bladeCd = 80 * sec
+var maskCd = 48 * sec
+var armCd = 39 * sec
+var fTaliCd = 5 * sec
+var aeTaliCd = 5 * sec
+var cindCd = 90 * sec
+var weavCd = 90 * sec
 
-var bardCd = 30 * u.sec
-var hammCd = 22 * u.sec
-// var mindCd = 12 * u.sec // currently not in use
-var qstaffCd = 5 * u.sec + 15 // 5,5s
-var dashCd = u.sec + 15 // 1,5s
-var bashCd = 9 * u.sec
+var bardCd = 30 * sec
+var hammCd = 22 * sec
+// var mindCd = 12 * sec // currently not in use
+var qstaffCd = 5 * sec + 15 // 5,5s
+var dashCd = sec + 15 // 1,5s
+var bashCd = 9 * sec
 
 // Cast times
-var castTime = u.sec
+var castTime = sec
 
 // Delays
 var bladeDelay = 0

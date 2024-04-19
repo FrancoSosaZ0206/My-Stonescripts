@@ -147,32 +147,32 @@ func ToString(isSlim, isSpeedrun)
   ?isSlim
     ?isSpeedrun
       return
-      ^"☆ " + pbSpeedrun +     // ☆ = PB
-      ^" | ≈ " + avgSpeedrun + // ≈ = AVG
-      ^" | ▶ " + ttSpeedrun    // ▶ = CURR
+      ^"☆#" + pbSpeedrun +     // ☆ = PB
+      ^"#|#≈#" + avgSpeedrun + // ≈ = AVG
+      ^"#|#▶#" + ttSpeedrun    // ▶ = CURR
 
     :
       return
-      ^"☆ " + pb +         // ☆ = PB
-      ^" | ≈ " + avg +      // ≈ = AVG
-      ^" | ▶ " + ttDigital // ▶ = CURR
+      ^"☆#" + pb +         // ☆ = PB
+      ^"#|#≈#" + avg +      // ≈ = AVG
+      ^"#|#▶#" + ttDigital // ▶ = CURR
 
   :
     ?isSpeedrun
       return
-      ^"    SPEED-O-METER" + "\n" +
+      ^"####SPEED-O-METER" + "\n" +
       ^"·····················" + "\n" +
-      ^" PB  " + pbSpeedrun + " (" + p.lbt + "f)" + "\n" +
-      ^" AVG " + avgSpeedrun + " (" + p.lavg + "f)" + "\n" +
-      ^" CUR " + ttSpeedrun + " (" + p.tt + "f)"
+      ^"#PB##" + pbSpeedrun + "#(" + p.lbt + "f)" + "\n" +
+      ^"#AVG#" + avgSpeedrun + "#(" + p.lavg + "f)" + "\n" +
+      ^"#CUR#" + ttSpeedrun + "#(" + p.tt + "f)"
 
     :
       return
       ^"SPEED-O-METER" + "\n" +
       ^"·············" + "\n" +
-      ^"  PB  " + pb + "\n" +
-      ^"  AVG " + avg + "\n" +
-      ^"  CUR " + ttDigital
+      ^"##PB##" + pb + "\n" +
+      ^"##AVG#" + avg + "\n" +
+      ^"##CUR#" + ttDigital
 
 /* isAscii:
     true: prints the text in ascii format,
@@ -184,7 +184,7 @@ func Print(x, y, col, isSlim, isSpeedrun, isAscii)
   ?asciiPrint
 
     >`@x@,@y@,@col@,ascii
-@u.replaceInStr(ToString(isSlim, isSpeedrun), " ", "#")@
+@ToString(isSlim, isSpeedrun)@
 asciiend
 
   :
@@ -209,17 +209,13 @@ func mkUI(x, y, col, isSlim, isSpeedrun)
   :
     pnlAnchor = top_left
     pnlDock = top_left
-    style = -8
+    style = -2
 
   txt = uimkr.mkTxtbox(
-    ^1, 1, null, null, // x, y, w, h,
-    ^top_left, top_left, // pnlAnchor, dock,
-    ^u.replaceInStr(ToString(isSlim, isSpeedrun), " ", "#"), // txt
-    ^null, col) // align, col
-
-  /*>`1,10,#green,u.ReplaceInStr(ToString(@isSlim@, @isSpeedrun@), " ", "#")
-  ^\n = @u.replaceInStr(ToString(isSlim, isSpeedrun), " ", "#")@
-  loc.Pause()*/
+  ^1, 1, null, null, // x, y, w, h,
+  ^top_left, top_left, // pnlAnchor, dock,
+  ^ToString(isSlim, isSpeedrun), // txt
+  ^null, col) // align, col
 
   panel = uimkr.mkPanel(
     ^x, y, txt.w + 2, txt.h + 2, // x, y, w, h,

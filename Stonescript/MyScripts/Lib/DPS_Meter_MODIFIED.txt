@@ -93,10 +93,9 @@ v1.9:
   - Renamed variables:
     - Enabled -> ENABLED
     - Refresh -> refreshRate
-  - TESTING:
-    - "_old" variables deprecated. Now the original
-      ones are used.
-    - Update() - mode parameter and "_old" vars deprecated.
+  - "_old" variables deprecated. Now the original
+    ones are used.
+  - Update() - mode parameter and "_old" vars deprecated.
 
 */
 
@@ -112,8 +111,7 @@ p = import MyScripts/Lib/Performance
 // GLOBAL VARIABLES
 
 var ENABLED = false
-var refreshRate = 1 // meter's refresh rate (in frames)
-                    // 1 = always refresh
+var refreshRate = 1 // meter's refresh rate (in frames) (1 = always refresh)
 
 
 
@@ -136,12 +134,6 @@ var FPH = "N/A" // frames per hit >>> hit frequency | frames elapsed from each h
 var HPS = "N/A" // hits per second
 var DPF = "N/A" // damage per frame
 var DPS = "N/A" // damage per second
-
-/*var hits_old
-var HPS_old
-var dmg_old
-var DPF_old
-var DPS_old*/
 
 
 
@@ -199,34 +191,7 @@ func dpsUpdate()
 
 // PUBLIC FUNCTIONS
 
-/* mode (DEPRECATED):
-  1 = updates the full version of the Meter.
-
-  2 = updates a smaller version of it,
-      containing less information. */
-func Update(/*mode*/)
-  /*?ENABLED & p.f = "boss"
-    ?mode = 1
-      ?hits_old ! hits
-        hits_old = hits
-      
-      ?HPS_old ! HPS
-        HPS_old = HPS
-      
-      ?dmg_old ! dmg
-        dmg_old = dmg
-      
-      ?DPF_old ! DPF
-        DPF_old = DPF
-      
-      ?DPS_old ! DPS
-        DPS_old = DPS
-
-
-    :?mode = 2 & DPS_old ! DPS
-      DPS_old = DPS
-  */
-
+func Update()
   return p.f = "boss" & p.tt % refreshRate = 0
 
 /* Returns ui panel containing the DPS Meter.
@@ -243,25 +208,21 @@ func mkUI(x, y, colorStr, mode)
 
     panel = ui.AddPanel()
 
-    var dpsStr = "asdasdasdk"
+    var dpsStr
     ?mode = 1
-      dpsStr = "   DPS METER   "   + "\n" +
+      dpsStr = "###DPS#METER###"   + "\n" +
       ^        "···············"   + "\n" +
-      ^        " hits     " + hits + "\n" +
-      ^        " hits/s   " + HPS  + "\n" +
-      ^        " dmg /hit " + dmg  + "\n" +
-      ^        " dmg /f   " + DPF  + "\n" +
-      ^        " dmg /s   " + DPS  + "\n" +
+      ^        "#hits#####" + hits + "\n" +
+      ^        "#hits/s###" + HPS  + "\n" +
+      ^        "#dmg#/hit#" + dmg  + "\n" +
+      ^        "#dmg#/f###" + DPF  + "\n" +
+      ^        "#dmg#/s###" + DPS  + "\n" +
       ^        "···············"
 
     :?mode = 2
-      dpsStr = "DPS | " + DPS
+      dpsStr = "DPS#|#" + DPS
 
-    /*>c0,0,#red,u.replaceInStr(@dpsStr@," ", "#")
-    ^\n\n = @u.replaceInStr(dpsStr," ", "#")@
-    loc.Pause()*/
-
-    txt = ui.AddText(u.replaceInStr(dpsStr," ", "#"))
+    txt = ui.AddText(dpsStr)
     panel.Add(txt)
     
     ?mode = 1
@@ -270,7 +231,7 @@ func mkUI(x, y, colorStr, mode)
       txt.anchor = top_left
       txt.dock = top_left
 
-      panel.style = 3
+      panel.style = -3
 
     :?mode = 2
       panel.anchor = top_center
@@ -278,7 +239,7 @@ func mkUI(x, y, colorStr, mode)
       txt.anchor = top_left
       txt.dock = top_left
 
-      panel.style = -8
+      panel.style = -1
       
     
     panel.color = colorStr

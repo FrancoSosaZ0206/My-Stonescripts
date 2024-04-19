@@ -54,14 +54,6 @@ func getLargestStr(arrStr)
   :
     return null
 
-func replaceInStr(str, charOld, charNew)
-  for i = 0 .. str.Count() - 1
-    ?str[i] = charOld
-      str[i] = charNew
-
-  return str
-
-
 func myFormatDigital(frames)
   ?frames <= 0
     return "00:00"

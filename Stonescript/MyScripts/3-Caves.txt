@@ -8,19 +8,14 @@
 
 // IMPORTS
 
-var u = import MyScripts/Imports/PC/Utilities
-var uimkr = import MyScripts/Imports/PC/UI_Maker
+var u = import MyScripts/Lib/Utilities
+var uimkr = import MyScripts/Lib/UI_Maker
 var p
-p = import MyScripts/Imports/PC/PerformanceV2
-var a = import MyScripts/Imports/PC/MyArsenal
+p = import MyScripts/Lib/Performance
+var a = import MyScripts/Lib/MyArsenal
 var i
-i = import MyScripts/Imports/PC/MyBetterInfo
-var c = import MyScripts/Imports/PC/Combat
-
-var som
-som = import MyScripts/Imports/PC/Speed_O_Meter
-var dpsm
-dpsm = import MyScripts/Imports/PC/DPS_Meter_MODIFIED
+i = import MyScripts/Lib/MyBetterInfo
+var c = import MyScripts/Lib/Combat
 
 
 
@@ -161,25 +156,6 @@ func ldtF(mode) // loadouts
 
 
 // PROCEDURE:
-
-var somui = som.speedOmeterUI(0, 1, i.colToHex("pink"), true, false)
-?som.speedOmeterUpdate(false)
-  somui.Recycle()
-  somui = null
-
-  somui = som.speedOmeterUI(0, 1, i.colToHex("pink"), true, false)
-
-
-dpsm.DPSMeterEnabled = true
-var dpsPanel
-?dpsm.dpsMeterUpdate(2)
-  ?dpsPanel
-    dpsPanel.Recycle()
-    dpsPanel = null
-
-  dpsPanel = dpsm.uiDPSMeter(0, 4, "#yellow", 2)
-
-
 
 /* Mano izquierda:
 --- hacer AAC ---

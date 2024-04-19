@@ -353,7 +353,7 @@ var dpsPanel
       ?p.fs = 100 & !pausedOnce
         // 100 = entering phase2
         pausedOnce = true
-        loc.Pause()
+        ui.OpenInv()
 
       :?p.fs ! 4
         ?c.canUsePot()

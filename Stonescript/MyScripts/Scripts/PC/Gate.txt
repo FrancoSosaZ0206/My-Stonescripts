@@ -1,7 +1,0 @@
-﻿import Cosmetics/PetStonehead
-
-equipL triskelion
-equipR mask
-
-var freeChest = import UI/FreeChestTracker
-freeChest.Main()

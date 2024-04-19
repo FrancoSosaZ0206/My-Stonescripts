@@ -1,0 +1,116 @@
+﻿// *******************************************************
+//                        MAIN.txt                        
+// *******************************************************
+
+
+
+/* MAIN SCRIPT, PC VERSION
+  Made by MetalEagle26 (Tom Crow)
+
+HOW TO USE - Follow these steps:
+  1. Paste this code into your mindstone:
+    "
+    sys.SetFileUrl(
+    ^"https://raw.githubusercontent.com/
+    ^FrancoSosaZ0206/My-Stonescripts/main/
+    ^Stonescript/")
+
+    //import MAIN
+    "
+  2. IMPORTANT - Make sure you remove any indentation
+     (tabls or whitespace characters) before each line,
+     otherwise it won't work.
+  3. Enter any location and leave it.
+  4. Close the game and re-enter.
+  5. Uncomment the import line, and this time,
+     enter the desired location.
+  
+  Tip: if you get any errors, repeat steps 3
+       to 5 in different orders until it works.
+
+  ********************************************************
+  WARNINGS:
+
+  - Keep in mind that SetFileUrl() has many bugs.
+  - Changes made to the scripts imported here take time
+    to process. Patience is adviced.
+  ********************************************************
+
+Enjoy your multi-location script package :3 */
+
+
+
+// PROCEDURE - Special locations:
+
+?!loc.isQuest & (
+^p.l = "Waterfall" |
+^p.l = "cross_deadwood_river" |
+^p.l = "cross_bridge")
+  loc.Leave()
+
+:?p.l = "undead_crypt_intro" // Haunted Gate
+  import MyScripts/Gate
+
+:
+  // IMPORTS
+
+  var u = import MyScripts/Lib/Utilities
+  var uimkr = import MyScripts/Lib/UI_Maker
+  var p
+  p = import MyScripts/Lib/Performance
+  var a = import MyScripts/Lib/MyArsenal
+  var i
+  i = import MyScripts/Lib/MyBetterInfo
+  var c = import MyScripts/Lib/Combat
+
+  var som
+  som = import MyScripts/Lib/Speed_O_Meter
+  var dpsm
+  dpsm = import MyScripts/Lib/DPS_Meter_MODIFIED
+
+
+
+  // PROCEDURE - farming locations:
+
+  var somPanel = som.mkUI(0, 1, i.colToHex("orange"), true, false)
+  ?som.Update(false)
+    somPanel.Recycle()
+    somPanel = null
+
+    somPanel = som.mkUI(0, 1, i.colToHex("orange"), true, false)
+
+
+  dpsm.ENABLED = true
+  dpsm.refreshRate = 5
+
+  var dpsPanel
+  ?dpsm.Update(/*2*/)
+    ?dpsPanel
+      dpsPanel.Recycle()
+      dpsPanel = null
+
+    dpsPanel = dpsm.mkUI(0, 3, "#rainbow", 2)
+
+
+  ?p.l = "Rocky"
+    import MyScripts/1-Rocky
+  :?p.l = "Deadwood"
+    import MyScripts/2-Deadwood
+  :?p.l = "Caves"
+    import MyScripts/3-Caves
+  :?p.l = "Mushroom"
+    import MyScripts/4-Mushroom
+  :?p.l = "Halls"
+    import MyScripts/5-Halls
+  :?p.l = "Mine"
+    import MyScripts/6-Mine
+  :?p.l = "Ridge"
+    import MyScripts/7-Ridge
+  :?p.l = "Temple"
+    import MyScripts/8-Temple
+
+
+
+// *******************************************************
+//                    END OF "Main.txt"                   
+// *******************************************************

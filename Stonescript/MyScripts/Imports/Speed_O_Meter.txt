@@ -1,5 +1,5 @@
 ﻿// *******************************************************
-//                    Speed_O_Meter.txt                   
+//                START OF "Speed_O_Meter"                
 // *******************************************************
 
 
@@ -8,7 +8,7 @@
   Time Display Utility
   Made by MetalEagle26 (Tom Crow)
 
-  current version: 1.6
+  current version: 1.8
 
 
 DESCRIPTION
@@ -24,8 +24,8 @@ HOW TO IMPORT
     folder of preference
     and in your mindstone/ main script, do this:
 
-    var speedOmeter
-    speedOmeter = import UI/Speed_O_Meter
+    var som
+    som = import UI/Speed_O_Meter
 
   Mobile:
     Copy-Paste this into your mindstone/script.
@@ -33,13 +33,13 @@ HOW TO IMPORT
 
 HOW TO USE
   Example for PC:
-    ?speedOmeter.speedOmeterUpdate()
-      speedOmeter.showSpeedOmeter(x,y,col)
+    ?som.Update()
+      som.showSom(x,y,col)
 
   Example for Mobile (Recommended):
     var SOMPanel
-    ?speedOmeterUpdate()
-      SOMPanel = showSpeedOmeterUI(x,y,col)
+    ?Update()
+      SOMPanel = mkUI(x,y,col)
 
 ······················································
 
@@ -66,6 +66,22 @@ CHANGELOG:
       moved to Utilities.
     - fixed ttSpeedrun update frequency. Now
       it updates every frame as it should.
+  v1.7:
+    - renamed all functions and variables
+      containing "speedOmeter" to "som".
+    - asciiPrint now belongs to Print() as
+      one of two modes of a new parameter: isAscii.
+    - uiSom() -> mkUI().
+    - mkUI(): if isSlim, the panel will now be borderless.
+    - ToString(): '#' replaced back with ' '.
+      Now not all functions replace it again, but those who do
+      delegate that task to Utilities -> replaceInStr().
+  v1.8:
+    - Renamed functions: removed "Som" from them
+      to make them more concise and cohesive with
+      object-oriented programming and the "new" keyword.
+    - Added Import: Performance, to centralize dependencies
+      and upgrade performance.
 
 
 ······················································
@@ -83,105 +99,100 @@ Enjoy! */
 
 // IMPORTS:
 
-var u = import MyScripts/Imports/PC/Utilities
-var uimkr = import MyScripts/Imports/PC/UI_Maker
+var u = import MyScripts/Lib/Utilities
+var uimkr = import MyScripts/Lib/UI_Maker
+
+var p
+p = import MyScripts/Lib/Performance
 
 
 
 // VARIABLES:
 
-var sec = 30 // frames
-
-// Times in frames:
-var tt = totaltime
-var lbt
-var lavg
-
-tt = totaltime
-?tt <= 1
-  lbt = loc.bestTime
-  lavg = loc.averageTime
-
 // Times in seconds:
-var ttDigital = u.myFormatDigital(tt)
-var pb = u.myFormatDigital(lbt)
-var avg = u.myFormatDigital(lavg)
+var ttDigital = u.myFormatDigital(p.tt)
+var pb = u.myFormatDigital(p.lbt)
+var avg = u.myFormatDigital(p.lavg)
 
 // Times in seconds and frames:
-var ttSpeedrun = u.formatSpeedrun(tt)
-var pbSpeedrun = u.formatSpeedrun(lbt)
-var avgSpeedrun = u.formatSpeedrun(lavg)
+var ttSpeedrun = u.formatSpeedrun(p.tt)
+var pbSpeedrun = u.formatSpeedrun(p.lbt)
+var avgSpeedrun = u.formatSpeedrun(p.lavg)
 
 
 // Variable updating frequency:
-?tt % 30 = 0
-  ttDigital = u.myFormatDigital(tt)
-ttSpeedrun = u.formatSpeedrun(tt)
+?p.tt % 30 = 0
+  ttDigital = u.myFormatDigital(p.tt)
+ttSpeedrun = u.formatSpeedrun(p.tt)
 
-?loc.loop
-  pb = u.myFormatDigital(lbt)
-  avg = u.myFormatDigital(lavg)
+?p.ll
+  pb = u.myFormatDigital(p.lbt)
+  avg = u.myFormatDigital(p.lavg)
 
-  pbSpeedrun = u.formatSpeedrun(lbt)
-  avgSpeedrun = u.formatSpeedrun(lavg)
+  pbSpeedrun = u.formatSpeedrun(p.lbt)
+  avgSpeedrun = u.formatSpeedrun(p.lavg)
 
 
 
 // PUBLIC FUNCTIONS
 
-func speedOmeterUpdate(isSpeedrun)
+func Update(isSpeedrun)
   ?isSpeedrun
     return true
   :
-    return loc.begin | loc.loop | (tt % 30 = 0)
+    return loc.begin | loc.loop | (p.tt % 30 = 0)
 
-func speedOmeterToStr(isSlim, isSpeedrun)
+func ToString(isSlim, isSpeedrun)
 
   ?isSlim
     ?isSpeedrun
       return
-      ^"☆#" + pbSpeedrun +     // ☆ = PB
-      ^"#|#≈#" + avgSpeedrun + // ≈ = AVG
-      ^"#|#▶#" + ttSpeedrun    // ▶ = CURR
+      ^"☆ " + pbSpeedrun +     // ☆ = PB
+      ^" | ≈ " + avgSpeedrun + // ≈ = AVG
+      ^" | ▶ " + ttSpeedrun    // ▶ = CURR
 
     :
       return
-      ^"☆#" + pb +         // ☆ = PB
-      ^"#|#≈#" + avg +      // ≈ = AVG
-      ^"#|#▶#" + ttDigital // ▶ = CURR
+      ^"☆ " + pb +         // ☆ = PB
+      ^" | ≈ " + avg +      // ≈ = AVG
+      ^" | ▶ " + ttDigital // ▶ = CURR
 
   :
     ?isSpeedrun
       return
-      ^"####SPEED-O-METER" + "\n" +
+      ^"    SPEED-O-METER" + "\n" +
       ^"·····················" + "\n" +
-      ^"#PB##" + pbSpeedrun + "#(" + lbt + "f)" + "\n" +
-      ^"#AVG#" + avgSpeedrun + "#(" + lavg + "f)" + "\n" +
-      ^"#CUR#" + ttSpeedrun + "#(" + tt + "f)"
+      ^" PB  " + pbSpeedrun + " (" + p.lbt + "f)" + "\n" +
+      ^" AVG " + avgSpeedrun + " (" + p.lavg + "f)" + "\n" +
+      ^" CUR " + ttSpeedrun + " (" + p.tt + "f)"
 
     :
       return
       ^"SPEED-O-METER" + "\n" +
       ^"·············" + "\n" +
-      ^"##PB##" + pb + "\n" +
-      ^"##AVG#" + avg + "\n" +
-      ^"##CUR#" + ttDigital
+      ^"  PB  " + pb + "\n" +
+      ^"  AVG " + avg + "\n" +
+      ^"  CUR " + ttDigital
 
-func printSpeedOmeter(x, y, col, isSlim, isSpeedrun)
+/* isAscii:
+    true: prints the text in ascii format,
+          replacing the whitespace characters
+          with transparent characters.
+    false: prints normally. Whitespaces
+           will block the background. */
+func Print(x, y, col, isSlim, isSpeedrun, isAscii)
+  ?asciiPrint
 
-  >`@x@,@y@,@col@,@speedOmeterToStr(isSlim, isSpeedrun)@
-
-  return
-
-func asciiPrintSpeedOmeter(x, y, col, isSlim, isSpeedrun)
-
-  >`@x@,@y@,@col@,ascii
-@u.replaceInStr(speedOmeterToStr(isSlim, isSpeedrun), " ", "#")@
+    >`@x@,@y@,@col@,ascii
+@u.replaceInStr(ToString(isSlim, isSpeedrun), " ", "#")@
 asciiend
 
+  :
+    >`@x@,@y@,@col@,@ToString(isSlim, isSpeedrun)@
+
   return
 
-func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
+func mkUI(x, y, col, isSlim, isSpeedrun)
 
   var txt
   var panel
@@ -198,12 +209,12 @@ func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
   :
     pnlAnchor = top_left
     pnlDock = top_left
-    style = -2
+    style = 0
 
   txt = uimkr.mkTxtbox(
     ^1, 1, null, null, // x, y, w, h,
     ^top_left, top_left, // pnlAnchor, dock,
-    ^speedOmeterToStr(isSlim, isSpeedrun), // txt
+    ^u.replaceInStr(ToString(isSlim, isSpeedrun), " ", "#"), // txt
     ^null, col) // align, col
 
   panel = uimkr.mkPanel(
@@ -216,5 +227,5 @@ func speedOmeterUI(x, y, col, isSlim, isSpeedrun)
 
 
 // *******************************************************
-//               END OF "Speed_O_Meter.txt"               
+//                 END OF "Speed_O_Meter"                 
 // *******************************************************

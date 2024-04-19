@@ -1,5 +1,5 @@
 ﻿// *******************************************************
-//                 DPS_Meter_MODIFIED.txt                 
+//              START OF "DPS_Meter_MODIFIED"             
 // *******************************************************
 
 
@@ -7,7 +7,7 @@
   Made by: Pikarizard Charikachu xD
   Modified by: MetalEagle26 (Tom Crow)
   
-  Current version: v1.7
+  Current version: v1.9
 
 ··········································
 
@@ -73,28 +73,57 @@ v1.6:
     less information in a slim design if desired.
 v1.7:
   - minor bug fixes and improvements.
+v1.8:
+  - Renamed all functions and variables:
+    "DPSmeter" -> "dpsm".
+  - Added new variable: dpsmRefresh, which
+    is used to control the refresh rate of
+    the meter's UI panel.
+  - uiDPSMeter() -> mkDpsmUI().
+  - removed "dps_" from some variable names.
+  - dpsmUpdate(): now it doesn't depend on changes
+    of "_old" variables, though it still updates them.
+  - Added imports: Utilities, Performance for performance
+    and centralization of dependencies.
+  - Other minor changes.
+v1.9:
+  - Renamed functions and variables: removed "dpsm"
+    from them to make them more concise and cohesive with
+    object-oriented programming and the "new" keyword.
+  - Renamed variables:
+    - Enabled -> ENABLED
+    - Refresh -> refreshRate
+  - TESTING:
+    - "_old" variables deprecated. Now the original
+      ones are used.
+    - Update() - mode parameter and "_old" vars deprecated.
 
 */
 
 
-// PUBLIC VARIABLES
+// IMPORTS
 
-var DPSMeterEnabled = false
+var u = import MyScripts/Lib/Utilities
+var p
+p = import MyScripts/Lib/Performance
+
 
 
 // GLOBAL VARIABLES
 
-var dps_sec = 30  // 1 sec = 30 frames
+var ENABLED = false
+var refreshRate = 1 // meter's refresh rate (in frames)
+                    // 1 = always refresh
 
-var dps_tt        // total time, on in-game frames
+
+
+// PRIVATE VARIABLES
+
 var currhp = 0    // foe's current hitpoints (with armor)
 var nethp = 0     // foe's net maximum hitpoints (with armor)
-var dps_f         // foe
 
-dps_tt  = totaltime
-currhp = foe.hp + foe.armor
-nethp  = foe.maxhp + foe.maxarmor
-dps_f   = foe
+currhp  = foe.hp + foe.armor
+nethp   = foe.maxhp + foe.maxarmor
 
 var hits      = 0 // hit counter
 var dmg       = 0 // current damage dealt
@@ -108,108 +137,97 @@ var HPS = "N/A" // hits per second
 var DPF = "N/A" // damage per frame
 var DPS = "N/A" // damage per second
 
+/*var hits_old
+var HPS_old
+var dmg_old
+var DPF_old
+var DPS_old*/
+
 
 
 // PROCEDURE
 
 // Calculate only when desired:
-?DPSMeterEnabled
+?ENABLED & p.f = "boss" // only works when there's a boss
 
-  ?dps_f = "boss" // only works when there's a boss
+  ?0 < currhp & currhp < nethp // boss lost hp/armor, but isn't dead
 
-    ?0 < currhp & currhp < nethp // boss lost hp/armor, but isn't dead
+    ?auxhp > currhp // if current hp updates
+      hits += 1 // we count a hit
+      dmg       = auxhp - currhp // we get the damage dealt from the difference
+      totalDmg  = totalDmg + dmg // and we accumulate it in this variable
 
-      ?auxhp > currhp // if current hp updates
-        hits += 1 // we count a hit
-        dmg       = auxhp - currhp // we get the damage dealt from the difference
-        totalDmg  = totalDmg + dmg // and we accumulate it in this variable
-  
-    : // else, reset temporal variables
-      startTime = dps_tt
-      hits      = 0
-      dmg       = 0
-      totalDmg  = 0
+  : // else, reset temporal variables
+    startTime = p.tt
+    hits      = 0
+    dmg       = 0
+    totalDmg  = 0
 
 
-    FRM = dps_tt - startTime // total time minus the time the first hit was dealt
-    ?hits > 1
-      FPH = FRM      / (hits-1) // -1 is there to avoid stat flicking
-    :
-      FPH = "N/A"
-  
-    ?FPH ! "N/A"
-      HPS = dps_sec      / FPH
-    :
-      HPS = "N/A"
-      
-    ?FRM > 0
-      DPF = totalDmg / FRM // damage accumulated - no. frames elapsed
-    :
-      DPF = "N/A"
+  FRM = p.tt - startTime // total time minus the time the first hit was dealt
+  ?hits > 1
+    FPH = FRM      / (hits-1) // -1 is there to avoid stat flicking
+  :
+    FPH = "N/A"
 
-    ?DPF ! "N/A"
-      DPS = DPF  * dps_sec
-    :
-      DPS = "N/A"
+  ?FPH ! "N/A"
+    HPS = u.sec      / FPH
+  :
+    HPS = "N/A"
+    
+  ?FRM > 0
+    DPF = totalDmg / FRM // damage accumulated - no. frames elapsed
+  :
+    DPF = "N/A"
+
+  ?DPF ! "N/A"
+    DPS = DPF  * u.sec
+  :
+    DPS = "N/A"
 
 
 
 // PRIVATE FUNCTIONS (do not use/modify!)
 
 func dpsUpdate()
-  ?DPSMeterEnabled
+  ?ENABLED
     auxhp = currhp
 
   return
 
 
-var hits_old
-var HPS_old
-var dmg_old
-var DPF_old
-var DPS_old
-
-
 
 // PUBLIC FUNCTIONS
 
-/* mode:
+/* mode (DEPRECATED):
   1 = updates the full version of the Meter.
 
   2 = updates a smaller version of it,
       containing less information. */
-func dpsMeterUpdate(mode)
-  var result = false
-
-  ?DPSMeterEnabled
-    ?dps_f = "boss"
+func Update(/*mode*/)
+  /*?ENABLED & p.f = "boss"
+    ?mode = 1
+      ?hits_old ! hits
+        hits_old = hits
       
-      ?mode = 1
-        ?(hits_old ! hits | HPS_old ! HPS |
-        ^dmg_old ! dmg | DPF_old ! DPF |
-        ^DPS_old ! DPS)
-          ?hits_old ! hits
-            hits_old = hits
-          ?HPS_old ! HPS
-            HPS_old = HPS
-          ?dmg_old ! dmg
-            dmg_old = dmg
-          ?DPF_old ! DPF
-            DPF_old = DPF
-          ?DPS_old ! DPS
-            DPS_old = DPS
-
-          result = true
-
-
-      :?mode = 2 &
-      ^DPS_old ! DPS
+      ?HPS_old ! HPS
+        HPS_old = HPS
+      
+      ?dmg_old ! dmg
+        dmg_old = dmg
+      
+      ?DPF_old ! DPF
+        DPF_old = DPF
+      
+      ?DPS_old ! DPS
         DPS_old = DPS
 
-        result = true
 
-  return result
+    :?mode = 2 & DPS_old ! DPS
+      DPS_old = DPS
+  */
 
+  return p.f = "boss" & p.tt % refreshRate = 0
 
 /* Returns ui panel containing the DPS Meter.
 mode:
@@ -217,32 +235,29 @@ mode:
 
   2 = returns a smaller version of it,
       containing less information. */
-func uiDPSMeter(x,y,colorStr,mode)
+func mkUI(x, y, colorStr, mode)
   var panel
   var txt
   
-  ?DPSMeterEnabled & (mode = 1 | mode = 2)
+  ?ENABLED & (mode = 1 | mode = 2)
 
     panel = ui.AddPanel()
 
     var dpsStr
     ?mode = 1
-      dpsStr = "###DPS METER###"   + "\n" +
+      dpsStr = "   DPS METER   "   + "\n" +
       ^        "···············"   + "\n" +
-      ^        "#hits#####" + hits_old + "\n" +
-      ^        "#hits/s###" + HPS_old  + "\n" +
-      ^        "#dmg#/hit#" + dmg_old  + "\n" +
-      ^        "#dmg#/f###" + DPF_old  + "\n" +
-      ^        "#dmg#/s###" + DPS_old  + "\n" +
+      ^        " hits     " + hits + "\n" +
+      ^        " hits/s   " + HPS  + "\n" +
+      ^        " dmg /hit " + dmg  + "\n" +
+      ^        " dmg /f   " + DPF  + "\n" +
+      ^        " dmg /s   " + DPS  + "\n" +
       ^        "···············"
 
     :?mode = 2
-      dpsStr = "DPS#|#" + DPS_old
+      dpsStr = "DPS | " + DPS
 
-    txt = ui.AddText(dpsStr)
-
-
-    panel.style = 3
+    txt = ui.AddText(u.replaceInStr(dpsStr," ", "#"))
     panel.Add(txt)
     
     ?mode = 1
@@ -251,11 +266,15 @@ func uiDPSMeter(x,y,colorStr,mode)
       txt.anchor = top_left
       txt.dock = top_left
 
+      panel.style = 3
+
     :?mode = 2
       panel.anchor = top_center
       panel.dock = top_center
       txt.anchor = top_left
       txt.dock = top_left
+
+      panel.style = 0
       
     
     panel.color = colorStr
@@ -285,12 +304,12 @@ func uiDPSMeter(x,y,colorStr,mode)
 
 
   ?mode ! 1 & mode ! 2
-    >c0,0,#red,func uiDPSMeter() - incorrect mode: @mode@
+    >c0,0,#red,func mkUI() - incorrect mode: @mode@
 
   return panel
 
 
 
 // *******************************************************
-//             END OF "DPS_Meter_MODIFIED.txt"            
+//               END OF "DPS_Meter_MODIFIED"              
 // *******************************************************

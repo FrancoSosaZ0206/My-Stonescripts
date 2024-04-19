@@ -1,0 +1,49 @@
+﻿// *******************************************************
+//                     START OF "Gate"                    
+// *******************************************************
+
+
+
+// IMPORTS
+
+import Cosmetics/PetStonehead
+
+
+
+// FUNCTIONS (borrowed from Combat library)
+
+func canUseQstaff_OG()
+  var result = false
+
+  ?item.CanActivate()
+    ?item.GetCooldown("quarterstaff") <= 0
+      result = true
+    :?item.right = "quarterstaff" & item.right.state = 2
+      result = true
+
+  return result
+
+func useQstaff_OG(yourQstaff)
+  equip @yourQstaff@
+  activate R
+
+  return
+
+
+
+// PROCEDURE:
+
+?canUseQstaff_OG()
+  useQstaff_OG()
+:
+  equipL triskelion
+  equipR mask
+
+var freeChest = import UI/FreeChestTracker
+freeChest.Main()
+
+
+
+// *******************************************************
+//                       END OF "Gate"                    
+// *******************************************************

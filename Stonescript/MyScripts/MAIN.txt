@@ -1,10 +1,10 @@
 ﻿// *******************************************************
-//                        MAIN.txt                        
+//                     START OF "MAIN"                    
 // *******************************************************
 
 
 
-/* MAIN SCRIPT, PC VERSION
+/* MAIN SCRIPT - FILE INFO
   Made by MetalEagle26 (Tom Crow)
 
 HOW TO USE - Follow these steps:
@@ -15,7 +15,7 @@ HOW TO USE - Follow these steps:
     ^FrancoSosaZ0206/My-Stonescripts/main/
     ^Stonescript/")
 
-    //import MAIN
+    //import MyScripts/MAIN
     "
   2. IMPORTANT - Make sure you remove any indentation
      (tabls or whitespace characters) before each line,
@@ -28,13 +28,15 @@ HOW TO USE - Follow these steps:
   Tip: if you get any errors, repeat steps 3
        to 5 in different orders until it works.
 
-  ********************************************************
-  WARNINGS:
+........................................................
 
-  - Keep in mind that SetFileUrl() has many bugs.
-  - Changes made to the scripts imported here take time
-    to process. Patience is adviced.
-  ********************************************************
+WARNINGS:
+
+- Keep in mind that SetFileUrl() has many bugs.
+- Changes made to the scripts imported here take time
+  to process. Patience is adviced.
+
+........................................................
 
 Enjoy your multi-location script package :3 */
 
@@ -112,5 +114,5 @@ Enjoy your multi-location script package :3 */
 
 
 // *******************************************************
-//                    END OF "Main.txt"                   
+//                      END OF "Main"                     
 // *******************************************************

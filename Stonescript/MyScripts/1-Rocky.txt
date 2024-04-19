@@ -16,7 +16,7 @@ var a = import MyScripts/Lib/MyArsenal
 var i = import MyScripts/Lib/MyBetterInfo
 var c = import MyScripts/Lib/Combat
 
-/***************************************************************/
+/***************************************************************
 
 var som
 som = import MyScripts/Lib/Speed_O_Meter

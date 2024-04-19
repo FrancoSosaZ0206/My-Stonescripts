@@ -8,7 +8,7 @@
   Time Display Utility
   Made by MetalEagle26 (Tom Crow)
 
-  current version: 1.8
+  current version: 1.9
 
 
 DESCRIPTION
@@ -82,6 +82,8 @@ CHANGELOG:
       object-oriented programming and the "new" keyword.
     - Added Import: Performance, to centralize dependencies
       and upgrade performance.
+  v1.9:
+    - Variable updates are now done in function Update().
 
 
 ······················································
@@ -109,7 +111,17 @@ p = import MyScripts/Lib/Performance
 
 // VARIABLES:
 
-// Times in seconds:
+// Times in seconds
+var ttDigital = u.myFormatDigital(p.tt)
+var pb = u.myFormatDigital(p.lbt)
+var avg = u.myFormatDigital(p.lavg)
+
+// Times in seconds and frames
+var ttSpeedrun = u.formatSpeedrun(p.tt)
+var pbSpeedrun = u.formatSpeedrun(p.lbt)
+var avgSpeedrun = u.formatSpeedrun(p.lavg)
+
+/*// Times in seconds:
 var ttDigital = u.myFormatDigital(p.tt)
 var pb = u.myFormatDigital(p.lbt)
 var avg = u.myFormatDigital(p.lavg)
@@ -121,7 +133,7 @@ var avgSpeedrun = u.formatSpeedrun(p.lavg)
 
 
 // Variable updating frequency:
-?p.tt % 30 = 0
+?p.tt % u.sec = 0
   ttDigital = u.myFormatDigital(p.tt)
 ttSpeedrun = u.formatSpeedrun(p.tt)
 
@@ -130,17 +142,29 @@ ttSpeedrun = u.formatSpeedrun(p.tt)
   avg = u.myFormatDigital(p.lavg)
 
   pbSpeedrun = u.formatSpeedrun(p.lbt)
-  avgSpeedrun = u.formatSpeedrun(p.lavg)
-
+  avgSpeedrun = u.formatSpeedrun(p.lavg) */
 
 
 // PUBLIC FUNCTIONS
 
 func Update(isSpeedrun)
+  // Variable updating frequency:
+  ?p.tt % u.sec = 0
+    ttDigital = u.myFormatDigital(p.tt)
+  ttSpeedrun = u.formatSpeedrun(p.tt)
+
+  ?p.ll
+    pb = u.myFormatDigital(p.lbt)
+    avg = u.myFormatDigital(p.lavg)
+
+    pbSpeedrun = u.formatSpeedrun(p.lbt)
+    avgSpeedrun = u.formatSpeedrun(p.lavg)
+
+
   ?isSpeedrun
     return true
   :
-    return loc.begin | loc.loop | (p.tt % 30 = 0)
+    return p.lb | p.ll | (p.tt % u.sec = 0)
 
 func ToString(isSlim, isSpeedrun)
 

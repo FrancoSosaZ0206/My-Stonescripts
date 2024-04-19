@@ -20,7 +20,7 @@ DESCRIPTION
 
 HOW TO IMPORT
   var p
-  p = import PerformanceV2
+  p = import Performance
 
 HOW TO USE
   ?p.bardDelay // example */

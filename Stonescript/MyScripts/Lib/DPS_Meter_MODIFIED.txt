@@ -7,7 +7,7 @@
   Made by: Pikarizard Charikachu xD
   Modified by: MetalEagle26 (Tom Crow)
   
-  Current version: v1.9
+  Current version: v2.0.0
 
 ··········································
 
@@ -24,25 +24,15 @@ damage bosses. Neat right?
 INSTRUCTIONS
 
 On PC:
-  var dpsMeter
-  dpsMeter = import DPS_Meter
+  var dpsMeter = new DPS_Meter
 
 On mobile:
-  Copy paste this into your mindstone
+  Copy-paste this script into your mindstone.
   
 To execute it:
-  dpsMeter.PrintDPSMeter(x,y,colorStr)
-
-    - x = x axis offset
-    - y = y axis offset
-    - colorStr = text color in string
-      format
+  dpsMeter.mkUI(x, y, colorStr, mode)
 
 ··········································
-
-Have fun!
-
-******************************************
 
 CHANGELOG
 
@@ -96,13 +86,18 @@ v1.9:
   - "_old" variables deprecated. Now the original
     ones are used.
   - Update() - mode parameter and "_old" vars deprecated.
+v2.0.0:
+  - Removed function dpsUpdate().
+  - All variable updates and calculations are now
+    done in function Update().
 
-*/
+******************************************
+
+Have fun! */
 
 
 // IMPORTS
 
-var u = import MyScripts/Lib/Utilities
 var p
 p = import MyScripts/Lib/Performance
 
@@ -117,11 +112,9 @@ var refreshRate = 1 // meter's refresh rate (in frames) (1 = always refresh)
 
 // PRIVATE VARIABLES
 
+var sec = 30      // No need to import the whole Utilities script just for this variable.
 var currhp = 0    // foe's current hitpoints (with armor)
 var nethp = 0     // foe's net maximum hitpoints (with armor)
-
-currhp  = foe.hp + foe.armor
-nethp   = foe.maxhp + foe.maxarmor
 
 var hits      = 0 // hit counter
 var dmg       = 0 // current damage dealt
@@ -139,60 +132,57 @@ var DPS = "N/A" // damage per second
 
 // PROCEDURE
 
-// Calculate only when desired:
-?ENABLED & p.f = "boss" // only works when there's a boss
-
-  ?0 < currhp & currhp < nethp // boss lost hp/armor, but isn't dead
-
-    ?auxhp > currhp // if current hp updates
-      hits += 1 // we count a hit
-      dmg       = auxhp - currhp // we get the damage dealt from the difference
-      totalDmg  = totalDmg + dmg // and we accumulate it in this variable
-
-  : // else, reset temporal variables
-    startTime = p.tt
-    hits      = 0
-    dmg       = 0
-    totalDmg  = 0
-
-
-  FRM = p.tt - startTime // total time minus the time the first hit was dealt
-  ?hits > 1
-    FPH = FRM      / (hits-1) // -1 is there to avoid stat flicking
-  :
-    FPH = "N/A"
-
-  ?FPH ! "N/A"
-    HPS = u.sec      / FPH
-  :
-    HPS = "N/A"
-    
-  ?FRM > 0
-    DPF = totalDmg / FRM // damage accumulated - no. frames elapsed
-  :
-    DPF = "N/A"
-
-  ?DPF ! "N/A"
-    DPS = DPF  * u.sec
-  :
-    DPS = "N/A"
-
-
-
-// PRIVATE FUNCTIONS (do not use/modify!)
-
-func dpsUpdate()
-  ?ENABLED
-    auxhp = currhp
-
-  return
-
-
 
 // PUBLIC FUNCTIONS
 
 func Update()
-  return p.f = "boss" & p.tt % refreshRate = 0
+  // Calculate only when desired:
+  ?ENABLED & p.f = "boss" // only works when there's a boss
+
+    currhp  = p.fhp + p.fa
+    nethp   = foe.maxhp + foe.maxarmor
+
+    ?0 < currhp & currhp < nethp // boss lost hp/armor, but isn't dead
+
+      ?auxhp > currhp // if current hp updates
+        hits += 1 // we count a hit
+        dmg       = auxhp - currhp // we get the damage dealt from the difference
+        totalDmg  = totalDmg + dmg // and we accumulate it in this variable
+
+    : // else, reset temporal variables
+      startTime = p.tt
+      hits      = 0
+      dmg       = 0
+      totalDmg  = 0
+
+
+    FRM = p.tt - startTime // total time minus the time the first hit was dealt
+    ?hits > 1
+      FPH = FRM      / (hits-1) // -1 is there to avoid stat flicking
+    :
+      FPH = "N/A"
+
+    ?FPH ! "N/A"
+      HPS = sec      / FPH
+    :
+      HPS = "N/A"
+      
+    ?FRM > 0
+      DPF = totalDmg / FRM // damage accumulated - no. frames elapsed
+    :
+      DPF = "N/A"
+
+    ?DPF ! "N/A"
+      DPS = DPF  * sec
+    :
+      DPS = "N/A"
+
+    auxhp = currhp
+
+
+    return p.tt % refreshRate = 0
+  :
+    return false
 
 /* Returns ui panel containing the DPS Meter.
 mode:
@@ -263,9 +253,6 @@ func mkUI(x, y, colorStr, mode)
 
     panel.w = txt.w + 2
     panel.h = txt.h + 2
-
-
-    dpsUpdate()
 
 
   ?mode ! 1 & mode ! 2

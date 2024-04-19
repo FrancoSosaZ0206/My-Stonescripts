@@ -22,7 +22,7 @@ farming script easier.
 // IMPORTS
 
 var p
-p = import MyScripts/Imports/PC/PerformanceV2
+p = import MyScripts/Lib/Performance
 
 
 
@@ -30,11 +30,11 @@ p = import MyScripts/Imports/PC/PerformanceV2
 
 // Status
 
-var pmhp = maxhp // PRIVATE - to save sys variable accesses (and reduce lag)
+p.pmhp = maxhp
 
-var midhp = pmhp / 2
-var lowhp = pmhp / 3
-var hihp = (4 * pmhp) / 5
+var midhp = p.pmhp / 2
+var lowhp = p.pmhp / 3
+var hihp = (4 * p.pmhp) / 5
 
 
 

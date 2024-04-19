@@ -15,7 +15,7 @@ This library provides a pack of useful
   tasks easier!
 
 HOW TO IMPORT
-  var u = import Utilities
+  var u = import Lib/Utilities
 
 HOW TO USE
   ?u.sec // example */

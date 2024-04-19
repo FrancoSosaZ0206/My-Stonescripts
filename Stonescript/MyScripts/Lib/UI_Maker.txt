@@ -24,7 +24,7 @@ usage of them.
 
 // IMPORTS
 
-var u = import MyScripts/Imports/PC/Utilities
+var u = import MyScripts/Lib/Utilities
 
 
 

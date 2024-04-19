@@ -243,7 +243,7 @@ func mkUI(x, y, colorStr, mode)
 
     panel = ui.AddPanel()
 
-    var dpsStr
+    var dpsStr = "asdasdasdk"
     ?mode = 1
       dpsStr = "   DPS METER   "   + "\n" +
       ^        "···············"   + "\n" +
@@ -256,6 +256,10 @@ func mkUI(x, y, colorStr, mode)
 
     :?mode = 2
       dpsStr = "DPS | " + DPS
+
+    /*>c0,0,#red,u.replaceInStr(@dpsStr@," ", "#")
+    ^\n\n = @u.replaceInStr(dpsStr," ", "#")@
+    loc.Pause()*/
 
     txt = ui.AddText(u.replaceInStr(dpsStr," ", "#"))
     panel.Add(txt)
@@ -274,7 +278,7 @@ func mkUI(x, y, colorStr, mode)
       txt.anchor = top_left
       txt.dock = top_left
 
-      panel.style = 0
+      panel.style = -8
       
     
     panel.color = colorStr

@@ -209,7 +209,7 @@ func mkUI(x, y, col, isSlim, isSpeedrun)
   :
     pnlAnchor = top_left
     pnlDock = top_left
-    style = 0
+    style = -8
 
   txt = uimkr.mkTxtbox(
     ^1, 1, null, null, // x, y, w, h,
@@ -217,12 +217,17 @@ func mkUI(x, y, col, isSlim, isSpeedrun)
     ^u.replaceInStr(ToString(isSlim, isSpeedrun), " ", "#"), // txt
     ^null, col) // align, col
 
+  /*>`1,10,#green,u.ReplaceInStr(ToString(@isSlim@, @isSpeedrun@), " ", "#")
+  ^\n = @u.replaceInStr(ToString(isSlim, isSpeedrun), " ", "#")@
+  loc.Pause()*/
+
   panel = uimkr.mkPanel(
     ^x, y, txt.w + 2, txt.h + 2, // x, y, w, h,
     ^pnlAnchor, pnlDock, // anchor, dock,
     ^col, style, txt) // col, style, child
 
   return panel
+
 
 
 

@@ -1,5 +1,5 @@
 ﻿// *******************************************************
-//                    PerformanceV2.txt                   
+//                 START OF "Performance"                 
 // *******************************************************
 
 
@@ -7,6 +7,10 @@
 /* FILE INFO
   Performance library (version 2)
   Made by MetalEagle26 (Tom Crow)
+
+  version 2.0--
+    - Where is the first one, though?
+    - Nobody knows...
 
 DESCRIPTION
   This library provides some custom
@@ -25,7 +29,7 @@ HOW TO USE
 
 // IMPORTS
 
-var u = import MyScripts/Imports/PC/Utilities
+var u = import MyScripts/Lib/Utilities
 
 
 
@@ -168,5 +172,5 @@ var bashDelay = 0
 
 
 // *******************************************************
-//               END OF "PerformanceV2.txt"               
+//                  END OF "Performance"                  
 // *******************************************************

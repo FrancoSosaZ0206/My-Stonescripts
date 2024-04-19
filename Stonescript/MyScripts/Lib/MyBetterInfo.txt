@@ -23,9 +23,9 @@ HOW TO USE
 
 // IMPORTS
 
-var uimkr = import MyScripts/Imports/PC/UI_Maker
+var uimkr = import MyScripts/Lib/UI_Maker
 var p
-p = import MyScripts/Imports/PC/PerformanceV2
+p = import MyScripts/Lib/Performance
 
 
 

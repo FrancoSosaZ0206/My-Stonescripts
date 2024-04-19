@@ -5,6 +5,20 @@
 // Script for Rocky Plateau
 
 
+
+// IMPORTS
+
+var u = import MyScripts/Lib/Utilities
+var uimkr = import MyScripts/Lib/UI_Maker
+var p
+p = import MyScripts/Lib/Performance
+var a = import MyScripts/Lib/MyArsenal
+var i
+i = import MyScripts/Lib/MyBetterInfo
+var c = import MyScripts/Lib/Combat
+
+
+
 // VARIABLES
 
 var dontDash

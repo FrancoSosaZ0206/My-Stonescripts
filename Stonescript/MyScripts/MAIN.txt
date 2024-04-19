@@ -42,29 +42,28 @@ Enjoy your multi-location script package :3 */
 
 
 
+// VARIABLES
+
+var l = loc // We don't need to import the whole Performance lib to get this.
+
+
+
 // PROCEDURE - Special locations:
 
 ?!loc.isQuest & (
-^p.l = "Waterfall" |
-^p.l = "cross_deadwood_river" |
-^p.l = "cross_bridge")
+^l = "Waterfall" |
+^l = "cross_deadwood_river" |
+^l = "cross_bridge")
   loc.Leave()
 
-:?p.l = "undead_crypt_intro" // Haunted Gate
+:?l = "undead_crypt_intro" // Haunted Gate
   import MyScripts/Gate
 
 :
-  // IMPORTS
+  // IMPORTS (more)
 
-  var u = import MyScripts/Lib/Utilities
-  var uimkr = import MyScripts/Lib/UI_Maker
-  var p
-  p = import MyScripts/Lib/Performance
-  var a = import MyScripts/Lib/MyArsenal
   var i
   i = import MyScripts/Lib/MyBetterInfo
-  var c = import MyScripts/Lib/Combat
-
   var som
   som = import MyScripts/Lib/Speed_O_Meter
   var dpsm
@@ -94,21 +93,21 @@ Enjoy your multi-location script package :3 */
     dpsPanel = dpsm.mkUI(0, 3, "#rainbow", 2)
 
 
-  ?p.l = "Rocky"
+  ?l = "Rocky"
     import MyScripts/1-Rocky
-  :?p.l = "Deadwood"
+  :?l = "Deadwood"
     import MyScripts/2-Deadwood
-  :?p.l = "Caves"
+  :?l = "Caves"
     import MyScripts/3-Caves
-  :?p.l = "Mushroom"
+  :?l = "Mushroom"
     import MyScripts/4-Mushroom
-  :?p.l = "Halls"
+  :?l = "Halls"
     import MyScripts/5-Halls
-  :?p.l = "Mine"
+  :?l = "Mine"
     import MyScripts/6-Mine
-  :?p.l = "Ridge"
+  :?l = "Ridge"
     import MyScripts/7-Ridge
-  :?p.l = "Temple"
+  :?l = "Temple"
     import MyScripts/8-Temple
 
 

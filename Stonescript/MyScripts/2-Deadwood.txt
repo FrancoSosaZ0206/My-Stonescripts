@@ -24,8 +24,13 @@ var c = import MyScripts/Lib/Combat
 var keepMask = true
 var smiteScr = 1
 
+var dontDash = false
+var wandCount = 0
+
 ?p.ll
   keepMask = false
+  dontDash = false
+  wandCount = 0
 
 var canDebI
 var canDebP
@@ -62,6 +67,10 @@ func ldtF(mode)
     equipL star
     ?!keepMask
       equipR triskelion
+
+  :?mode = "extend"
+    equipL triskelion
+    equipR mask
 
   :?mode = "harv"
     ?!keepMask
@@ -126,15 +135,15 @@ func ldtF(mode)
 
 func fight1v1()
   p.fds = foe.debuffs.string
+  p.php = hp
+  p.pmhp = maxhp
 
   /* How to apply debuffs:
   - apply all except the ones the foe is immune to.
   Finish when:
   - all possible debuffs have been applied. */
   canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
-  
   canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
-  
   canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
   
   ?canDebI | canDebP | canDebF
@@ -157,7 +166,17 @@ func fight1v1()
       //Right hand:
       ?canDebI
         equipR @a.dIsword@
+
+  
+  :?p.php ! p.pmhp
+    ?keepMask
+      equipL @a.dLsword@
+    :
+      equipL moon
+      equipR @a.dLsword@
+
   :
+    //equip arm
     ?keepMask
       equipL Vantum Phoenix
     :
@@ -233,11 +252,16 @@ var dontShowAgain = false
 
 
 
-?p.ils = 3
+/* Mano izquierda:
+--- hacer AAC ---
+- cuando state = 3
+--- NO hacer AAC ---
+- Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
+?p.ils = 3 & !(keepMask & p.il = "sword D +21")
   equipL wand 0*
   equipL @p.il@
-?p.irs = 3
-  equipR @a.cshield1@
+?p.irs = 3 & p.ir ! "sword D +21"
+  equipR @a.cshield2@
   equipR @p.ir@
 
 
@@ -295,20 +319,20 @@ var dontShowAgain = false
   p.fd = foe.distance
   p.aiE = ai.enabled
 
-  ?c.canUseQstaff()
-    ?p.aiE & p.ir ! "hatchet"
-    ^& p.ir ! "heavy hammer"
-    ^& p.ir ! "bardiche"
-    ^& p.ir ! Kubikiribocho
-    ^& ((!c.canBash() & !c.canDash())
-    ^| (p.fd < 11 | p.fd > 15))
-      c.useQstaff(a.myqstaff)
-
   ?c.canUseBladeDS(smiteScr)
     c.useBladeDS()
 
-  ?(p.f ! "tree_boss" & p.f ! "poena" & p.fd > 22)
-  ^|(p.fd > 15)
+  ?c.canUseQstaff() &
+  ^p.aiE & p.ir ! "hatchet"
+  ^& p.ir ! "heavy hammer"
+  ^& p.ir ! "bardiche"
+  ^& p.ir ! Kubikiribocho
+  ^& ((!c.canBash() & !c.canDash())
+  ^| (p.fd < 11 | p.fd > 15))
+    c.useQstaff(a.myqstaff)
+
+  :?((p.f = "tree_boss" | p.f = "poena") & p.fd > 22)
+  ^|(p.f ! "tree_boss" & p.f ! "poena" & p.fd > 15)
     ?hp ! maxhp
       ldtF("aidPassive")
     :
@@ -318,17 +342,16 @@ var dontShowAgain = false
       :?p.pa < 14
         ldtF("armorRegen")
       :
-        equipL triskelion
-        equipR mask
+        ldtF("extend")
 
   :
-    ?c.canBash()
+    ?c.canBash() & !dontDash
       c.bash(a.dLsword)
-    :?c.canDash()
-      c.dash(a.dLsword,a.dshield)
+    :?c.canDash() & !dontDash
+      c.dash(a.dLsword, a.dshield)
 
     :
-      p.fc = foe.count
+      p.fc = foe.GetCount(10)
 
       ?p.f = "wasp" | p.f = "wasp_nest"
         ?c.canUseWeav()
@@ -343,28 +366,68 @@ var dontShowAgain = false
         :
           ldtF("unmkDmg")
 
-
-      : // ?foe = "tree_boss" | foe = "poena"
+      :
         ?p.ls > 5 & c.canUsePotDmg()
           activate potion
 
-        :
-          ?p.f = "phase1" // = "Xyloalgia"
-            ?c.canUseMask()
-              c.useMask()
+        :?p.f = "phase1" // Xyloalgia
+        ^& foe.state ! 4
+
+          var bossHp = 72
+          ?!keepMask
+            bossHp = 144
+
+          ?foe.hp > bossHp
+            fight1v1()
+          :
+            dontDash = true
+            ?c.canUseMind()
+              ldtF("escape")
+
             :
+              ?p.irs = 3
+                wandCount++
+
+              ?wandCount < 1
+                equipL moon
+                equipR @a.dPwand@
+              ?wandCount < 2
+                equipL moon
+                equipR @a.dFwand@
+              :?wandCount < 8
+                equipL moon
+                equipR @a.dIwand1@
+
+              :
+                dontDash = false
+                fight1v1()
+
+
+        : // Poena
+
+          p.bs = buffs.string
+
+          ?i.getBuffInfo("smite", false, 2) >= 25
+
+            ?c.canUseBard()
+              c.useBard(Kubikiribocho)
+            :?c.canUseMask()
+              c.useMask()
+            /*:?c.canUseHamm()
+              c.useHamm()*/
+            :
+              //equip arm
               fight1v1()
 
-          : // foe = "phase2" (poena)
+          :
+            p.fhp = foe.hp
 
             /* hide cinderwisp to avoid
             getting ignition debuff reflected */
             ?c.canHideFTali()
               c.useFTali("l")
-            :
-              p.fhp = foe.hp
-              p.bs = buffs.string
 
+            :
               ?c.canUseBard() & p.fhp <= a.bardRDmg
                 c.useBard(Kubikiribocho)
 

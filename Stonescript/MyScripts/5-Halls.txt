@@ -95,7 +95,7 @@ func fight1v1()
     ?keepMask
       equipL @a.dLsword@
     :
-      equipL triskelion
+      equipL moon
       equipR @a.dLsword@
 
   :

@@ -168,7 +168,7 @@ func fight1v1()
     ?keepMask
       equipL @a.dLsword@
     :
-      equipL triskelion
+      equipL moon
       equipR @a.dLsword@
 
   :
@@ -386,12 +386,6 @@ i.showBuffs(false, 2, 7, "#cyan", false)*/
               fight1v1()
 
         :
-          /*>c-20,0,#red,fBowCount#=#@fBowCount@
-          ^\nitem.right#=#@p.ir@
-          ^\n^########^.state#=#@p.irs@
-          ^\n\nfoe.armor#=#@p.fa@
-          */
-
           ?p.irs = 3
             fBowCount++
           ?fBowCount = 0

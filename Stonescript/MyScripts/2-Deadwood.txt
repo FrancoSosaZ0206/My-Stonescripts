@@ -200,7 +200,7 @@ var dontShowAgain = false
 
 
   i.showStrCtr(6,30,
-  ^"Harvest boulders?","#yellow",
+  ^"Harvest trees?","#yellow",
   ^false)
 
 :

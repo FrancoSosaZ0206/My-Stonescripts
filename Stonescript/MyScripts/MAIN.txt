@@ -81,7 +81,7 @@ var l = loc // We don't need to import the whole Performance lib to get this.
 
 
   dpsm.ENABLED = true
-  dpsm.refreshRate = 5
+  dpsm.refreshRate = 10
 
   var dpsPanel
   ?dpsm.Update()

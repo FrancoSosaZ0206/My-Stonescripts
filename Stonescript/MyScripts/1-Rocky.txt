@@ -16,6 +16,33 @@ var a = import MyScripts/Lib/MyArsenal
 var i = import MyScripts/Lib/MyBetterInfo
 var c = import MyScripts/Lib/Combat
 
+/***************************************************************/
+
+var som
+som = import MyScripts/Lib/Speed_O_Meter
+var dpsm
+dpsm = import MyScripts/Lib/DPS_Meter_MODIFIED
+
+var somPanel = som.mkUI(0, 1, i.colToHex("orange"), true, false)
+?som.Update(false)
+  somPanel.Recycle()
+  somPanel = null
+
+  somPanel = som.mkUI(0, 1, i.colToHex("orange"), true, false)
+
+
+dpsm.ENABLED = true
+dpsm.refreshRate = 10
+
+var dpsPanel
+?dpsm.Update()
+  ?dpsPanel
+    dpsPanel.Recycle()
+    dpsPanel = null
+
+  dpsPanel = dpsm.mkUI(0, 3, "#yellow", 2)
+
+/***************************************************************/
 
 
 // VARIABLES

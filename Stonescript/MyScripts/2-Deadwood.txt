@@ -338,8 +338,10 @@ var dontShowAgain = false
         ?p.fc >= 5 & !c.canUseBlade()
         ^& c.canUseHamm()
           c.useHamm()
-        :
+        :?p.fc = 1
           fight1v1()
+        :
+          ldtF("unmkDmg")
 
 
       : // ?foe = "tree_boss" | foe = "poena"

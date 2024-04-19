@@ -18,21 +18,20 @@ var c = import MyScripts/Lib/Combat
 
 /***************************************************************
 
-var som
-som = import MyScripts/Lib/Speed_O_Meter
-var dpsm
-dpsm = import MyScripts/Lib/DPS_Meter_MODIFIED
+var i = new MyScripts/Lib/MyBetterInfo
+var som = new MyScripts/Lib/Speed_O_Meter
+var dpsm = new MyScripts/Lib/DPS_Meter_MODIFIED
 
-var somPanel = som.mkUI(0, 1, i.colToHex("orange"), true, false)
+var somPanel = som.mkUI(0, 1, i.colToHex("gold"), true, false)
 ?som.Update(false)
   somPanel.Recycle()
   somPanel = null
 
-  somPanel = som.mkUI(0, 1, i.colToHex("orange"), true, false)
+  somPanel = som.mkUI(0, 1, i.colToHex("gold"), true, false)
 
 
 dpsm.ENABLED = true
-dpsm.refreshRate = 10
+dpsm.refreshRate = 30
 
 var dpsPanel
 ?dpsm.Update()

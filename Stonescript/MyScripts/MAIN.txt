@@ -71,16 +71,16 @@ var l = loc // We don't need to import the whole Performance lib to get this.
 
   // PROCEDURE - farming locations:
 
-  var somPanel = som.mkUI(0, 1, i.colToHex("gold"), true, false)
+  var somPanel = som.mkUI(0, 1, i.colToHex("green"), true, false)
   ?som.Update(false)
     somPanel.Recycle()
     somPanel = null
 
-    somPanel = som.mkUI(0, 1, i.colToHex("gold"), true, false)
+    somPanel = som.mkUI(0, 1, i.colToHex("green"), true, false)
 
 
   dpsm.ENABLED = true
-  //dpsm.refreshRate = 5
+  dpsm.refreshRate = 30
 
   var dpsPanel
   ?dpsm.Update()

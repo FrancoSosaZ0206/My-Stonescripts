@@ -354,7 +354,7 @@ func fight1v1()
       c.useQstaff(a.myqstaff)
 
     ?p.fs = 1 & p.ft = 1
-      loc.Pause()
+      ui.OpenInv()
 
     :?c.canBash()
       c.bash(Vantum Phoenix)

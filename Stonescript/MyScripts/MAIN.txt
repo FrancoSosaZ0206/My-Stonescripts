@@ -60,7 +60,7 @@ var l = loc // We don't need to import the whole Performance lib to get this.
   import MyScripts/Gate
 
 :
-  // IMPORTS (more)
+  /*// IMPORTS (more)
 
   var i = new MyScripts/Lib/MyBetterInfo
   var som = new MyScripts/Lib/Speed_O_Meter
@@ -88,7 +88,7 @@ var l = loc // We don't need to import the whole Performance lib to get this.
       dpsPanel.Recycle()
       dpsPanel = null
 
-    dpsPanel = dpsm.mkUI(0, 3, "#yellow", 2)
+    dpsPanel = dpsm.mkUI(0, 3, "#yellow", 2)*/
 
 
   ?l = "Rocky"

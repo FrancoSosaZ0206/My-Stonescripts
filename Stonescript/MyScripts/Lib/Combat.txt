@@ -12,7 +12,10 @@ functions to make the task of doing a
 farming script easier.
 
 - How to use:
-  var c = import Combat
+  var c = new Combat
+
+- Tip: If you want to use the variables here,
+       put c.Main() at the top of your script.
 
 - Use the functions that you need like this:
   ?c.useBlade() // example */
@@ -30,15 +33,22 @@ p = import MyScripts/Lib/Performance
 
 // Status
 
-p.pmhp = maxhp
-
-var midhp = p.pmhp / 2
-var lowhp = p.pmhp / 3
-var hihp = (4 * p.pmhp) / 5
+var midhp
+var lowhp
+var hihp
 
 
 
 // FUNCTIONS
+
+func Main()
+  p.pmhp = maxhp
+
+  midhp = p.pmhp / 2
+  lowhp = p.pmhp / 3
+  hihp = (4 * p.pmhp) / 5
+
+  return
 
 
 // Lost items

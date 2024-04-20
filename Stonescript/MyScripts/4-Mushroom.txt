@@ -8,20 +8,43 @@
 
 // IMPORTS
 
-var u = import MyScripts/Lib/Utilities
-var uimkr = import MyScripts/Lib/UI_Maker
+var u = new MyScripts/Lib/Utilities
+var uimkr = new MyScripts/Lib/UI_Maker
 var p
 p = import MyScripts/Lib/Performance
-var a = import MyScripts/Lib/MyArsenal
-var i
-i = import MyScripts/Lib/MyBetterInfo
-var c = import MyScripts/Lib/Combat
+var a = new MyScripts/Lib/MyArsenal
+var i = new MyScripts/Lib/MyBetterInfo
+var c = new MyScripts/Lib/Combat
+
+/***************************************************************/
+
+var som = new MyScripts/Lib/Speed_O_Meter
+var dpsm = new MyScripts/Lib/DPS_Meter_MODIFIED
+var bosTmr
+bosTmr = import MyScripts/Borrowed/Boss_Timer
+
+var somPanel = som.mkUI(0, 1, i.colToHex("red"), true, false)
+?som.Update(false)
+  somPanel.Recycle()
+  somPanel = null
+
+  somPanel = som.mkUI(0, 1, i.colToHex("red"), true, false)
 
 
-/* ****************************** */
-var bossTmr
-bossTmr = import MyScripts/Borrowed/Boss_Timer
-/* ****************************** */
+dpsm.ENABLED = true
+dpsm.refreshRate = 30
+
+var dpsPanel
+?dpsm.Update()
+  ?dpsPanel
+    dpsPanel.Recycle()
+    dpsPanel = null
+
+  dpsPanel = dpsm.mkUI(0, 3, "#yellow", 2)
+
+/***************************************************************/
+
+
 
 // VARIABLES
 

@@ -16,7 +16,7 @@ This library just has some variables
   info on their damage.
 
 HOW TO IMPORT
-  var a = import MyArsenal
+  var a = new MyArsenal
 
 HOW TO USE
   ?foe.debuffs.count = a.maxIgnitions // example

@@ -2,7 +2,7 @@
   Made by: Tomato Bulb
   Modified by: MetalEagle26 (Tom Crow) */
 
-var u = import MyScripts/Lib/Utilities
+var u = new MyScripts/Lib/Utilities
 var p
 p = import MyScripts/Lib/Performance
 var i = new MyScripts/Lib/MyBetterInfo

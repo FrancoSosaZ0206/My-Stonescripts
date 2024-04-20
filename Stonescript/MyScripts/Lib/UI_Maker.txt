@@ -15,7 +15,7 @@ what the functions do in order to make a good
 usage of them.
 
 - How to use:
-  var uimkr = import UI_Maker
+  var uimkr = new UI_Maker
 
 - Use the functions that you need like this:
   var btn = uimkr.mkBtn([...parameters...]) // example */
@@ -24,7 +24,7 @@ usage of them.
 
 // IMPORTS
 
-var u = import MyScripts/Lib/Utilities
+var u = new MyScripts/Lib/Utilities
 
 
 

@@ -101,8 +101,8 @@ Enjoy! */
 
 // IMPORTS:
 
-var u = import MyScripts/Lib/Utilities
-var uimkr = import MyScripts/Lib/UI_Maker
+var u = new MyScripts/Lib/Utilities
+var uimkr = new MyScripts/Lib/UI_Maker
 
 var p
 p = import MyScripts/Lib/Performance
@@ -120,29 +120,6 @@ var avg = u.myFormatDigital(p.lavg)
 var ttSpeedrun = u.formatSpeedrun(p.tt)
 var pbSpeedrun = u.formatSpeedrun(p.lbt)
 var avgSpeedrun = u.formatSpeedrun(p.lavg)
-
-/*// Times in seconds:
-var ttDigital = u.myFormatDigital(p.tt)
-var pb = u.myFormatDigital(p.lbt)
-var avg = u.myFormatDigital(p.lavg)
-
-// Times in seconds and frames:
-var ttSpeedrun = u.formatSpeedrun(p.tt)
-var pbSpeedrun = u.formatSpeedrun(p.lbt)
-var avgSpeedrun = u.formatSpeedrun(p.lavg)
-
-
-// Variable updating frequency:
-?p.tt % u.sec = 0
-  ttDigital = u.myFormatDigital(p.tt)
-ttSpeedrun = u.formatSpeedrun(p.tt)
-
-?p.ll
-  pb = u.myFormatDigital(p.lbt)
-  avg = u.myFormatDigital(p.lavg)
-
-  pbSpeedrun = u.formatSpeedrun(p.lbt)
-  avgSpeedrun = u.formatSpeedrun(p.lavg) */
 
 
 // PUBLIC FUNCTIONS

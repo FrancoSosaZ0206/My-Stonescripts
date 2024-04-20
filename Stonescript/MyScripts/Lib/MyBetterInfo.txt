@@ -14,7 +14,7 @@ DESCRIPTION
   that is easy to use and to comprehend.
 
 HOW TO IMPORT
-  var info = import MyBetterInfo
+  var info = new MyBetterInfo
 
 HOW TO USE
   ?info.getDebuffLvl([...parameters...]) > 26 // example */
@@ -23,7 +23,7 @@ HOW TO USE
 
 // IMPORTS
 
-var uimkr = import MyScripts/Lib/UI_Maker
+var uimkr = new MyScripts/Lib/UI_Maker
 var p
 p = import MyScripts/Lib/Performance
 

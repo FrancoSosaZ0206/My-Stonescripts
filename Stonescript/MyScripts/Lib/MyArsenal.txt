@@ -53,6 +53,8 @@ var pshield = "poison shield A *max"
 var pBow = "poison bow -dP *max"
 var dPbow = "poison bow dP *max"
 var dPwand = "poison wand dP *max"
+var dPstaff = "poison staff dP *max"
+
 
 //vigor:
 var dLsword = "vigor sword dL *max"
@@ -78,6 +80,7 @@ var fsword = "fire sword D *max"
 var fshield = "fire shield A *max"
 var fbow = "fire crossbow dF *max"
 var dFwand = "fire wand dF *max"
+var dFstaff = "fire staff dF *max"
 
 //ice:
 var dIsword = "ice sword dI *max"
@@ -87,6 +90,7 @@ var aiShield = "ice shield ai *max"
 var dIwand1 = "ice wand dI *max +16"
 var dIwand2 = "ice wand dI *max +11"
 var ibow = "ice crossbow D *max"
+var dIstaff = "ice staff dI *max"
 
 //alternate:
 var altbow = "crossbow *max golden"

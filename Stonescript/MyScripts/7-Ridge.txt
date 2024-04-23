@@ -223,11 +223,6 @@ func fight1v1()
 
 // PROCEDURE:
 
-?p.tt % 2 = 0 & p.fd < 11 &
-^(p.ir = "wand" | p.ir = "staff")
-  equipL triskelion
-  equipR hatchet
-
 /* Left hand:
 --- do AAC ---
 - when state = 3
@@ -299,6 +294,12 @@ func fight1v1()
   ?p.f ! "yeti"
     p.si = screen.i
     p.bs = buffs.string
+
+    ?p.tt % 2 = 0 & p.fd < 11 &
+    ^(p.ir = "wand" | p.ir = "staff")
+      equipL triskelion
+      equipR hatchet
+
 
     ?c.canUseBladeDS(smiteScr)
       ?p.fd <= 33 & i.getBuffInfo("smite", false, 2) < 25

@@ -1,4 +1,4 @@
-﻿// *******************************************************
+// *******************************************************
 //                       7-Ridge.txt                      
 // *******************************************************
 
@@ -65,9 +65,15 @@ var keepFTali = false
 ?p.f = "boss"
   keepFTali = true
 
+/*var magiCounter = 0
+var magiLimit = 8*/
+
 ?p.ll
   keepFTali = false
   keepMask = false
+  /*magiCounter = 0
+  magiLimit = 8*/
+  
   ?smiteScr = 1 & p.ls > 10
     smiteScr = 2
 
@@ -103,14 +109,28 @@ func ldtF(mode)
     equipR mask
 
   :?mode = "magic"
+    /*?p.irs = 3
+      magiCounter++*/
     ?keepMask
+      //?p.f ! "immune_to_debuff_chill" & magiCounter < 6
       ?canDebI
         equipL @a.dIwand1@
+      //:?p.f ! "immune_to_debuff_damage" & magiCounter < 7
       :?canDebP
         equipL @a.dPwand@
+      //:?p.f ! "immune_to_debuff_dot" & magiCounter < 8
       :?canDebF
         equipL @a.dFwand@
+
     :
+      ?canDebI
+        equip @a.dIstaff@
+      :?canDebP
+        equip @a.dPstaff@
+      :?canDebF
+        equip @a.dFstaff@
+
+      /*
       //Left hand:
       ?canDebP
         equipL @a.dPwand@
@@ -118,10 +138,10 @@ func ldtF(mode)
         equipL @a.dPwand@
       :?canDebI
         equipL @a.dIwand2@
-      
+
       //Right hand:
       ?canDebI
-        equipR @a.dIwand1@
+        equipR @a.dIwand1@*/
 
   :?mode = "meleeDmg"
     equipL Vantum Phoenix
@@ -166,7 +186,7 @@ func fight1v1()
   canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
   canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
   canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
-  
+
   ?canDebI | canDebP | canDebF
     ?keepMask
       ?canDebI
@@ -203,16 +223,18 @@ func fight1v1()
 
 // PROCEDURE:
 
-/* Mano izquierda:
---- hacer AAC ---
-- cuando state = 3
---- NO hacer AAC ---
-- Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
-?p.ils = 3 & !(keepMask & p.il = "sword D +21")
-  equipL wand 0*
+/* Left hand:
+--- do AAC ---
+- when state = 3
+--- do NOT do AAC ---
+- When ask is on and equipped weapon is a +21 sword. */
+?p.ils = 3 // & !(keepMask & p.il = "sword D +21")
+  //equipL wand 0*
+  equipL triskelion
   equipL @p.il@
-?p.irs = 3 & p.ir ! "sword D +21"
-  equipR @a.cshield1@
+?p.irs = 3 // & p.ir ! "sword D +21"
+  //equipR @a.cshield1@
+  equipR hatchet
   equipR @p.ir@
 
 ?hp < maxhp
@@ -301,7 +323,7 @@ func fight1v1()
 
     :?p.fd > 15
       ldtF("engage")
-      
+
       var isAbtToDash
       isAbtToDash = (p.fd <= 17)
       ?keepMask & isAbtToDash
@@ -363,7 +385,7 @@ func fight1v1()
           canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
           canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
           canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
-    
+
           ?canDebI | canDebP | canDebF
             ldtF("magic")
           :

@@ -223,7 +223,8 @@ func fight1v1()
 
 // PROCEDURE:
 
-?p.tt % 2 = 0
+?p.tt % 2 = 0 & p.fd < 11 &
+^(p.ir = "wand" | p.ir = "staff")
   equipL triskelion
   equipR hatchet
 

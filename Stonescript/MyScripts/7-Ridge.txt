@@ -223,6 +223,10 @@ func fight1v1()
 
 // PROCEDURE:
 
+?p.tt % 2 = 0
+  equipL triskelion
+  equipR hatchet
+
 /* Left hand:
 --- do AAC ---
 - when state = 3

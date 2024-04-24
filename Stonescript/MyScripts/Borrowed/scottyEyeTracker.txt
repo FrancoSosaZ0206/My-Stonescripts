@@ -15,11 +15,9 @@ Instructions:
 
 var o_X
 var o_Y
-var w
+var w = screen.w
 
 func scottyEyeTracker()
-  w = screen.w
-
   ?screen.x ! 69
     return
   var L

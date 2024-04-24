@@ -59,23 +59,22 @@ var l = loc // We don't need to import the whole Performance lib to get this.
 :?l = "undead_crypt_intro" // Haunted Gate
   import MyScripts/Gate
 
-:
-  ?l = "Rocky"
-    import MyScripts/1-Rocky
-  :?l = "Deadwood"
-    import MyScripts/2-Deadwood
-  :?l = "Caves"
-    import MyScripts/3-Caves
-  :?l = "Mushroom"
-    import MyScripts/4-Mushroom
-  :?l = "Halls"
-    import MyScripts/5-Halls
-  :?l = "Mine"
-    import MyScripts/6-Mine
-  :?l = "Ridge"
-    import MyScripts/7-Ridge
-  :?l = "Temple"
-    import MyScripts/8-Temple
+:?l = "Rocky"
+  import MyScripts/1-Rocky
+:?l = "Deadwood"
+  import MyScripts/2-Deadwood
+:?l = "Caves"
+  import MyScripts/3-Caves
+:?l = "Mushroom"
+  import MyScripts/4-Mushroom
+:?l = "Halls"
+  import MyScripts/5-Halls
+:?l = "Mine"
+  import MyScripts/6-Mine
+:?l = "Ridge"
+  import MyScripts/7-Ridge
+:?l = "Temple"
+  import MyScripts/8-Temple
 
 
 

@@ -10,20 +10,19 @@ import Cosmetics/PetStonehead
 var a = new MyScripts/Lib/MyArsenal
 var c = new MyScripts/Lib/Combat
 
-// var freeChest = import UI/FreeChestTracker
-var freeChest = import MySripts/Borrowed/FreeChestTracker
+var set = new MyScripts/Borrowed/scottyEyeTracker
 
 
 
 // PROCEDURE:
 
-?c.canUseQstaff_OG()
+?c.canUseQstaff_OG() & ai.walking
   c.useQstaff(a.myqstaff)
 :
   equipL triskelion
   equipR mask
 
-freeChest.Main()
+set.scottyEyeTracker()
 
 
 

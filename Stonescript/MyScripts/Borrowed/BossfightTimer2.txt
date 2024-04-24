@@ -39,7 +39,7 @@ var t = time
 t = time
 bftKillText = thebos + "#killed#in#" +
 ^             u.formatSpeedrun(endbos - prebos) +
-^             "#frames!"
+^             "!"
 
 // PROCEDURE:
 

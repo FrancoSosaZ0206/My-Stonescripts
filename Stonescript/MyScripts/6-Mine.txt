@@ -21,7 +21,7 @@ var c = new MyScripts/Lib/Combat
 var som = new MyScripts/Lib/Speed_O_Meter
 var dpsm = new MyScripts/Lib/DPS_Meter_MODIFIED
 var bosTmr
-bosTmr = import MyScripts/Borrowed/Boss_Timer
+bosTmr = import MyScripts/Borrowed/BossfightTimer2
 
 var somPanel = som.mkUI(0, 1, i.colToHex("red"), true, false)
 ?som.Update(false)
@@ -107,22 +107,16 @@ func ldtF(mode) // loadouts
     equipL triskelion
     equipR mask
 
-  :?mode = "aidActive"
-    equipL @a.ahHammer@
-    equipR @a.ahShield@
-
   :?mode = "meleeDmg"
     equipL Void Slayer
     ?!keepMask
       equipR @a.aesword@
-  :?mode = "meleeAOE"
-    equipL @a.dUSWORD2@
-    ?!keepMask
-      equipR @a.dUsword1@
-  :?mode = "meleeDef"
-    equipL @a.dUsword1@
-    ?!keepMask
-      equipR @a.dUshield@
+  :?mode = "unmkDmg"
+    ?p.tt % 2 = 0
+      equipL triskelion
+      equipR hatchet
+    :
+      equip @a.dUstaff@
 
   :?mode = "rangedDmg"
     equip @a.aebow@
@@ -140,17 +134,16 @@ func ldtF(mode) // loadouts
       :?canDebF
         equipL @a.dFwand@
     :
-      //Left hand:
-      ?canDebP
-        equipL @a.dPwand@
-      :?canDebF
-        equipL @a.dPwand@
+      ?p.tt % 2 = 0
+        equipL triskelion
+        equipR hatchet
+
       :?canDebI
-        equipL @a.dIwand2@
-      
-      //Right hand:
-      ?canDebI
-        equipR @a.dIwand1@
+        equip @a.dIstaff@
+      :?canDebP
+        equip @a.dPstaff@
+      :?canDebF
+        equip @a.dFstaff@
 
   :
     >`0,2,#red,ERROR: ldtF() recieved incorrect mode: @mode@
@@ -215,20 +208,16 @@ func fight1v1()
 
 // PROCEDURE:
 
-/*p.bs = buffs.string
-i.showBuffs(false, 2, 7, "#cyan", false)*/
 
-
-
-/* Mano izquierda:
---- hacer AAC ---
-- cuando state = 3
---- NO hacer AAC ---
-- Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
-?p.ils = 3 // & !(keepMask & p.il = "sword D +21")
-  equipL wand 0*
+/* Left hand:
+--- do AAC ---
+- when state = 3
+--- do NOT do AAC ---
+- When ask is on and equipped weapon is a +21 sword. */
+?p.ils >= 3 // & !(keepMask & p.il = "sword D +21")
+  equipL sword 0*
   equipL @p.il@
-?p.irs = 3 // & p.ir ! "sword D +21"
+?p.irs >= 3 // & p.ir ! "sword D +21"
   equipR @a.cshield1@
   equipR @p.ir@
 
@@ -272,8 +261,7 @@ i.showBuffs(false, 2, 7, "#cyan", false)*/
   p.aiE = ai.enabled
 
   ?c.canUseBladeDS(smiteScr)
-    ?p.fd <= 33
-      c.useBladeDS()
+    c.useBladeDS()
 
   /****************************/
   ?c.canUseWeav()
@@ -358,12 +346,8 @@ i.showBuffs(false, 2, 7, "#cyan", false)*/
 
           ?canDebI | canDebP | canDebF
             ldtF("magic")
-
-          :?p.fd < 7
-            ?armor > 15
-              ldtF("meleeAOE")
-            :
-              ldtF("meleeDef")
+          :
+            ldtF("unmkDmg")
 
 
     : // p.f = "bronze_guardian"

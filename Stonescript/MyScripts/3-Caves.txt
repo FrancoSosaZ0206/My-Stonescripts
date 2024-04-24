@@ -21,7 +21,7 @@ var c = new MyScripts/Lib/Combat
 var som = new MyScripts/Lib/Speed_O_Meter
 var dpsm = new MyScripts/Lib/DPS_Meter_MODIFIED
 var bosTmr
-bosTmr = import MyScripts/Borrowed/Boss_Timer
+bosTmr = import MyScripts/Borrowed/BossfightTimer2
 
 var somPanel = som.mkUI(0, 1, i.colToHex("red"), true, false)
 ?som.Update(false)
@@ -184,15 +184,15 @@ func ldtF(mode) // loadouts
 
 // PROCEDURE:
 
-/* Mano izquierda:
---- hacer AAC ---
-- cuando state = 3
---- NO hacer AAC ---
-- Cuando tenemos la mascara puesta y el arma equipada es una espada D +21. */
-?p.ils = 3 & !(keepMask & p.il = "sword D +21")
-  equipL wand 0*
+/* Left hand:
+--- do AAC ---
+- when state = 3
+--- do NOT do AAC ---
+- When ask is on and equipped weapon is a +21 sword. */
+?p.ils >= 3 & !(keepMask & p.il = "sword D +21")
+  equipL sword 0*
   equipL @p.il@
-?p.irs = 3 & p.ir ! "sword D +21"
+?p.irs >= 3 & p.ir ! "sword D +21"
   equipR @a.cshield1@
   equipR @p.ir@
 

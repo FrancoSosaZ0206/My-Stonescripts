@@ -63,6 +63,7 @@ tt = totaltime
 // Item
 var ip
 ip = item.potion
+
 var il
 il = item.left
 var ils

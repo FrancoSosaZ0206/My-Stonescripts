@@ -15,20 +15,21 @@ var prebos = -1
 var endbos = -1
 var thebos = p.fn
 
-?p.f = "boss" & thebos ! p.fn
-^& (p.irs = 2 | p.ils = 2)
-  prebos = p.tt
-  thebos = p.fn
+?p.f = "boss"
+  ?thebos ! p.fn
+  ^& (p.irs = 2 | p.ils = 2)
+    prebos = p.tt
+    thebos = p.fn
 
-?p.f = "boss" & p.fhp < 1 & p.fs ! 125 & p.fs ! 108
-^&(p.f = "elementalist" & p.ft = 1 | p.ft = 0)
-  endbos = p.tt
+  ?p.fhp < 1 & p.fs ! 125 & p.fs ! 108
+  ^&(p.f = "elementalist" & p.ft = 1 | p.ft = 0)
+    endbos = p.tt
 
-?endbos ! -1 & ((p.tt - endbos) % 10 >= 5 | key = primary)
-^ & (p.tt - 120) <= endbos & endbos - prebos > 0
-  //>c-20,10,#339999,@thebos@#killed#in#@endbos - prebos@#frames!
-  i.showStrCtr(10, 30,
-  ^thebos + "#killed#in#" + u.formatSpeedrun(endbos - prebos) + "!",
-  ^#339999, false)
+  ?endbos ! -1 & ((p.tt - endbos) % 10 >= 5 | key = primary)
+  ^ & (p.tt - 120) <= endbos & endbos - prebos > 0
+    //>c-20,10,#339999,@thebos@#killed#in#@endbos - prebos@#frames!
+    i.showStrCtr(10, 30,
+    ^thebos + "#killed#in#" + u.formatSpeedrun(endbos - prebos) + "!",
+    ^#339999, false)
 
 /* *************************** */

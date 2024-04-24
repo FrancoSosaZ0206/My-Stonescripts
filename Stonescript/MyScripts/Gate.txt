@@ -8,39 +8,21 @@
 
 import Cosmetics/PetStonehead
 var a = new MyScripts/Lib/MyArsenal
+var c = new MyScripts/Lib/Combat
 
-
-
-// FUNCTIONS (borrowed from Combat library)
-
-func canUseQstaff_OG()
-  var result = false
-
-  ?item.CanActivate()
-    ?item.GetCooldown("quarterstaff") <= 0
-      result = true
-    :?item.right = "quarterstaff" & item.right.state = 2
-      result = true
-
-  return result
-
-func useQstaff_OG(yourQstaff)
-  equip @yourQstaff@
-  activate R
-
-  return
+// var freeChest = import UI/FreeChestTracker
+var freeChest = import MySripts/Borrowed/FreeChestTracker
 
 
 
 // PROCEDURE:
 
-?canUseQstaff_OG()
-  useQstaff_OG(a.myqstaff)
+?c.canUseQstaff_OG()
+  c.useQstaff(a.myqstaff)
 :
   equipL triskelion
   equipR mask
 
-var freeChest = import UI/FreeChestTracker
 freeChest.Main()
 
 

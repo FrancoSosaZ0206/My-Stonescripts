@@ -1,7 +1,8 @@
 /*
-	FreeChestTracker v1.1.1
+	FreeChestTracker v2.0
 	
 	Written By: Cancerorus Potatoes (Discord: 10100111001)
+    Modified by: MetalEagle26 (Tom Crow)
 	
 	To Use:
 	var freeChest = import freeChestTracker
@@ -23,6 +24,7 @@
 	v1.0.1	Moved detection locations to be more reliable
 	v1.1	Added easily customisable options such as symbol style and colour
 	v1.1.1	Added seamless mode - for more immersive xray vision
+    v2.0.0  Added
 */
 
 /* ===============
@@ -51,8 +53,8 @@ var offSymbolY = -2 //y
 
 //0 = left, 1 = middle, 2 = right
 var RIGHT = 2
-var LEFT = 0
 var MIDDLE = 1
+var LEFT = 0
 var chestLoc = MIDDLE 
 
 var eps = "ε"

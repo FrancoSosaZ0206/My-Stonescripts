@@ -100,6 +100,7 @@ var dshield = "dashing shield *max golden HoH24"
 var myqstaff = "quarterstaff golden"
 var fastBard = "bardiche *max" // enchanted: speed
 var rbow = "repeating crossbow *max golden"
+var sbow = "stone crossbow *max"
 var cshield1 = "compound shield *max shiny"
 var cshield2 = "compound shield *max -shiny"
 var tshield = "towering shield *max golden"
@@ -112,15 +113,15 @@ var bladeDmg = 310
 var bladeRDmg = 95
 var smiteMult = 8.8 // mult = multiplier
 
-var armDmg = 44
+var armDmg = 56
 var armRDmg = armDmg / 2
-var maxArmBuffs = 3
+var maxArmBuffs = 4
 
 var cindDmg = 32 // multiplied by the amount of Ignition buffs
 var maxIgnitions = 15
 
 var weavDmg = 1
-var weavUnmkChance = 0.12 // %
+var weavUnmkChance = 0.14 // %
 var weavArmor = 1.35
 
 var hammDmg = 123

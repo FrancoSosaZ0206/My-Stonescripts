@@ -35,13 +35,11 @@ var thebos = p.fn
 var fip    = false
 var pebb   = "#ea#sports"
 
-/*var t = time
-t = time*/
+var t = time
+t = time
 bftKillText = thebos + "#killed#in#" +
 ^             u.formatSpeedrun(endbos - prebos) +
 ^             "#frames!"
-
->c0,0,#red,time = @time@
 
 // PROCEDURE:
 
@@ -57,12 +55,11 @@ bftKillText = thebos + "#killed#in#" +
   prebos  = p.tt
   thebos  = p.fn
 
-?p.f = "boss" & thebos ! p.fn
-^& (p.irs = 2 | p.ils = 2) | time = 1
-  fip     = true
+  ?p.irs = 2 | p.ils = 2 | t = 1
+    fip     = true
 
 ?p.f = "boss" & p.fhp < 1 & p.fs ! 125 & p.fs ! 108 &
-^(p.tt - endbos ! 1 & p.ft = 1 | p.ft = 0) | time = 1
+^(p.tt - endbos ! 1 & p.ft = 1 | p.ft = 0) | t = 1
   endbos  = p.tt
   fip     = false
 

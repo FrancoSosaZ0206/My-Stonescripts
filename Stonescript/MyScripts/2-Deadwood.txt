@@ -52,12 +52,12 @@ var keepMask = true
 var smiteScr = 1
 
 var dontDash = false
-var wandCount = 0
+var debCount = 0
 
 ?p.ll
   keepMask = false
   dontDash = false
-  wandCount = 0
+  debCount = 0
 
 var canDebI
 var canDebP
@@ -202,15 +202,15 @@ func fight1v1()
       equipR @a.dLsword@
 
   :
-    //equip arm
-    ?keepMask
+    equip arm
+    /*?keepMask
       equipL Bifrost
     :
       p.bs = buffs.string
       ?p.bs = "berserk"
         c.doMoondial(Bifrost, a.isword, 2)
       :
-        c.doMoondial(Bifrost, a.isword, 0)
+        c.doMoondial(Bifrost, a.isword, 0)*/
 
   return
 
@@ -283,10 +283,10 @@ var dontShowAgain = false
 - when state = 3
 --- do NOT do AAC ---
 - When ask is on and equipped weapon is a +21 sword. */
-?p.ils >= 3 & !(keepMask & p.il = "sword D +21")
+?p.ils >= 3 // & !(keepMask & p.il = "sword D +21")
   equipL sword 0*
   equipL @p.il@
-?p.irs >= 3 & p.ir ! "sword D +21"
+?p.irs >= 3 // & p.ir ! "sword D +21"
   equipR @a.cshield1@
   equipR @p.ir@
 
@@ -311,7 +311,10 @@ var dontShowAgain = false
     loc.Leave()
 
 ?keepMask
-  equipR mask
+  ?p.ir ! "bardiche" &
+  ^p.ir ! "quarterstaff" &
+  ^p.ir ! "heavy hammer"
+    equipR mask
 
 ?p.lb | p.ll
   equipL triskelion
@@ -333,7 +336,9 @@ var dontShowAgain = false
 
 /* hide cinderwisp to avoid
 getting ignition debuff reflected */
-:?p.f = "poena" & c.canHideFTali()
+:?c.canHideFTali()
+^& p.f = "poena"
+^& !c.canUseBard()
   ?keepMask
     c.useFTali("l")
   :
@@ -357,8 +362,8 @@ getting ignition debuff reflected */
   ?c.canUseBladeDS(smiteScr)
     c.useBladeDS()
 
-  ?c.canUseQstaff() &
-  ^p.aiE & p.ir ! "hatchet"
+  ?c.canUseQstaff() & p.f ! "tree_boss"
+  ^& p.aiE & p.ir ! "hatchet"
   ^& p.ir ! "heavy hammer"
   ^& p.ir ! "bardiche"
   ^& p.ir ! Kubikiribocho
@@ -386,29 +391,14 @@ getting ignition debuff reflected */
       c.dash(a.dLsword, a.dshield)
 
     :
-      p.fc = foe.GetCount(10)
+      p.fc = foe.GetCount(15)
 
-      ?p.f = "wasp" | p.f = "wasp_nest"
-        p.fds = foe.debuffs.string
-        canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
-        canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
-        canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
-
-        ?canDebI | canDebP | canDebF
-          ldtF("magic")
-        :
-          ldtF("unmkDmg")
-        /*****************
-        ?c.canUseWeav()
-          c.useWeav()
-        /*****************/
-
-      :?p.f ! "tree_boss" & p.f ! "poena"
-        ?p.fc >= 5 & !c.canUseBlade()
-        ^& c.canUseHamm()
+      ?p.f ! "tree_boss" & p.f ! "poena"
+        ?c.canUseHamm() & keepMask &
+        ^p.fc >= 5 & !c.canUseBlade()
           c.useHamm(a.myHamm)
-        :?p.fc = 1 | p.f = "immune_to_ranged"
-          ?p.tt % 2 = 0
+        :?p.fc = 1 | (p.f = "immune_to_ranged" & keepMask)
+          ?p.tt % 2 = 0 & ai.walking
             equipL triskelion
             equipR hatchet
           :
@@ -431,61 +421,68 @@ getting ignition debuff reflected */
         :?p.f = "phase1" // Xyloalgia
         ^& foe.state ! 4
 
-          var bossHp = 72
-          ?!keepMask
-            bossHp = 144
-
-          ?foe.hp > bossHp
+          ?foe.hp > a.armDmg * 2
             fight1v1()
           :
             dontDash = true
             ?c.canUseMind()
               ldtF("escape")
-
-            :?p.fd > 4
-              >c0,0,#red,STAFFING
+            :
               ?p.irs = 3
-                wandCount++
+                debCount++
 
-              ?p.tt % 2 = 0
-                equipL triskelion
-                equipR hatchet
-
-              :?wandCount < 1
-                equip @a.dPstaff@
-              :?wandCount < 2
-                equip @a.dFstaff@
-              :?wandCount < 8
+              ?debCount < 1
+                equipL @a.dPwand@
+                equipR @a.dFwand@
+              :?debCount < 7
                 equip @a.dIstaff@
 
-            :
-              dontDash = false
-              fight1v1()
+              :
+                dontDash = false
+                ?p.fd > 15 & c.canUseQstaff()
+                  c.useQstaff(a.myqstaff)
+                :?c.canBash()
+                  c.bash(a.dLsword)
+                :?c.canDash()
+                  c.dash(a.dLsword, a.dshield)
+                :
+                  fight1v1()
 
 
         : // Poena
-
+          dontDash = false
           p.bs = buffs.string
 
-          ?i.getBuffInfo("smite", false, 2) >= 25
+          ?p.fd > 15 & c.canUseQstaff()
+            c.useQstaff(a.myqstaff)
+          :?c.canBash()
+            c.bash(a.dLsword)
+          :?c.canDash()
+            c.dash(a.dLsword, a.dshield)
 
-            ?c.canUseBard()
-              c.useBard(Kubikiribocho)
-            :?c.canUseMask()
+          :?p.fd <= 9
+            ?c.canUseMask()
               c.useMask()
-            :
-              fight1v1()
-
-          :
-            ?c.canUseBard() & p.fhp <= a.bardRDmg
+            :?c.canUseBard() & p.fd <= 9
               c.useBard(Kubikiribocho)
 
-            :?c.canUseHamm() &
-            ^p.fhp <= a.hammDmg +
-            ^(a.smiteMult * i.getBuffInfo("smite", false, 2))
-              c.useHamm(a.myHamm)
             :
-              ldtF("poenaStun")
+              var smiteBuffs
+              smiteBuffs = i.getBuffInfo("smite", false, 2)
+
+              ?smiteBuffs >= 25
+                equip arm
+
+              :
+                ?c.canUseBard() & p.fhp <= a.bardRDmg
+                  c.useBard(Kubikiribocho)
+
+                :?c.canUseHamm() &
+                ^p.fhp <= a.hammDmg +
+                ^(a.smiteMult * smiteBuffs)
+                  c.useHamm(a.myHamm)
+                :
+                  ldtF("poenaStun")
 
 
 

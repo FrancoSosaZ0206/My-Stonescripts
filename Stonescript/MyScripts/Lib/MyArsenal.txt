@@ -99,6 +99,7 @@ var altbow = "crossbow *max golden"
 var dshield = "dashing shield *max golden HoH24"
 var myqstaff = "quarterstaff golden"
 var fastBard = "bardiche *max" // enchanted: speed
+var myHamm = "heavy hammer *max"
 var rbow = "repeating crossbow *max golden"
 var sbow = "stone crossbow *max"
 var cshield1 = "compound shield *max shiny"

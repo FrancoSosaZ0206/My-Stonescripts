@@ -157,6 +157,7 @@ func ldtF(mode)
         equipL @a.dPwand@
       :?canDebF
         equipL @a.dFwand@
+
     :
       ?p.tt % 2 = 0
         equipL triskelion
@@ -313,7 +314,7 @@ func ldtF(mode)
     :?p.f ! "phase2"
       ?c.canUseHamm() & p.fc >= 5 &
       ^!c.canUseBlade() & keepMask
-        c.useHamm()
+        c.useHamm(a.myHamm)
 
       :?p.fc = 1
         fight1v1()

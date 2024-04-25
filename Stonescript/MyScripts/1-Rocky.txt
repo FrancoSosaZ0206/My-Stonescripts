@@ -153,7 +153,7 @@ func bossFight()
       dontDash = false
       ?p.fa > 0 & c.canUseHamm2() &
       ^!bardCdSlower & p.fd < 11
-        c.useHamm()
+        c.useHamm(a.myHamm)
       :
         ?p.fbs ! "defense_fire"
           ?!keepMask & p.php = p.pmhp
@@ -398,7 +398,7 @@ var dontShowAgain = false
   ^(p.fs = 100 | p.fs = 101 |
   ^p.fs = 102 | p.fs = 126)
     ?c.canUseHamm2()
-      c.useHamm()
+      c.useHamm(a.myHamm)
     :?c.canUseQstaff()
       c.useQstaff(a.myqstaff)
     :?c.canDash()

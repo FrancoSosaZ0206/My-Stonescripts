@@ -93,10 +93,6 @@ func ldtF(mode) // loadouts
     equipL Bifrost
     ?!keepMask
       equipR @a.isword@
-  :?mode = "meleeDef"
-    equipL Bifrost
-    ?!keepMask
-      equipR @a.ishield@
 
   :?mode = "extend"
     equipL triskelion
@@ -110,18 +106,18 @@ func ldtF(mode) // loadouts
         equipL @a.dPwand@
       :?canDebF
         equipL @a.dFwand@
+
     :
-      //Left hand:
-      ?canDebP
-        equipL @a.dPwand@
-      :?canDebF
-        equipL @a.dPwand@
+      ?p.tt % 2 = 0
+        equipL triskelion
+        equipR hatchet
+
       :?canDebI
-        equipL @a.dIwand2@
-      
-      //Right hand:
-      ?canDebI
-        equipR @a.dIwand1@
+        equip @a.dIstaff@
+      :?canDebP
+        equip @a.dPstaff@
+      :?canDebF
+        equip @a.dFstaff@
 
   :
     >o0,0,#red,ERROR: ldtF() recieved incorrect mode: @mode@
@@ -176,6 +172,9 @@ func fight1v1()
 
 // PROCEDURE:
 
+p.bs = buffs.string
+i.showBuffs(false, 1, 10, "#green", false)
+
 /* Left hand:
 --- do AAC ---
 - when state = 3
@@ -197,13 +196,13 @@ func fight1v1()
   p.rb = res.bronze
 
   ?p.rb >= 10
-    ?p.rs >= 10
-      ?p.ip ! "lucky"
-        brew stone + bronze
-
-    :?p.rw >= 10
+    ?p.rw >= 10
       ?p.ip ! "berserk"
         brew wood + bronze
+
+    :?p.rs >= 10
+      ?p.ip ! "lucky"
+        brew stone + bronze
     :
       loc.Leave()
   :
@@ -246,7 +245,7 @@ func fight1v1()
     ?p.fd <= 33
       c.useBladeDS()
 
-  ?c.canUseQstaff() & p.aiE & !keepMask
+  ?c.canUseQstaff() & p.aiE
     ?p.ir ! "bardiche" & p.ir ! Kubikiribocho
     ^& p.ir ! "heavy hammer" & (
     ^(!c.canBash() & !c.canDash())
@@ -296,14 +295,14 @@ func fight1v1()
           p.fc = foe.count
 
           ?p.fc >= 7 &
-          ^c.canUseHamm() &
+          ^c.canUseHamm() & !keepMask
           ^!c.canUseBlade()
-            c.useHamm()
+            c.useHamm(a.myHamm)
 
-          :?p.fc > 1
+          ://?p.fc > 1
             ldtF("magic")
-          :?p.fd < 7
-            fight1v1()
+          /*:?p.fd < 7
+            fight1v1()*/
 
 
     : // foe = "nagaraja"
@@ -325,13 +324,11 @@ func fight1v1()
       ^& p.ft >= 55 & p.ft <= 65
         ?c.canUseMind()
           ldtF("escape")
-        :?p.fd < 11
-          ldtF("meleeDef")
+
+        :?keepMask
+          equipL @a.altbow@
         :
-          ?keepMask
-            equipL @a.altbow@
-          :
-            equip @a.ibow@
+          equip @a.ibow@
 
       :?p.fs ! 4 // if it's not dying
         ?c.canBash()

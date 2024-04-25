@@ -185,18 +185,18 @@ func ldtF(mode) // loadouts
         equipL @a.dPwand@
       :?canDebF
         equipL @a.dFwand@
+
     :
-      //Left hand:
-      ?canDebP
-        equipL @a.dPwand@
-      :?canDebF
-        equipL @a.dPwand@
+      ?p.tt % 2 = 0
+        equipL triskelion
+        equipR hatchet
+
       :?canDebI
-        equipL @a.dIwand2@
-      
-      //Right hand:
-      ?canDebI
-        equipR @a.dIwand1@
+        equip @a.dIstaff@
+      :?canDebP
+        equip @a.dPstaff@
+      :?canDebF
+        equip @a.dFstaff@
 
   :
     >c-10,0,#red,
@@ -335,7 +335,7 @@ func ldtF(mode) // loadouts
     ?c.canUseHamm() & !c.canUseBlade() &
     ^((smiteScr < 4 & p.si = 5) |
     ^ (smiteScr = 4 & p.si = 3))
-      c.useHamm()
+      c.useHamm(a.myHamm)
 
     :?p.f = "spawner" & p.fc = 1
       fight1v1()

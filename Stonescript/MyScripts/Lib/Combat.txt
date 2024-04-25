@@ -267,8 +267,8 @@ func canUseHamm2()
   ^(p.ir = "heavy hammer" &
   ^p.irs = 2)
 
-func useHamm()
-  equip heavy hammer
+func useHamm(yourHamm)
+  equip @yourHamm@
   activate R
 
   p.hammDelay = p.tt + p.hammCd + p.castTime
@@ -307,7 +307,7 @@ func canDash()
   ^& 11 <= p.fd & p.fd <= 15
   ^& p.canAct
 
-func dash(lItem,yourDshield)
+func dash(lItem, yourDshield)
   equipL @lItem@
   equipR @yourDshield@
 

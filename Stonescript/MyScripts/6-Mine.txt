@@ -112,7 +112,7 @@ func ldtF(mode) // loadouts
     ?!keepMask
       equipR @a.aesword@
   :?mode = "unmkDmg"
-    ?p.tt % 2 = 0
+    ?p.tt % 2 = 0 & p.fd > 4
       equipL triskelion
       equipR hatchet
     :

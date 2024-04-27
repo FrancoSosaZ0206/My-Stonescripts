@@ -205,20 +205,23 @@ func ldtF(mode) // loadouts
   p.rb = res.bronze
 
   ?p.rb >= 10
-    ?p.rw >= 10
-      ?p.ip ! "berserk"
-        brew wood + bronze
-
-    :?p.rs >= 10
+    ?p.rs >= 10
       ?p.ip ! "lucky"
         brew stone + bronze
+
+    :?p.rw >= 10
+      ?p.ip ! "berserk"
+        brew wood + bronze
     :
       loc.Leave()
   :
     loc.Leave()
 
 ?keepMask
-  equipR mask
+  ?p.ir ! "bardiche" &
+  ^p.ir ! "quarterstaff" &
+  ^p.ir ! "heavy hammer"
+    equipR mask
 
 ?p.lb | p.ll
   equipL triskelion

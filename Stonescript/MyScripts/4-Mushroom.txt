@@ -217,7 +217,10 @@ func ldtF(mode)
     loc.Leave()
 
 ?keepMask
-  equipR mask
+  ?p.ir ! "bardiche" &
+  ^p.ir ! "quarterstaff" &
+  ^p.ir ! "heavy hammer"
+    equipR mask
 
 ?p.lb | p.ll
   equipL triskelion

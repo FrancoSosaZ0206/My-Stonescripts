@@ -32,7 +32,7 @@ var somPanel = som.mkUI(0, 1, i.colToHex("red"), true, false)
 
 
 dpsm.ENABLED = true
-dpsm.refreshRate = 30
+dpsm.refreshRate = 5
 
 var dpsPanel
 ?dpsm.Update()
@@ -130,7 +130,7 @@ func bossFight()
         cindMargin = 1000
       :
         cindMargin = 3000
-      ?p.fds = "ignition:15" |
+      ?p.fds = a.maxIgnitions |
       ^c.canKillCind(i.getFoeTotalHP(),
       ^              i.getDebuffLvl("ignition", true),
       ^              a.cindDmg, cindMargin)
@@ -149,18 +149,30 @@ func bossFight()
         equip @a.aebow@
       :?c.canUseMask()
         c.useMask()
+
     :
       dontDash = false
-      ?p.fa > 0 & c.canUseHamm2() &
-      ^!bardCdSlower & p.fd < 11
+      ?c.canUseHamm() & p.fa > 0 & p.fd < 11
         c.useHamm(a.myHamm)
+      :?c.canUseQstaff()
+        c.useQstaff(a.myqstaff)
       :
         ?p.fbs ! "defense_fire"
           ?!keepMask & p.php = p.pmhp
             ?p.bs = "berserk"
               ldtF("fdmg")
+
             :
-              c.doMoondial(Vantum Phoenix, a.fsword, 0)
+              >`1,10,#red,apsTimer = @c.apsTimer@
+              ?c.apsTimer <= 10
+                c.doAps(Vantum Phoenix, a.fsword,
+                ^       Bifrost, a.isword,
+                ^       Dothaneel, a.vsword,
+                ^       Mamba Negra, a.psword,
+                ^       Void Slayer, a.aesword)
+
+              :// ?c.apsTimer > 10
+                c.doMoondial(Vantum Phoenix, a.fsword, 0)
           :
             equipL Vantum Phoenix
         :
@@ -211,14 +223,25 @@ func ldtF(mode)
 
   //buffs/debuffs (oriented to duration)
   :?mode = "pDeb1"
-    equipL @a.dPsword1@
-    equipR mask
+    ?keepMask
+      equipL @a.dPsword1@
+      equipR mask
+    :
+      equipL moon
+      equipR @a.dPsword1@
   :?mode = "pDeb2"
-    equipL @a.dPsword1@ // put 2 when upgraded back to normal
-    equipR mask
+    ?keepMask
+      equipL @a.dPsword2@
+      equipR mask
+    :
+      equipL moon
+      equipR @a.dPsword2@
   :?mode = "aidActive"
     equipL @a.ahHammer@
     equipR @a.ahShield@
+  :?mode = "pDebActive" // idk what to name it lol
+    equipL @a.dPsword1@
+    equipR @a.apShield@
     
   :?mode = "fDeb"
     equipL @a.dFsword@
@@ -316,7 +339,9 @@ var dontShowAgain = false
       ?!dontShowAgain
         dontShowAgain = true
 
-
+/*p.fs = foe.state
+p.ft = foe.time
+>`1,11,@i.colToHex("orange")@,fs = @p.fs@\nft = @p.ft@*/
 
 /* Left hand:
 --- do AAC ---
@@ -331,7 +356,7 @@ var dontShowAgain = false
   equipR @p.ir@
 
 
-?debuffs.string | (p.tt > p.lavg & nRuns >= 2)
+?debuffs.string
   loc.Leave()
 
 
@@ -413,10 +438,29 @@ var dontShowAgain = false
       :
         c.useBard(a.fastBard)
 
+  
+  /*:?(p.f = "phase2" & p.fs = 107 & p.ft >= 149) |
+  ^(p.f = "phase3" & p.fs = -1)
+    >c-20,0,#red, DESTROYING! (?)
+    ?c.canBash()
+      c.bash(a.dLsword)
+    :?c.canDash()
+      c.dash(Vantum Phoenix, a.dshield)
+
+    :?c.canUseQstaff()
+      c.useQstaff(a.myqstaff)
+
+    :?c.canUseBard()
+      c.useBard(a.fastBard)
+    :?c.canUseHamm()
+      c.useHamm(a.myHamm)*/
+
 
   :?p.fd > 15 | !aiE |
   ^(p.fs = 124 | p.fs = -1 |
   ^(p.fs = 107 & p.fdmg = 3)) // Dysan's flying animation (after putting shield on phase3)
+  ^| (p.f = "dysangelos" & p.fs = 4)
+  ^| p.fs = 116
     p.fa = armor
     ?14 <= p.fa & p.fa <= 29
       ldtF("default")
@@ -437,23 +481,24 @@ var dontShowAgain = false
       ?c.canBash()
         c.bash(Vantum Phoenix)
 
-      :
-        ?keepMask
-          ?p.fds ! "chill:6"
-            equipL @a.dIsword@
-          :?p.fds ! "damage"
-            equipL @a.dPsword1@
-          :?p.fds ! "dot"
-            equipL @a.dFsword@
-          :
-            equipL Vantum Phoenix
-
+      :?keepMask
+        ?p.fds ! "chill:6"
+          equipL @a.dIsword@
+        :?p.fds ! "damage"
+          equipL @a.dPsword1@
+        :?p.fds ! "dot"
+          equipL @a.dFsword@
         :
-          ?p.php = p.pmhp
-            c.doMoondial(Vantum Phoenix, a.fsword, 0)
-          :
-            equipL Vantum Phoenix
-            equipR @a.dLsword@
+          equipL Vantum Phoenix
+
+      :?p.php ! p.pmhp
+        equipL Vantum Phoenix
+        equipR @a.dLsword@
+
+      :?p.bs = "lucky"
+        c.doMoondial(Vantum Phoenix, a.fsword, 0)
+      :?p.bs = "berserk"
+        c.doMoondial(Vantum Phoenix, a.fsword, 2)
 
 
     :?p.f = "dysangelos" &
@@ -480,12 +525,15 @@ var dontShowAgain = false
         c.dash(Vantum Phoenix, a.dshield)
 
 
-      :?armor < trueDmg & p.fs = 32 & (
+      :?/*armor < trueDmg & */p.fs = 32 & (
       ^(p.f = "phase1" &
       ^  ((p.fds = "chill" & p.ft > 58) // about to attack, slowed down by chill debuff
       ^ | (48 < p.ft & p.ft < 52)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
       ^(p.f = "phase3" & p.ft > 80)  ) // final phase, about to normal attack
-        ldtF("aidActive")
+        ?armor < trueDmg
+          ldtF("aidActive")
+        :
+          ldtF("pDebActive")
 
 
       :?p.f ! "immune_to_debuff_damage"
@@ -500,11 +548,11 @@ var dontShowAgain = false
               ldtF("pDeb2")
             :
               ldtF("pDeb1")
+
+          :?p.fds ! "dot"
+            ldtF("fDeb")
           :
-            ?p.fds ! "dot"
-              ldtF("fDeb")
-            :
-              bossFight()
+            bossFight()
         :
           ?p.fds ! "damage"
             ?p.f = "phase3"

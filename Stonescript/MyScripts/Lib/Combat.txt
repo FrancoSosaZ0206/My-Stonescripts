@@ -89,7 +89,7 @@ func useBladeDS()
 
 func canUseArm()
   return p.tt >= p.armDelay &
-  ^3 <= p.fd & p.fd <= 7
+  ^3 < p.fd & p.fd < 9
   ^& p.canAct
 
 func useArm()
@@ -496,6 +496,59 @@ func doMoondial(weapon1, weapon2, mode)
     :
       equipL @weapon2@
     equipR @weapon1@
+
+  return
+
+var apsTimer = 0
+?p.ll
+  apsTimer = 0
+/* Fastest moondialing variant with all dual D rune swords.
+Requires them all to be *21 speed enchanted. */
+func doAps(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10)
+  apsTimer++
+
+  equipL moon
+  ?apsTimer = 1
+    equipR @s1@
+
+  :?apsTimer = 2
+    equipR @s2@
+
+  :?apsTimer = 3
+    equipR @s3@
+
+  :?apsTimer = 4
+    equipR @s4@
+
+  :?apsTimer = 5
+    equipR @s5@
+
+  :?apsTimer = 6
+    equipR @s6@
+
+  :?apsTimer = 7
+    equipR @s7@
+
+  :?apsTimer = 8
+    equipR @s8@
+
+  :?apsTimer = 9
+    equipR @s9@
+
+  :?apsTimer = 10
+    equipR @s10@
+
+  /*:?apsTimer = 11
+    equipL @s1@
+    equipR @s2@
+    equipL @s3@
+    equipR @s4@
+    equipL @s5@
+    equipR @s6@
+    equipL @s7@
+    equipR @s8@
+    equipL @s9@
+    equipR @s10@ */
 
   return
 

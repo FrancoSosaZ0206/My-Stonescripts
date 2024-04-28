@@ -163,7 +163,6 @@ func bossFight()
               ldtF("fdmg")
 
             :
-              >`1,10,#red,apsTimer = @c.apsTimer@
               ?c.apsTimer <= 10
                 c.doAps(Vantum Phoenix, a.fsword,
                 ^       Bifrost, a.isword,
@@ -171,7 +170,7 @@ func bossFight()
                 ^       Mamba Negra, a.psword,
                 ^       Void Slayer, a.aesword)
 
-              :// ?c.apsTimer > 10
+              :
                 c.doMoondial(Vantum Phoenix, a.fsword, 0)
           :
             equipL Vantum Phoenix

@@ -180,10 +180,10 @@ i.showBuffs(false, 1, 10, "#green", false)*/
 - when state = 3
 --- do NOT do AAC ---
 - When ask is on and equipped weapon is a +21 sword. */
-?p.ils >= 3 // & !(keepMask & p.il = "sword D +21")
+?p.ils >= 3 & !(keepMask & p.il = "sword D +21")
   equipL sword 0*
   equipL @p.il@
-?p.irs >= 3 // & p.ir ! "sword D +21"
+?p.irs >= 3 & p.ir ! "sword D +21"
   equipR @a.cshield1@
   equipR @p.ir@
 

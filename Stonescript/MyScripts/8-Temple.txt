@@ -135,7 +135,7 @@ func fight1v1()
   canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
   canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
   canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
-  
+
   ?(keepMask | p.bs = "berserk") & (canDebI | canDebP | canDebF)
     ?keepMask
       ?canDebI
@@ -172,18 +172,18 @@ func fight1v1()
 
 // PROCEDURE:
 
-p.bs = buffs.string
-i.showBuffs(false, 1, 10, "#green", false)
+/*p.bs = buffs.string
+i.showBuffs(false, 1, 10, "#green", false)*/
 
 /* Left hand:
 --- do AAC ---
 - when state = 3
 --- do NOT do AAC ---
 - When ask is on and equipped weapon is a +21 sword. */
-?p.ils >= 3 & !(keepMask & p.il = "sword D +21")
+?p.ils >= 3 // & !(keepMask & p.il = "sword D +21")
   equipL sword 0*
   equipL @p.il@
-?p.irs >= 3 & p.ir ! "sword D +21"
+?p.irs >= 3 // & p.ir ! "sword D +21"
   equipR @a.cshield1@
   equipR @p.ir@
 
@@ -196,13 +196,13 @@ i.showBuffs(false, 1, 10, "#green", false)
   p.rb = res.bronze
 
   ?p.rb >= 10
-    ?p.rw >= 10
-      ?p.ip ! "berserk"
-        brew wood + bronze
-
-    :?p.rs >= 10
+    ?p.rs >= 10
       ?p.ip ! "lucky"
         brew stone + bronze
+
+    :?p.rw >= 10
+      ?p.ip ! "berserk"
+        brew wood + bronze
     :
       loc.Leave()
   :

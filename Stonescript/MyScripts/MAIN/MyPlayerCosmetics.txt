@@ -1,7 +1,6 @@
 ?loc = "Caves"
-    import Cosmetics/Hats/Helmet
+  import Cosmetics/Hats/Helmet
+  import Cosmetics/PetSpider
 :
-    import Cosmetics/WavyScarf
-
-import Cosmetics/PetSpider
-import Cosmetics/PetSkully
+  import Cosmetics/WavyScarf
+  import Cosmetics/PetSkully

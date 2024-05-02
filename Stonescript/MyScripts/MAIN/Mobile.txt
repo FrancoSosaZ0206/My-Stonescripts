@@ -53,7 +53,9 @@ var l = loc
 
 
 
-// PROCEDURE - Special locations:
+// PROCEDURE
+
+import MyScripts/MAIN/MyPlayerCosmetics
 
 ?!loc.isQuest & (
 ^l = "Waterfall" |

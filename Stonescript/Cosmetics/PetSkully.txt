@@ -1,3 +1,15 @@
+/* Optimizations by MetalEagle26 */
+
+var _face = face
+_face = face
+var _time = time
+_time = time
+var _posx = pos.x
+_posx = pos.x
+var _posz = pos.z
+_posz = pos.z
+
+/* ***************************** */
 
 // Pet Skully
 // by: Newominus
@@ -77,31 +89,31 @@ func SetState(newState)
   currentState = newState
   stateTime = 0
 
-?currentState = stateNone | time = 1
-  lastPlayerX = pos.x
-  lastPlayerZ = pos.z
+?currentState = stateNone | _time = 1
+  lastPlayerX = _posx
+  lastPlayerZ = _posz
   myX = keepDistance
   myZ = targetZ
 
 // Start further away if skully is summoned while the location is already running
-  ?time > 1
+  ?_time > 1
     myX = maxDistance
 
   SetState(stateIdle)
 
-myX = myX - (pos.x - lastPlayerX) // If player has moved, increment myX (distance from player)
+myX = myX - (_posx - lastPlayerX) // If player has moved, increment myX (distance from player)
 
 stateTime++
 
-?face = "( ^^" & stateTime > 30
+?_face = "( ^^" & stateTime > 30
   chestTime++
-?face ! "( ^^"
+?_face ! "( ^^"
   chestTime = 0
 
 ?currentState = stateIdle 
   ?myX < maxDistance | myX > -maxDistance
     myX = maxDistance
-  myZ = myZ - (pos.z - lastPlayerZ)
+  myZ = myZ - (_posz - lastPlayerZ)
 
   ?myX < keepDistance
     SetState(stateMoving)
@@ -119,8 +131,8 @@ stateTime++
   ?stateTime >= 12
     SetState(stateIdle)
 	
-lastPlayerX = pos.x
-lastPlayerZ = pos.z
+lastPlayerX = _posx
+lastPlayerZ = _posz
 
 //DRAW state timers--------------------------------<
 //for debugging or whatever, uncomment if you want to see
@@ -130,7 +142,7 @@ lastPlayerZ = pos.z
 
 //IDLE---------------------------------------------<
 
-?currentState = stateIdle & face ! "( ^^" 
+?currentState = stateIdle & _face ! "( ^^" 
   >o@myX@,@myZ@,@skullColor@,ascii
 #####
 #####
@@ -142,11 +154,11 @@ asciiend
 
 //EYES----------------------------------------<
 ?currentState = stateIdle
-  ?face = "°°"
-      ?time % 10 = 0 & myX > keepDistance
+  ?_face = "°°"
+      ?_time % 10 = 0 & myX > keepDistance
         myX--
 
-      ?time % 4 <= 1
+      ?_time % 4 <= 1
         >o@myX@,@myZ@,@skullColor@,ascii
 #
 #
@@ -154,7 +166,7 @@ asciiend
 #
 ######O,o
 asciiend
-      ?time % 4 > 1
+      ?_time % 4 > 1
        >o@myX@,@myZ@,@skullColor@,ascii
 #
 #
@@ -165,7 +177,7 @@ asciiend
 
 //BLINKING----------------------------
 
-  ?face ! "( ^^"
+  ?_face ! "( ^^"
     ?stateTime % 50 >= 48
         >o@myX@,@myZ@,@skullColor@,ascii
 #
@@ -195,7 +207,7 @@ asciiend
 
   x = myX + 6
   y = myZ + 4
-?face = "( ^^" 
+?_face = "( ^^" 
     ?chestTime <= 5 | chestTime > 40
       >o@myX@,@myZ@,@skullColor@,ascii
 #

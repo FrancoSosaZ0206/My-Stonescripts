@@ -313,10 +313,10 @@ var dontShowAgain = false
       ?!dontShowAgain
         dontShowAgain = true
 
-p.fs = foe.state
+/*p.fs = foe.state
 p.ft = foe.time
 >`1,11,@i.colToHex("orange")@,fs = @p.fs@\nft = @p.ft@
-^\napsTimer = @c.apsTimer@
+^\napsTimer = @c.apsTimer@*/
 
 /* Left hand:
 --- do AAC ---
@@ -397,7 +397,7 @@ p.ft = foe.time
 
   p.aiE = ai.enabled
 
-  ?p.f = "dysangelos" & p.fs = 108
+  ?foe = "dysangelos" & foe.state = 108
   ^& dysanToPhase3Timer = 0
     dysanToPhase3Timer = 3 * u.sec
 
@@ -439,7 +439,7 @@ p.ft = foe.time
 
     //>c-20,2,#red, DESTROYING! (?)
 
-    ?dysanToPhase3Timer <= 80
+    ?dysanToPhase3Timer <= 83
       ?c.canBash()
         c.bash(a.dLsword)
 

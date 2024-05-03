@@ -363,10 +363,10 @@ func fight1v1()
 
       :?p.fs ! 1 // boss appearing cinematic
         ?c.canUseCind() & keepMask
-          ?p.fds = "ignition:15" |
+          ?p.fds = a.maxIgnitions_Default |
           ^c.canKillCind(i.getFoeTotalHP(),
-          ^              i.getDebuffLvl("ignition",true),
-          ^              a.cindDmg, 500)
+          ^              i.getDebuffLvl("ignition", true),
+          ^              a.cindDmg_Default, dpsm.DPS)
             c.useCind()
         
         ?c.canUsePotDmg() |

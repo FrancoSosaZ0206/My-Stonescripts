@@ -508,49 +508,39 @@ func doAps(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10)
   apsTimer++
 
   equipL moon
-  ?apsTimer = 1
+  ?apsTimer = 0
     equipR @s1@
 
-  :?apsTimer = 2
+  :?apsTimer = 1
     equipR @s2@
 
-  :?apsTimer = 3
+  :?apsTimer = 2
     equipR @s3@
 
-  :?apsTimer = 4
+  :?apsTimer = 3
     equipR @s4@
 
-  :?apsTimer = 5
+  :?apsTimer = 4
     equipR @s5@
 
-  :?apsTimer = 6
+  :?apsTimer = 5
     equipR @s6@
 
-  :?apsTimer = 7
+  :?apsTimer = 6
     equipR @s7@
 
-  :?apsTimer = 8
+  :?apsTimer = 7
     equipR @s8@
 
-  :?apsTimer = 9
+  :?apsTimer = 8
     equipR @s9@
 
-  :?apsTimer = 10
+  :?apsTimer = 9
     equipR @s10@
+  :
+    return
 
-  /*:?apsTimer = 11
-    equipL @s1@
-    equipR @s2@
-    equipL @s3@
-    equipR @s4@
-    equipL @s5@
-    equipR @s6@
-    equipL @s7@
-    equipR @s8@
-    equipL @s9@
-    equipR @s10@ */
-
-  return
+  //return
 
 
 

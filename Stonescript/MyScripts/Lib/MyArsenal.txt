@@ -120,8 +120,11 @@ var armDmg = 56
 var armRDmg = armDmg / 2
 var maxArmBuffs = 4
 
-var cindDmg = 92 // multiplied by the amount of Ignition buffs
-var maxIgnitions = "ignition:10"
+// multiplied by the amount of Ignition buffs:
+var cindDmg_Default = 32
+var cindDmg_Boosted = 92
+var maxIgnitions_Default = "ignition:10"
+var maxIgnitions_Boosted = "ignition:17"
 
 var weavDmg = 1
 var weavUnmkChance = 0.14 // %

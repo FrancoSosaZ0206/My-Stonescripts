@@ -52,14 +52,23 @@ var trueDmg
 
 var nRuns = 0
 
+var dysanToPhase3Done = false
+var dysanToPhase3Timer = 0
 var keepMask = true
 var resetApsTimer = true
+var restAps = false
 ?p.ll
+  dysanToPhase3Timer = 0
+  dysanToPhase3Done = false
+  c.apsTimer = 0
+
   keepMask = false
   resetApsTimer = true
+  restAps = false
   ?p.tt = 1
     nRuns++
 
+var moondialingMode = -1
 
 
 // FUNCTIONS
@@ -77,36 +86,24 @@ func bossFight()
 
   ?p.f = "phase1"
     ?!keepMask & p.php = p.pmhp
-      ?p.bs = "berserk"
-        ldtF("fdmg")
-      :
-        c.doMoondial(Vantum Phoenix, a.fsword, 0)
+      c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
     :
       equipL Vantum Phoenix
 
   :?p.f = "phase2"
     ?p.f = "poison"
       ?!keepMask & p.php = p.pmhp
-        ?p.bs = "berserk"
-          ldtF("idmg")
-        :
-          c.doMoondial(Bifrost, a.isword, 0)
+        c.doMoondial(Bifrost, a.isword, moondialingMode)
       :
         equipL Bifrost
     :?p.f = "vigor"
       ?!keepMask & p.php = p.pmhp
-        ?p.bs = "berserk"
-          ldtF("pdmg")
-        :
-          c.doMoondial(Mamba Negra, a.psword, 0)
+        c.doMoondial(Mamba Negra, a.psword, moondialingMode)
       :
         equipL Mamba Negra
     :?p.f = "aether"
       ?!keepMask & p.php = p.pmhp
-        ?p.bs = "berserk"
-          ldtF("vdmg")
-        :
-          c.doMoondial(Dothaneel, a.vsword, 0)
+        c.doMoondial(Dothaneel, a.vsword, moondialingMode)
       :
         equipL Dothaneel
     :?p.f = "fire"
@@ -119,10 +116,7 @@ func bossFight()
         equipL Void Slayer
     :?p.f = "ice"
       ?!keepMask & p.php = p.pmhp
-        ?p.bs = "berserk"
-          ldtF("fdmg")
-        :
-          c.doMoondial(Vantum Phoenix, a.fsword, 0)
+        c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
       :
         equipL Vantum Phoenix
 
@@ -133,15 +127,10 @@ func bossFight()
       c.useMask()
 
     ?c.canUseCind()
-      var cindMargin
-      ?p.ls >= 13
-        cindMargin = 1000
-      :
-        cindMargin = 3000
-      ?p.fds = a.maxIgnitions |
+      ?p.fds = a.maxIgnitions_Default |
       ^c.canKillCind(i.getFoeTotalHP(),
       ^              i.getDebuffLvl("ignition", true),
-      ^              a.cindDmg, cindMargin)
+      ^              a.cindDmg_Default, dpsm.DPS)
         c.useCind()
 
     p.ft = foe.time
@@ -162,32 +151,26 @@ func bossFight()
       dontDash = false
       ?c.canUseHamm() & p.fa > 0 & p.fd < 11
         c.useHamm(a.myHamm)
-      :?c.canUseQstaff()
+      :?c.canUseQstaff() & p.fd > 6
         c.useQstaff(a.myqstaff)
       :
         ?p.fbs ! "defense_fire"
           ?!keepMask & p.php = p.pmhp
-            ?p.bs = "berserk"
-              ldtF("fdmg")
+            ?c.apsTimer < 10
+              c.doAps(Vantum Phoenix, a.fsword,
+              ^       Bifrost, a.isword,
+              ^       Dothaneel, a.vsword,
+              ^       Mamba Negra, a.psword,
+              ^       Void Slayer, a.aesword)
 
             :
-              ?c.apsTimer <= 10
-                c.doAps(Vantum Phoenix, a.fsword,
-                ^       Bifrost, a.isword,
-                ^       Dothaneel, a.vsword,
-                ^       Mamba Negra, a.psword,
-                ^       Void Slayer, a.aesword)
-
-              :
-                c.doMoondial(Vantum Phoenix, a.fsword, 0)
+              c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
+              
           :
             equipL Vantum Phoenix
         :
           ?!keepMask & p.php = p.pmhp
-            ?p.bs = "berserk"
-              ldtF("idmg")
-            :
-              c.doMoondial(Bifrost, a.isword, 0)
+            c.doMoondial(Bifrost, a.isword, moondialingMode)
           :
             equipL Bifrost
 
@@ -238,11 +221,11 @@ func ldtF(mode)
       equipR @a.dPsword@
   :?mode = "pDeb2"
     ?keepMask
-      equipL Death's Kiss
+      equipL @a.dPsword@ // Death's Kiss
       equipR mask
     :
       equipL moon
-      equipR Death's Kiss
+      equipR @a.dPsword@ // Death's Kiss
   :?mode = "aidActive"
     equipL @a.ahHammer@
     equipR @a.ahShield@
@@ -257,22 +240,6 @@ func ldtF(mode)
     equipL @a.dIsword@
     equipR mask
   //damage
-  :?mode = "fDmg"
-    equipL Vantum Phoenix
-    ?!keepMask
-      equipR @a.fsword@
-  :?mode = "iDmg"
-    equipL Bifrost
-    ?!keepMask
-      equipR @a.isword@
-  :?mode = "pDmg"
-    equipL Mamba Negra
-    ?!keepMask
-      equipR @a.psword@
-  :?mode = "vDmg"
-    equipL Dothaneel
-    ?!keepMask
-      equipR @a.vsword@
   :?mode = "aeDmg"
     equipL Void Slayer
     ?!keepMask
@@ -346,9 +313,10 @@ var dontShowAgain = false
       ?!dontShowAgain
         dontShowAgain = true
 
-/*p.fs = foe.state
+p.fs = foe.state
 p.ft = foe.time
->`1,11,@i.colToHex("orange")@,fs = @p.fs@\nft = @p.ft@*/
+>`1,11,@i.colToHex("orange")@,fs = @p.fs@\nft = @p.ft@
+^\napsTimer = @c.apsTimer@
 
 /* Left hand:
 --- do AAC ---
@@ -368,22 +336,26 @@ p.ft = foe.time
 
 
 ?p.lb
-  p.rs = res.stone
   p.rb = res.bronze
+  p.rs = res.stone
+  p.rw = res.wood
 
-  ?p.rs >= 10 & p.rb >= 10
-    ?p.ip ! "lucky"
-      brew stone + bronze
+  ?p.rb >= 10
+    ?p.rs >= 10
+      ?p.ip ! "lucky"
+        brew stone + bronze
+
+      moondialingMode = 0
+
+    :?p.rw >= 10
+      ?p.ip ! "berserk"
+        brew wood + bronze
+
+      moondialingMode = 2
+    :
+      loc.Leave()
   :
     loc.Leave()
-
-  /*p.rw = res.wood
-  p.rb = res.bronze
-  ?p.rw >= 10 & p.rb >= 10
-    ?p.ip ! "berserk"
-      brew wood + bronze
-  :
-    loc.Leave()*/
 
 
 ?keepMask
@@ -425,6 +397,10 @@ p.ft = foe.time
 
   p.aiE = ai.enabled
 
+  ?p.f = "dysangelos" & p.fs = 108
+  ^& dysanToPhase3Timer = 0
+    dysanToPhase3Timer = 3 * u.sec
+
   ?p.si < 3 & p.fd > 17 & c.canUseQstaff()
     c.useQstaff(a.myqstaff)
 
@@ -445,22 +421,37 @@ p.ft = foe.time
       :
         c.useBard(a.fastBard)
 
+  :?p.f = "dysangelos" & p.fs = 127 & !restAps
+    ?c.apsTimer >= 10
+      c.apsTimer = 0
+    : // ?c.apsTimer < 10
+      c.doAps(Vantum Phoenix, a.fsword,
+      ^       Bifrost, a.isword,
+      ^       Dothaneel, a.vsword,
+      ^       Mamba Negra, a.psword,
+      ^       Void Slayer, a.aesword)
 
-  /*:?(p.f = "phase2" & p.fs = 107 & p.ft >= 149) |
-  ^(p.f = "phase3" & p.fs = -1)
-    >c-20,0,#red, DESTROYING! (?)
-    ?c.canBash()
-      c.bash(a.dLsword)
-    :?c.canDash()
-      c.dash(Vantum Phoenix, a.dshield)
+      ?c.apsTimer = 9
+        restAps = true
 
-    :?c.canUseQstaff()
-      c.useQstaff(a.myqstaff)
+  :?dysanToPhase3Timer > 0 & !dysanToPhase3Done
+    dysanToPhase3Timer--
 
-    :?c.canUseBard()
-      c.useBard(a.fastBard)
-    :?c.canUseHamm()
-      c.useHamm(a.myHamm)*/
+    //>c-20,2,#red, DESTROYING! (?)
+
+    ?dysanToPhase3Timer <= 80
+      ?c.canBash()
+        c.bash(a.dLsword)
+
+      :?c.canUseQstaff()
+        c.useQstaff(a.myqstaff)
+
+      :?c.canUseBard()
+        c.useBard(Kubikiribocho)
+      :?c.canUseHamm()
+        c.useHamm(a.myHamm)
+      :
+        dysanToPhase3Done = true
 
 
   :?p.fd > 15 | !aiE |
@@ -468,7 +459,9 @@ p.ft = foe.time
   ^(p.fs = 107 & p.fdmg = 3)) // Dysan's flying animation (after putting shield on phase3)
   ^| (p.f = "dysangelos" & p.fs = 4)
   ^| p.fs = 116
+
     p.fa = armor
+
     ?14 <= p.fa & p.fa <= 29
       ldtF("default")
     :
@@ -502,17 +495,14 @@ p.ft = foe.time
         equipL Vantum Phoenix
         equipR @a.dLsword@
 
-      :?c.apsTimer <= 10
+      :?c.apsTimer < 10
         c.doAps(Vantum Phoenix, a.fsword,
         ^       Bifrost, a.isword,
         ^       Dothaneel, a.vsword,
         ^       Mamba Negra, a.psword,
         ^       Void Slayer, a.aesword)
-    
-      :?p.bs = "lucky"
-        c.doMoondial(Vantum Phoenix, a.fsword, 0)
-      :?p.bs = "berserk"
-        c.doMoondial(Vantum Phoenix, a.fsword, 2)
+      :
+        c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
 
 
     :?p.f = "dysangelos" &

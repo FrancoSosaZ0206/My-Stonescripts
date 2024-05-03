@@ -363,10 +363,10 @@ func ldtF(mode) // loadouts
       :?p.f = "spider_boss_harder"
       ^& p.fs ! 4 // dying
         ?c.canUseCind() & keepMask & dpsm.DPS ! "N/A"
-          ?p.fds = "ignition:15" |
+          ?p.fds = a.maxIgnitions_Default |
           ^c.canKillCind(i.getFoeTotalHP(),
-          ^              i.getDebuffLvl("ignition",true),
-          ^              a.cindDmg, dpsm.DPS)
+          ^              i.getDebuffLvl("ignition", true),
+          ^              a.cindDmg_Default, dpsm.DPS)
             c.useCind()
 
         ?c.canUsePotDmg()

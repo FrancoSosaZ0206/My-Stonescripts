@@ -314,10 +314,10 @@ i.showBuffs(false, 1, 10, "#green", false)*/
       p.ft = foe.time
 
       ?c.canUseCind() & dpsm.DPS ! "N/A"
-        ?p.fds = "ignition:15" |
+        ?p.fds = a.maxIgnitions_Default |
         ^c.canKillCind(i.getFoeTotalHP(),
-        ^              i.getDebuffLvl("ignition",true),
-        ^              a.cindDmg, dpsm.DPS)
+        ^              i.getDebuffLvl("ignition", true),
+        ^              a.cindDmg_Default, dpsm.DPS)
           c.useCind()
 
       ?c.canUsePot()

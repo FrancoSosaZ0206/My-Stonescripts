@@ -53,8 +53,10 @@ var trueDmg
 var nRuns = 0
 
 var keepMask = true
+var resetApsTimer = true
 ?p.ll
   keepMask = false
+  resetApsTimer = true
   ?p.tt = 1
     nRuns++
 
@@ -68,7 +70,7 @@ func harvFunc(btn)
     choice = true
   : // btn = noBtn
     choice = false
-  
+
   return
 
 func bossFight()
@@ -229,25 +231,25 @@ func ldtF(mode)
   //buffs/debuffs (oriented to duration)
   :?mode = "pDeb1"
     ?keepMask
-      equipL @a.dPsword1@
+      equipL @a.dPsword@
       equipR mask
     :
       equipL moon
-      equipR @a.dPsword1@
+      equipR @a.dPsword@
   :?mode = "pDeb2"
     ?keepMask
-      equipL @a.dPsword2@
+      equipL Death's Kiss
       equipR mask
     :
       equipL moon
-      equipR @a.dPsword2@
+      equipR Death's Kiss
   :?mode = "aidActive"
     equipL @a.ahHammer@
     equipR @a.ahShield@
   :?mode = "pDebActive" // idk what to name it lol
-    equipL @a.dPsword1@
+    equipL @a.dPsword@
     equipR @a.apShield@
-    
+
   :?mode = "fDeb"
     equipL @a.dFsword@
     equipR mask
@@ -400,7 +402,7 @@ p.ft = foe.time
 :?c.canUseFTali()
   equipL triskelion
   c.useFTali("r")
-  
+
 :?c.canUsePotDmg() & keepMask
   activate potion
 
@@ -443,7 +445,7 @@ p.ft = foe.time
       :
         c.useBard(a.fastBard)
 
-  
+
   /*:?(p.f = "phase2" & p.fs = 107 & p.ft >= 149) |
   ^(p.f = "phase3" & p.fs = -1)
     >c-20,0,#red, DESTROYING! (?)
@@ -471,7 +473,7 @@ p.ft = foe.time
       ldtF("default")
     :
       ldtF("armorRecover")
-      
+
   :?p.aiE & p.fs ! -1
     // fighting range
 
@@ -490,7 +492,7 @@ p.ft = foe.time
         ?p.fds ! "chill:6"
           equipL @a.dIsword@
         :?p.fds ! "damage"
-          equipL @a.dPsword1@
+          equipL @a.dPsword@
         :?p.fds ! "dot"
           equipL @a.dFsword@
         :
@@ -500,6 +502,13 @@ p.ft = foe.time
         equipL Vantum Phoenix
         equipR @a.dLsword@
 
+      :?c.apsTimer <= 10
+        c.doAps(Vantum Phoenix, a.fsword,
+        ^       Bifrost, a.isword,
+        ^       Dothaneel, a.vsword,
+        ^       Mamba Negra, a.psword,
+        ^       Void Slayer, a.aesword)
+    
       :?p.bs = "lucky"
         c.doMoondial(Vantum Phoenix, a.fsword, 0)
       :?p.bs = "berserk"
@@ -509,10 +518,9 @@ p.ft = foe.time
     :?p.f = "dysangelos" &
     ^p.fs ! 124
     ^!(p.fs = 107 & p.fdmg = 3)
-
       p.fdmg = foe.damage
       p.ft = foe.time
-      
+
       trueDmg = p.fdmg
       ?p.fds = "damage"
         ?p.f = "phase3"
@@ -522,8 +530,11 @@ p.ft = foe.time
 
       ?p.fds = "feeble"
         trueDmg -= 2*i.getDebuffLvl("feeble", true)
-      
-      
+
+      ?resetApsTimer
+        c.apsTimer = 0
+        resetApsTimer = false
+
       ?c.canBash() & !dontDash
         c.bash(Vantum Phoenix)
       :?c.canDash() & !dontDash

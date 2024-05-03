@@ -439,7 +439,7 @@ p.ft = foe.time
 
     //>c-20,2,#red, DESTROYING! (?)
 
-    ?dysanToPhase3Timer <= 83
+    ?dysanToPhase3Timer <= 80
       ?c.canBash()
         c.bash(a.dLsword)
 

@@ -108,10 +108,7 @@ func bossFight()
         equipL Dothaneel
     :?p.f = "fire"
       ?!keepMask & p.php = p.pmhp
-        ?p.bs = "berserk"
-          ldtF("aedmg")
-        :
-          c.doMoondial(Void Slayer, a.aesword, moondialingMode)
+        c.doMoondial(Void Slayer, a.aesword, moondialingMode)
       :
         equipL Void Slayer
     :?p.f = "ice"

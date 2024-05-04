@@ -1,4 +1,4 @@
-﻿// *******************************************************
+// *******************************************************
 //                       6-Mine.txt                       
 // *******************************************************
 
@@ -107,10 +107,6 @@ func ldtF(mode) // loadouts
     equipL triskelion
     equipR mask
 
-  :?mode = "meleeDmg"
-    equipL Void Slayer
-    ?!keepMask
-      equipR @a.aesword@
   :?mode = "unmkDmg"
     ?p.tt % 2 = 0 & p.fd > 4
       equipL triskelion
@@ -163,7 +159,7 @@ func fight1v1()
   canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
   canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
   canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
-  
+
   ?canDebI | canDebP | canDebF
     ?keepMask
       ?canDebI
@@ -196,12 +192,11 @@ func fight1v1()
     ?keepMask
       equipL Void Slayer
     :
-      ldtF("meleeDmg")
-      /*p.bs = buffs.string
+      p.bs = buffs.string
       ?p.bs = "berserk"
         c.doMoondial(Void Slayer, a.aesword, 2)
       :
-        c.doMoondial(Void Slayer, a.aesword, 0)*/
+        c.doMoondial(Void Slayer, a.aesword, 0)
 
   return
 
@@ -309,7 +304,7 @@ func fight1v1()
           isAbtToDash = (p.fd <= 17)
           ?keepMask & isAbtToDash
             equipR @a.aeshield@
-          
+
           canDebI = (p.fds ! "chill" &
           ^f ! "immune_to_debuff_chill")
           p.bs = buffs.string
@@ -368,7 +363,7 @@ func fight1v1()
           ^              i.getDebuffLvl("ignition", true),
           ^              a.cindDmg_Default, dpsm.DPS)
             c.useCind()
-        
+
         ?c.canUsePotDmg() |
         ^c.canUsePotSpecial("strength",0)
           activate potion

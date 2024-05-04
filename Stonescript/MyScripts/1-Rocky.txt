@@ -53,12 +53,12 @@ var trueDmg
 var nRuns = 0
 
 var dysanToPhase3Done = false
-var dysanToPhase3Timer = 0
+var dysanToPhase3Timer = -1
 var keepMask = true
 var resetApsTimer = true
 var restAps = false
 ?p.ll
-  dysanToPhase3Timer = 0
+  dysanToPhase3Timer = -1
   dysanToPhase3Done = false
   c.apsTimer = 0
 
@@ -304,10 +304,31 @@ var dontShowAgain = false
       ?!dontShowAgain
         dontShowAgain = true
 
-/*p.fs = foe.state
-p.ft = foe.time
->`1,11,@i.colToHex("orange")@,fs = @p.fs@\nft = @p.ft@
-^\napsTimer = @c.apsTimer@*/
+/************************************
+
+var dysanPhaseNum = -1
+?p.f = "phase2"
+  dysanPhaseNum = 2
+:?p.f = "phase3"
+  dysanPhaseNum = 3
+:?p.ll
+  dysanPhaseNum = -1
+
+?dysanPhaseNum ! -1
+  >`1,8,@i.colToHex("orange")@,PHASE#=#@dysanPhaseNum@
+
+  p.fs = foe.state
+  p.ft = foe.time
+
+  >`1,10,#green,state#=#@p.fs@\n
+  ^time#=#@p.ft@
+
+  ?dysanToPhase3Timer ! -1
+    >`1,13,#cyan,phase3#timer:#@dysanToPhase3Timer@f
+
+/************************************/
+
+
 
 /* Left hand:
 --- do AAC ---
@@ -388,11 +409,19 @@ p.ft = foe.time
 
   p.aiE = ai.enabled
 
-  ?foe = "dysangelos" & foe.state = 108
-  ^& dysanToPhase3Timer = 0
-    dysanToPhase3Timer = 3 * u.sec
+  /************************************/
 
-  ?p.si < 3 & p.fd > 17 & c.canUseQstaff()
+  ?p.f = "dysangelos" & p.fs = 108
+  ^& dysanToPhase3Timer = -1
+    dysanToPhase3Timer = 0
+
+  ?dysanToPhase3Timer ! -1 & dysanToPhase3Timer < 90
+    dysanToPhase3Timer++
+
+  /************************************/
+
+
+  ?c.canUseQstaff() & p.si < 3 & p.fd > 15
     c.useQstaff(a.myqstaff)
 
   :?p.f = "dysangelos" & p.fd <= 22
@@ -425,24 +454,32 @@ p.ft = foe.time
       ?c.apsTimer = 9
         restAps = true
 
-  :?dysanToPhase3Timer > 0 & !dysanToPhase3Done
-    dysanToPhase3Timer--
+  :?c.canUseQstaff() & p.si = 4 &
+  ^p.fd > 15 & p.fd <= 18 & p.aiE
+    c.useQstaff(a.myqstaff)
 
+  /************************************/
+
+  :?dysanToPhase3Timer >= 0 & !dysanToPhase3Done
     //>c-20,2,#red, DESTROYING! (?)
 
-    ?dysanToPhase3Timer <= 80
-      ?c.canBash()
-        c.bash(a.dLsword)
+    ?c.canUseQstaff()
+      c.useQstaff(a.myqstaff)
 
-      :?c.canUseQstaff()
-        c.useQstaff(a.myqstaff)
+    :?c.canBash()
+      c.bash(a.dLsword)
+    :?c.canDash()
+      c.dash(a.dLsword, a.dshield)
 
-      :?c.canUseBard()
-        c.useBard(Kubikiribocho)
-      :?c.canUseHamm()
-        c.useHamm(a.myHamm)
-      :
-        dysanToPhase3Done = true
+    :?c.canUseBard()
+      c.useBard(Kubikiribocho)
+    :?c.canUseHamm()
+      c.useHamm(a.myHamm)
+    :
+      dysanToPhase3Done = true
+
+  /************************************/
+
 
 
   :?p.fd > 15 | !aiE |

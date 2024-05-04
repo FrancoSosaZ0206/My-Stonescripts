@@ -121,8 +121,8 @@ var armRDmg = armDmg / 2
 var maxArmBuffs = 4
 
 // multiplied by the amount of Ignition buffs:
-var cindDmg_Default = 32
-var cindDmg_Boosted = 92
+var cindDmg_Default = 36
+var cindDmg_Boosted = 96
 var maxIgnitions_Default = "ignition:10"
 var maxIgnitions_Boosted = "ignition:17"
 

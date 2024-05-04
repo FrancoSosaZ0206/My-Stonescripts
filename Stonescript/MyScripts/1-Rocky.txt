@@ -111,7 +111,7 @@ func bossFight()
         ?p.bs = "berserk"
           ldtF("aedmg")
         :
-          c.doMoondial(Void Slayer, a.aesword, 3)
+          c.doMoondial(Void Slayer, a.aesword, moondialingMode)
       :
         equipL Void Slayer
     :?p.f = "ice"
@@ -165,7 +165,7 @@ func bossFight()
 
             :
               c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
-              
+
           :
             equipL Vantum Phoenix
         :
@@ -239,12 +239,6 @@ func ldtF(mode)
   :?mode = "iDeb"
     equipL @a.dIsword@
     equipR mask
-  //damage
-  :?mode = "aeDmg"
-    equipL Void Slayer
-    ?!keepMask
-      equipR @a.aesword@
-
 
   : // print error message on screen
     i.showStrCentered(

@@ -96,19 +96,19 @@ func fight1v1()
   canDebI = (p.fds ! "chill:6" & p.f ! "immune_to_debuff_chill")
   canDebP = (p.fds ! "damage" & p.f ! "immune_to_debuff_damage")
   canDebF = (p.fds ! "dot" & p.f ! "immune_to_debuff_dot")
-  
+
   ?(p.bs = "berserk" | keepMask) & (canDebI | canDebP | canDebF)
     ?keepMask
       ?canDebI
         equipL @a.dIsword@
       :?canDebP
-        equipL @a.dPsword1@
+        equipL @a.dPsword@
       :?canDebF
         equipL @a.dFsword@
     :
       //Left hand:
       ?canDebP
-        equipL @a.dPsword1@
+        equipL @a.dPsword@
       :?canDebF
         equipL @a.dFsword@
       :?canDebI
@@ -275,7 +275,7 @@ c.doAAC("sword 0*", a.cshield1)
       isAbtToDash = (p.fd <= 17)
       ?keepMask & isAbtToDash
         equipR @a.ishield@
-      
+
       canDebI = (p.fds ! "chill" &
       ^f ! "immune_to_debuff_chill")
       p.bs = buffs.string

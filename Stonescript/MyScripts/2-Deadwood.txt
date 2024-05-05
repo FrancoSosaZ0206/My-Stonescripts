@@ -15,6 +15,7 @@ p = import MyScripts/Lib/Performance
 var a = new MyScripts/Lib/MyArsenal
 var i = new MyScripts/Lib/MyBetterInfo
 var c = new MyScripts/Lib/Combat
+c.Main()
 
 /***************************************************************/
 
@@ -278,18 +279,7 @@ var dontShowAgain = false
 
 
 
-/* Left hand:
---- do AAC ---
-- when state = 3
---- do NOT do AAC ---
-- When ask is on and equipped weapon is a +21 sword. */
-?p.ils >= 3 // & !(keepMask & p.il = "sword D +21")
-  equipL sword 0*
-  equipL @p.il@
-?p.irs >= 3 // & p.ir ! "sword D +21"
-  equipR @a.cshield1@
-  equipR @p.ir@
-
+c.doAAC("sword 0*", a.cshield1)
 
 ?p.lb
   p.rs = res.stone

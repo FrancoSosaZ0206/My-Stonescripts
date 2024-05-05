@@ -48,6 +48,9 @@ func Main()
   lowhp = p.pmhp / 3
   hihp = (4 * p.pmhp) / 5
 
+  ?p.ll
+    apsTimer = 0
+
   return
 
 
@@ -500,8 +503,6 @@ func doMoondial(weapon1, weapon2, mode)
   return
 
 var apsTimer = 0
-?p.ll
-  apsTimer = 0
 /* Fastest moondialing variant with all dual D rune swords.
 Requires them all to be *21 speed enchanted. */
 func doAps(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10)
@@ -540,7 +541,16 @@ func doAps(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10)
   :
     return
 
-  //return
+
+func doAAC(itemLeft, itemRight)
+  ?p.ils >= 3
+    equipL @itemLeft@
+    equipL @p.il@
+  ?p.irs >= 3
+    equipR @itemRight@
+    equipR @p.ir@
+
+  return
 
 
 

@@ -151,7 +151,7 @@ func bossFight()
       dontDash = false
       ?c.canUseHamm() & p.fa > 0 & p.fd < 11
         c.useHamm(a.myHamm)
-      :?c.canUseQstaff() & p.fd > 6
+      :?c.canUseQstaff() & p.fd > 6 & p.fd < 11
         c.useQstaff(a.myqstaff)
       :
         ?p.fbs ! "defense_fire"
@@ -308,7 +308,6 @@ var dontShowAgain = false
         dontShowAgain = true
 
 
-
 c.doAAC("sword 0*", a.cshield1)
 
 ?debuffs.string
@@ -401,7 +400,7 @@ c.doAAC("sword 0*", a.cshield1)
     :?c.canUseQstaff()
       c.useQstaff(a.myqstaff)
     :?c.canDash()
-      c.dash(Vantum Phoenix, a.dshield)
+      c.dash("Vantum Phoenix", a.dshield)
     :
       p.bs = buffs.string
       ?p.bs = "berserk"
@@ -524,9 +523,9 @@ c.doAAC("sword 0*", a.cshield1)
         resetApsTimer = false
 
       ?c.canBash() & !dontDash
-        c.bash(Vantum Phoenix)
+        c.bash("Vantum Phoenix")
       :?c.canDash() & !dontDash
-        c.dash(Vantum Phoenix, a.dshield)
+        c.dash("Vantum Phoenix", a.dshield)
 
 
       :?p.fs = 32 & (

@@ -304,30 +304,6 @@ var dontShowAgain = false
       ?!dontShowAgain
         dontShowAgain = true
 
-/************************************
-
-var dysanPhaseNum = -1
-?p.f = "phase2"
-  dysanPhaseNum = 2
-:?p.f = "phase3"
-  dysanPhaseNum = 3
-:?p.ll
-  dysanPhaseNum = -1
-
-?dysanPhaseNum ! -1
-  >`1,8,@i.colToHex("orange")@,PHASE#=#@dysanPhaseNum@
-
-  p.fs = foe.state
-  p.ft = foe.time
-
-  >`1,10,#green,state#=#@p.fs@\n
-  ^time#=#@p.ft@
-
-  ?dysanToPhase3Timer ! -1
-    >`1,13,#cyan,phase3#timer:#@dysanToPhase3Timer@f
-
-/************************************/
-
 
 
 /* Left hand:
@@ -397,7 +373,7 @@ var dysanPhaseNum = -1
 :?pickup.distance < 15
   ldtF("magnet")
 
-  ?p.si < 3 & c.canUseQstaff()
+  ?p.si ! 3 & c.canUseQstaff()
     c.useQstaff(a.myqstaff)
 
 :
@@ -412,7 +388,7 @@ var dysanPhaseNum = -1
   /************************************/
 
   ?p.f = "dysangelos" & p.fs = 108
-  ^& dysanToPhase3Timer = -1
+  ^& dysanToPhase3Timer = -1 & !keepMask
     dysanToPhase3Timer = 0
 
   ?dysanToPhase3Timer ! -1 & dysanToPhase3Timer < 90
@@ -441,9 +417,10 @@ var dysanPhaseNum = -1
       :
         c.useBard(a.fastBard)
 
-  :?p.f = "dysangelos" & p.fs = 127 & !restAps
+  :?p.f = "dysangelos" & p.fs = 127 & !restAps & !keepMask
     ?c.apsTimer >= 10
       c.apsTimer = 0
+
     : // ?c.apsTimer < 10
       c.doAps(Vantum Phoenix, a.fsword,
       ^       Bifrost, a.isword,
@@ -461,7 +438,6 @@ var dysanPhaseNum = -1
   /************************************/
 
   :?dysanToPhase3Timer >= 0 & !dysanToPhase3Done
-    //>c-20,2,#red, DESTROYING! (?)
 
     ?c.canUseQstaff()
       c.useQstaff(a.myqstaff)
@@ -482,7 +458,7 @@ var dysanPhaseNum = -1
 
 
 
-  :?p.fd > 15 | !aiE |
+  :?p.fd > 15 | !p.aiE |
   ^(p.fs = 124 | p.fs = -1 |
   ^(p.fs = 107 & p.fdmg = 3)) // Dysan's flying animation (after putting shield on phase3)
   ^| (p.f = "dysangelos" & p.fs = 4)
@@ -506,6 +482,7 @@ var dysanPhaseNum = -1
     p.bs = buffs.string
 
     ?p.f = "acronian_scout"
+      
       ?c.canBash()
         c.bash(Vantum Phoenix)
 
@@ -533,6 +510,7 @@ var dysanPhaseNum = -1
         c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
 
 
+
     :?p.f = "dysangelos" &
     ^p.fs ! 124
     ^!(p.fs = 107 & p.fdmg = 3)
@@ -547,7 +525,7 @@ var dysanPhaseNum = -1
           trueDmg -= 4
 
       ?p.fds = "feeble"
-        trueDmg -= 2*i.getDebuffLvl("feeble", true)
+        trueDmg -= 2 * i.getDebuffLvl("feeble", true)
 
       ?resetApsTimer
         c.apsTimer = 0
@@ -559,7 +537,7 @@ var dysanPhaseNum = -1
         c.dash(Vantum Phoenix, a.dshield)
 
 
-      :?/*armor < trueDmg & */p.fs = 32 & (
+      :?p.fs = 32 & (
       ^(p.f = "phase1" &
       ^  ((p.fds = "chill" & p.ft > 58) // about to attack, slowed down by chill debuff
       ^ | (48 < p.ft & p.ft < 52)      )) | // same, but w/o chill (sometimes it runs out right when attacking)

@@ -95,6 +95,11 @@ aiI = ai.idle
 var si
 si = screen.i
 
+//position
+var px
+var py
+var pz
+
 //resources
 var rs // res.stone
 var rw // res.wood

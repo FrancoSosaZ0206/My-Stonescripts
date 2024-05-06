@@ -348,7 +348,7 @@ c.doAAC("sword 0*", a.cshield1)
         ldtF("magnet")
 
       :?p.fs ! 1 // boss appearing cinematic
-        ?c.canUseCind() & keepMask
+        ?c.canUseCind() & keepMask & dpsm.DPS ! "N/A"
           ?p.fds = a.maxIgnitions_Default |
           ^c.canKillCind(i.getFoeTotalHP(),
           ^              i.getDebuffLvl("ignition", true),
@@ -360,7 +360,7 @@ c.doAAC("sword 0*", a.cshield1)
           activate potion
         :?c.canUseHamm() & keepMask
           c.useHamm(a.myHamm)
-        :?c.canUseMask() & keepMask
+        :?c.canUseMask() // & keepMask
           c.useMask()
 
         :?p.fs = 32 & p.ft >= u.sec // boss's hammer attack

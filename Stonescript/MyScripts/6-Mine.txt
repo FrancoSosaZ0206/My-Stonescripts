@@ -132,7 +132,7 @@ func ldtF(mode) // loadouts
         equipL @a.dFwand@
 
     :
-      ?p.tt % 3 = 0 & p.fd > 4
+      ?p.tt % 4 = 0 & p.fd > 4
         equipL triskelion
         equipR hatchet
 

@@ -349,10 +349,13 @@ c.doAAC("sword 0*", a.cshield1)
 
       :?p.fs ! 1 // boss appearing cinematic
         ?c.canUseCind() & keepMask & dpsm.DPS ! "N/A"
+          var currIgnLvl
+          currIgnLvl = i.getDebuffLvl("ignition", true)
           ?p.fds = a.maxIgnitions_Default |
+          ^(currIgnLvl > 3 &
           ^c.canKillCind(i.getFoeTotalHP(),
-          ^              i.getDebuffLvl("ignition", true),
-          ^              a.cindDmg_Default, dpsm.DPS)
+          ^              currIgnLvl,
+          ^              a.cindDmg_Default, dpsm.DPS))
             c.useCind()
 
         ?c.canUsePotDmg() |
@@ -366,7 +369,7 @@ c.doAAC("sword 0*", a.cshield1)
         :?p.fs = 32 & p.ft >= u.sec // boss's hammer attack
           ldtF("escape")
 
-        :?p.fs = 33 & p.ft < 6*u.sec // boss's hammer's stuck
+        :?p.fs = 33 & p.ft < 6 * u.sec // boss's hammer's stuck
 
           ?p.ft > 5 & c.canUseQstaff()
             c.useQstaff(a.myqstaff)
@@ -387,12 +390,14 @@ c.doAAC("sword 0*", a.cshield1)
               fight1v1()
 
         :
-          /*?p.irs = 3
+          ?p.irs = 3
             fBowCount++
           ?fBowCount = 0
-            ldtF("rangedF")
+            equip @a.dFstaff@
+          :?fBowCount = 1
+            equip @a.dPstaff@
 
-          :
+          /*:
             ?p.fa < 1
               ?c.canUseMask() & !keepMask
                 c.useMask()
@@ -409,7 +414,7 @@ c.doAAC("sword 0*", a.cshield1)
                 :
                   ldtF("rangedDmg")*/
 
-            ?keepMask
+            :?keepMask
               equipL @a.altbow@
             :
               ldtF("rangedDmg")

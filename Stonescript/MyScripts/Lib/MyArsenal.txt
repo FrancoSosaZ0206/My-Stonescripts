@@ -136,7 +136,7 @@ var hammDmg = 123
 "Kubikiribocho" only, not for the
 other bardiche! */
 var bardDmg = 52
-var bardCrit = 10.8
+var bardCrit = 11.2
 var bardRDmg = (bardDmg + 17) * bardCrit
 
 

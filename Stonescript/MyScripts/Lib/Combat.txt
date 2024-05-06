@@ -179,7 +179,7 @@ leaving a damage margin.
             necessary because the ability has a cast time
             that will alter the estimations done here.
             Send 0 if you don't want to use a margin. */
-func canKillCind(foeTotalHP,nIgnitions,cindDmg,margin)
+func canKillCind(foeTotalHP, nIgnitions, cindDmg, margin)
   return foeTotalHP <= (nIgnitions * cindDmg) + margin
 
 func useCind()

@@ -349,8 +349,9 @@ c.doAAC("sword 0*", a.cshield1)
 
       :?p.fs ! 1 // boss appearing cinematic
         ?c.canUseCind() & keepMask & dpsm.DPS ! "N/A"
-          var currIgnLvl
+          var currIgnLvl = 0
           currIgnLvl = i.getDebuffLvl("ignition", true)
+
           ?p.fds = a.maxIgnitions_Default |
           ^(currIgnLvl > 3 &
           ^c.canKillCind(i.getFoeTotalHP(),
@@ -392,12 +393,19 @@ c.doAAC("sword 0*", a.cshield1)
         :
           ?p.irs = 3
             fBowCount++
+
           ?fBowCount = 0
             equip @a.dFstaff@
           :?fBowCount = 1
             equip @a.dPstaff@
 
-          /*:
+
+          :?keepMask
+            equipL @a.altbow@
+          :
+            ldtF("rangedDmg")
+
+          /* :
             ?p.fa < 1
               ?c.canUseMask() & !keepMask
                 c.useMask()
@@ -412,13 +420,8 @@ c.doAAC("sword 0*", a.cshield1)
                 :?keepMask
                   equipL @a.altbow@
                 :
-                  ldtF("rangedDmg")*/
-
-            :?keepMask
-              equipL @a.altbow@
-            :
-              ldtF("rangedDmg")
-
+                  ldtF("rangedDmg")
+          */
 
 
 // *******************************************************

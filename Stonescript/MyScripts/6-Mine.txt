@@ -361,7 +361,7 @@ c.doAAC("sword 0*", a.cshield1)
         ?c.canUsePotDmg() |
         ^c.canUsePotSpecial("strength",0)
           activate potion
-        :?c.canUseHamm() & keepMask
+        :?c.canUseHamm() // & keepMask
           c.useHamm(a.myHamm)
         :?c.canUseMask() // & keepMask
           c.useMask()

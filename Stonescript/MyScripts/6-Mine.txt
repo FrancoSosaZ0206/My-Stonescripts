@@ -391,19 +391,18 @@ c.doAAC("sword 0*", a.cshield1)
               fight1v1()
 
         :
-          ?p.irs = 3
-            fBowCount++
-
-          ?fBowCount = 0
-            equip @a.dFstaff@
-          :?fBowCount = 1
-            equip @a.dPstaff@
-
-
-          :?keepMask
+          ?keepMask
             equipL @a.altbow@
           :
-            ldtF("rangedDmg")
+            ?p.irs = 3
+              fBowCount++
+
+            ?fBowCount = 0
+              equip @a.dFstaff@
+            :?fBowCount = 1
+              equip @a.dPstaff@
+            :
+              ldtF("rangedDmg")
 
           /* :
             ?p.fa < 1

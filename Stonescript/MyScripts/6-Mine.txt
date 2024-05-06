@@ -132,7 +132,7 @@ func ldtF(mode) // loadouts
         equipL @a.dFwand@
 
     :
-      ?p.tt % 3 = 0
+      ?p.tt % 3 = 0 & p.fd > 4
         equipL triskelion
         equipR hatchet
 
@@ -387,7 +387,7 @@ c.doAAC("sword 0*", a.cshield1)
               fight1v1()
 
         :
-          ?p.irs = 3
+          /*?p.irs = 3
             fBowCount++
           ?fBowCount = 0
             ldtF("rangedF")
@@ -407,9 +407,9 @@ c.doAAC("sword 0*", a.cshield1)
                 :?keepMask
                   equipL @a.altbow@
                 :
-                  ldtF("rangedDmg")
+                  ldtF("rangedDmg")*/
 
-            :?keepMask
+            ?keepMask
               equipL @a.altbow@
             :
               ldtF("rangedDmg")

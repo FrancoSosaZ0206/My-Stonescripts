@@ -83,13 +83,13 @@ func fight1v1()
       ?canDebI
         equipL @a.dIsword@
       :?canDebP
-        equipL @a.dPsword1@
+        equipL @a.dPsword@
       :?canDebF
         equipL @a.dFsword@
     :
       //Left hand:
       ?canDebP
-        equipL @a.dPsword1@
+        equipL @a.dPsword@
       :?canDebF
         equipL @a.dFsword@
       :?canDebI

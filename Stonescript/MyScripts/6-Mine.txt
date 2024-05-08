@@ -64,12 +64,12 @@ var keepFTali = false
 ?p.f = "boss"
   keepFTali = true
 
-var fBowCount = 0
+var rangedDebCount = 0
 
 ?p.ll
   keepMask = false
   keepFTali = false
-  fBowCount = 0
+  rangedDebCount = 0
 
   ?p.tt = 1
     runCount++
@@ -208,14 +208,14 @@ func fight1v1()
 
 c.doAAC("sword 0*", a.cshield1)
 
-/*?p.lb // AUTO BREWING:
+?p.lb // AUTO BREWING:
   p.rs = res.stone
 
   ?p.rs >= 20
     ?p.ip ! "strength"
       brew stone
   :
-    loc.Leave() */
+    loc.Leave()
 
 ?keepMask
   ?p.ir ! "bardiche" &
@@ -392,14 +392,23 @@ c.doAAC("sword 0*", a.cshield1)
 
         :
           ?keepMask
-            equipL @a.altbow@
+            ?p.ils = 3
+              rangedDebCount++
+
+            ?rangedDebCount = 0
+              equipL @a.dFwand@
+            :?rangedDebCount = 1
+              equipL @a.dPwand@
+            :
+              equipL @a.altbow@
+
           :
             ?p.irs = 3
-              fBowCount++
+              rangedDebCount++
 
-            ?fBowCount = 0
+            ?rangedDebCount = 0
               equip @a.dFstaff@
-            :?fBowCount = 1
+            :?rangedDebCount = 1
               equip @a.dPstaff@
             :
               ldtF("rangedDmg")
@@ -411,8 +420,8 @@ c.doAAC("sword 0*", a.cshield1)
               :?c.canUseHamm() & !keepMask & p.ip = "strength"
                 c.useHamm(a.myHamm)
               :
-                var pBowCount = fBowCount + 1
-                ?p.fds ! "damage" & pBowCount ! fBowCount
+                var pBowCount = rangedDebCount + 1
+                ?p.fds ! "damage" & pBowCount ! rangedDebCount
                 ^& p.ip = "strength"
                   ldtF("rangedP")
 

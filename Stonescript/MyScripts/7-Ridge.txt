@@ -264,6 +264,8 @@ c.doAAC("sword 0*", a.cshield1)
     ?c.canUseMaskDS(maskScr)
       ?i.getBuffInfo("smite", false, 2) >= 25
         c.useMaskDS()
+      :
+        screen.ResetOffset()
 
     ?c.canUseQstaff() &
     ^p.ir ! "bardiche" &

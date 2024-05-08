@@ -63,7 +63,6 @@ var restAps = false
 ?p.ll
   dysanToPhase3Timer = -1
   dysanToPhase3Done = false
-  //c.apsTimer = 0
 
   keepMask = false
   resetApsTimer = true
@@ -178,6 +177,7 @@ func bossFight()
   ?p.php < p.pmhp
   ^& !c.canBash() & !c.canDash()
   ^& !keepMask
+    equipL moon
     equipR @a.dLsword@
 
 
@@ -308,13 +308,13 @@ var dontShowAgain = false
         dontShowAgain = true
 
 
+
 c.doAAC("sword 0*", a.cshield1)
 
 ?debuffs.string
   loc.Leave()
 
-
-?p.lb
+?p.lb // AUTO BREWING
   p.rb = res.bronze
   p.rs = res.stone
   p.rw = res.wood
@@ -336,19 +336,16 @@ c.doAAC("sword 0*", a.cshield1)
   :
     loc.Leave()
 
-
 ?keepMask
   ?p.ir ! "bardiche" &
   ^p.ir ! "quarterstaff" &
   ^p.ir ! "heavy hammer"
     equipR mask
 
-
 ?p.lb | p.ll
   /* ldtF("default") but w/o considering keepMask*/
   equipL triskelion
   equipR @a.cshield1@
-
 
 :?c.canUseFTali()
   equipL triskelion
@@ -356,7 +353,6 @@ c.doAAC("sword 0*", a.cshield1)
 
 :?c.canUsePotDmg() & keepMask
   activate potion
-
 
 :?choice & harvest.distance < 5
   ldtF("harv")
@@ -485,10 +481,11 @@ c.doAAC("sword 0*", a.cshield1)
         :?p.fds ! "dot"
           equipL @a.dFsword@
         :
-          equipL Vantum Phoenix
+          //equipL Vantum Phoenix
+          equipL Stoney
 
       :?p.php ! p.pmhp
-        equipL Vantum Phoenix
+        equipL moon// Vantum Phoenix
         equipR @a.dLsword@
 
       :?c.apsTimer < 10
@@ -498,7 +495,10 @@ c.doAAC("sword 0*", a.cshield1)
         ^       Mamba Negra, a.psword,
         ^       Void Slayer, a.aesword)
       :
-        c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
+        //c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
+        equipL Stoney
+        equipR Rockus
+        //c.doMoondial(Stoney, Rockus, moondialingMode)
 
 
 

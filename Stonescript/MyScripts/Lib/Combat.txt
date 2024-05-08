@@ -306,7 +306,7 @@ func useBard(yourBard)
 /* Checks if you can use the
 dashing shield's ability. */
 func canDash()
-  return p.tt >= p.dashDelay & !p.aiI
+  return item.GetCooldown("dash") <= 0 & !p.aiI
   ^& 11 <= p.fd & p.fd <= 15
   ^& p.canAct
 
@@ -543,10 +543,10 @@ func doAps(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10)
 
 
 func doAAC(itemLeft, itemRight)
-  ?p.ils >= 3
+  ?p.ils = 3
     equipL @itemLeft@
     equipL @p.il@
-  ?p.irs >= 3
+  ?p.irs = 3
     equipR @itemRight@
     equipR @p.ir@
 

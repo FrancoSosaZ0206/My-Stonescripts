@@ -98,7 +98,7 @@ var dIstaff = "ice staff dI *max"
 var altbow = "crossbow *max golden"
 
 //special weapons:
-var dshield = "dashing shield *max golden HoH24"
+var dshield = "dashing shield *max HoH24"
 var myqstaff = "quarterstaff golden"
 var fastBard = "bardiche *max" // enchanted: speed
 var myHamm = "heavy hammer *max"

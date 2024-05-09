@@ -481,11 +481,10 @@ c.doAAC("sword 0*", a.cshield1)
         :?p.fds ! "dot"
           equipL @a.dFsword@
         :
-          //equipL Vantum Phoenix
-          equipL Stoney
+          equipL Vantum Phoenix
 
       :?p.php ! p.pmhp
-        equipL moon// Vantum Phoenix
+        equipL moon
         equipR @a.dLsword@
 
       :?c.apsTimer < 10
@@ -495,10 +494,7 @@ c.doAAC("sword 0*", a.cshield1)
         ^       Mamba Negra, a.psword,
         ^       Void Slayer, a.aesword)
       :
-        //c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
-        equipL Stoney
-        equipR Rockus
-        //c.doMoondial(Stoney, Rockus, moondialingMode)
+        c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
 
 
 

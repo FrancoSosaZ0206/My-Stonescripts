@@ -342,6 +342,10 @@ c.doAAC("sword 0*", a.cshield1)
   ^p.ir ! "heavy hammer"
     equipR mask
 
+?c.canUseMask() &
+^p.tt = 60 & !keepMask
+  c.useMaskDS()
+
 ?p.lb | p.ll
   /* ldtF("default") but w/o considering keepMask*/
   equipL triskelion
@@ -469,7 +473,7 @@ c.doAAC("sword 0*", a.cshield1)
     p.bs = buffs.string
 
     ?p.f = "acronian_scout"
-      
+
       ?c.canBash()
         c.bash(Vantum Phoenix)
 

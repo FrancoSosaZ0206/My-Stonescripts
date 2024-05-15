@@ -342,8 +342,7 @@ c.doAAC("sword 0*", a.cshield1)
   ^p.ir ! "heavy hammer"
     equipR mask
 
-?c.canUseMask() &
-^p.tt = 60 & !keepMask
+?c.canUseMask() & p.tt >= 60 & !keepMask
   c.useMaskDS()
 
 ?p.lb | p.ll

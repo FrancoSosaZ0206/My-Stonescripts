@@ -342,9 +342,6 @@ c.doAAC("sword 0*", a.cshield1)
   ^p.ir ! "heavy hammer"
     equipR mask
 
-?c.canUseMask() & p.tt >= 60 & !keepMask
-  c.useMaskDS()
-
 ?p.lb | p.ll
   /* ldtF("default") but w/o considering keepMask*/
   equipL triskelion
@@ -502,7 +499,7 @@ c.doAAC("sword 0*", a.cshield1)
 
 
     :?p.f = "dysangelos" &
-    ^p.fs ! 124
+    ^p.fs ! 124 &
     ^!(p.fs = 107 & p.fdmg = 3)
       p.fdmg = foe.damage
       p.ft = foe.time
@@ -536,6 +533,8 @@ c.doAAC("sword 0*", a.cshield1)
           ldtF("aidActive")
         :
           ldtF("pDebActive")
+          ?!keepMask
+            >c0,-10,#magenta,P DEB ACTIVE
 
 
       :?p.f ! "immune_to_debuff_damage"

@@ -539,7 +539,8 @@ c.doAAC("sword 0*", a.cshield1)
       ^ | (48 < p.ft & p.ft < 52)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
       ^(p.f = "phase3" & p.ft > 80)  ) // final phase, about to normal attack
 
-        loc.Pause()
+        ?!keepMask
+          loc.Pause()
         p.pa = armor
         ?p.pa < trueDmg
           ldtF("aidActive")

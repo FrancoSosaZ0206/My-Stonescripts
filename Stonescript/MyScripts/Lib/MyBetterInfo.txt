@@ -121,7 +121,7 @@ func getBuffInfo(nameid, inFoe, infoIndex)
    - arrInfo[1] is id
    - arrInfo[2] is stack count
    - arrInfo[3] is remaining duration on first stack */
-func getDebuffLvl(nameid,inFoe)
+func getDebuffLvl(nameid, inFoe)
   var lvl
   var debuffFound
   var arrDebuffs

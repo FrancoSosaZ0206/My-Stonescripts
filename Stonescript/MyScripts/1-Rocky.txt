@@ -310,6 +310,7 @@ var dontShowAgain = false
 
 /************************************/
 
+p.bs = buffs.string
 i.showBuffs(false,1,15,"#green",false)
 ?trueDmg
   >c0,0,trueDmg#=#@trueDmg@
@@ -515,7 +516,7 @@ c.doAAC("sword 0*", a.cshield1)
       trueDmg = p.fdmg
       ?p.fds = "damage"
         ?p.f = "phase3"
-          trueDmg -= 8
+          trueDmg -= 4 // 8 was for when using the other dP sword
         :
           trueDmg -= 4
 

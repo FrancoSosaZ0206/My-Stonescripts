@@ -312,8 +312,12 @@ var dontShowAgain = false
 
 p.bs = buffs.string
 i.showBuffs(false,1,15,"#green",false)
+
 ?trueDmg
   >c0,0,trueDmg#=#@trueDmg@
+
+>c-10,1,#magenta,state#=#@foe.state@\n
+^time#=#@foe.time@
 
 /************************************/
 

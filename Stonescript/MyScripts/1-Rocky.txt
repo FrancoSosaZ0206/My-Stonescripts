@@ -479,7 +479,7 @@ var dontShowAgain = false
         ?p.fds ! "chill:6"
           ldtF("iDeb")
         :?p.fds ! "damage"
-          ldtF("pDeb2")
+          ldtF("pDeb1") // 2
         :?p.fds ! "dot"
           ldtF("fDeb")
         :
@@ -508,15 +508,10 @@ var dontShowAgain = false
 
       trueDmg = p.fdmg
       ?p.fds = "damage"
-        ?!keepMask
+        ?p.f = "phase3"
+          trueDmg -= 4 // a.boostedPdeb
+        :
           trueDmg -= 4
-        :
-          trueDmg -= a.boostedPdeb
-
-        /*?p.f = "phase3"
-          trueDmg -= 4 // 8 was for when using the other dP sword
-        :
-          trueDmg -= 4*/
 
       ?p.fds = "feeble"
         trueDmg -= 2 * i.getDebuffLvl("feeble", true)
@@ -555,9 +550,9 @@ var dontShowAgain = false
 
           :?p.fds ! "damage"
             ?p.f = "phase3"
-              ldtF("pDeb2")
+              ldtF("pDeb1") // 2
             :
-              ldtF("pDeb2") // 1
+              ldtF("pDeb1") // 2
 
           :?p.fds ! "dot"
             ldtF("fDeb")

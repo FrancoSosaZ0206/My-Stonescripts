@@ -112,7 +112,7 @@ var tshield = "towering shield *max golden"
 
 // Weapons damage and stats
 
-var boostedPdeb = 9 // [Death's Kiss]'s damage penalty (boosted)
+var boostedPdeb = 4 // [Death's Kiss]'s damage penalty (boosted)
 
 var bladeDmg = 310
 var bladeRDmg = 95

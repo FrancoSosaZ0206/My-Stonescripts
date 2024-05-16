@@ -309,7 +309,9 @@ var dontShowAgain = false
 
 
 
-c.doAAC("sword 0*", a.cshield1)
+?p.irs ! a.apShield &
+^p.ils ! a.ahHammer & p.irs ! a.ahShield
+  c.doAAC("sword 0*", a.cshield1)
 
 ?debuffs.string
   loc.Leave()

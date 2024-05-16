@@ -308,6 +308,15 @@ var dontShowAgain = false
         dontShowAgain = true
 
 
+/************************************/
+
+i.showBuffs(false,1,15,"#green",false)
+?trueDmg
+  >c0,0,trueDmg#=#@trueDmg@
+
+/************************************/
+
+
 
 c.doAAC("sword 0*", a.cshield1)
 
@@ -501,7 +510,6 @@ c.doAAC("sword 0*", a.cshield1)
     :?p.f = "dysangelos" &
     ^p.fs ! 124 &
     ^!(p.fs = 107 & p.fdmg = 3)
-      p.fdmg = foe.damage
       p.ft = foe.time
 
       trueDmg = p.fdmg

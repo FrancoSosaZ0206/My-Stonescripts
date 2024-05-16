@@ -308,20 +308,6 @@ var dontShowAgain = false
         dontShowAgain = true
 
 
-/************************************/
-
-p.bs = buffs.string
-i.showBuffs(false,1,15,"#green",false)
-
-?trueDmg
-  >c0,0,trueDmg#=#@trueDmg@
-
->c-10,1,#magenta,state#=#@foe.state@\n
-^time#=#@foe.time@
-
-/************************************/
-
-
 
 c.doAAC("sword 0*", a.cshield1)
 
@@ -545,16 +531,11 @@ c.doAAC("sword 0*", a.cshield1)
       ^  ((p.fds = "chill" & p.ft > 80) // final phase, about to normal attack
       ^ | (45 < p.ft & p.ft < 50)      )) ) // same, but w/o chill
 
-        ?!keepMask
-          loc.Pause()
         p.pa = armor
         ?p.pa < trueDmg
           ldtF("aidActive")
-        :?trueDmg < 0 | p.pa >= trueDmg
+        :
           ldtF("pDebActive")
-          ?!keepMask
-            >c0,-10,#magenta,P DEB ACTIVE
-            loc.Pause()
 
 
       :?p.f ! "immune_to_debuff_damage"

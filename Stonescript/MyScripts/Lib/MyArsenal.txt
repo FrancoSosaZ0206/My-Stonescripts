@@ -112,6 +112,8 @@ var tshield = "towering shield *max golden"
 
 // Weapons damage and stats
 
+var boostedPdeb = 9 // [Death's Kiss]'s damage penalty (boosted)
+
 var bladeDmg = 310
 var bladeRDmg = 95
 var smiteMult = 8.8 // mult = multiplier
@@ -133,7 +135,7 @@ var weavArmor = 1.35
 var hammDmg = 123
 
 /* WARNING: These stats are for
-"Kubikiribocho" only, not for the
+[Kubikiribocho] only, not for the
 other bardiche! */
 var bardDmg = 52
 var bardCrit = 13.5

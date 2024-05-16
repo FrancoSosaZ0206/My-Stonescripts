@@ -158,7 +158,7 @@ func Update()
 
     FRM = p.tt - startTime // total time minus the time the first hit was dealt
     ?hits > 1
-      FPH = FRM      / (hits-1) // -1 is there to avoid stat flicking
+      FPH = FRM      / (hits /*- 1*/) // -1 is there to avoid stat flicking
     :
       FPH = "N/A"
 

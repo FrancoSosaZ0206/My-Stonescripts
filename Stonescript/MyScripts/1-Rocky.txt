@@ -461,9 +461,9 @@ c.doAAC("sword 0*", a.cshield1)
   ^| (p.f = "dysangelos" & p.fs = 4)
   ^| p.fs = 116
 
-    p.fa = armor
+    p.pa = armor
 
-    ?14 <= p.fa & p.fa <= 29
+    ?14 <= p.pa & p.pa <= 29
       ldtF("default")
     :
       ldtF("armorRecover")
@@ -538,12 +538,14 @@ c.doAAC("sword 0*", a.cshield1)
       ^  ((p.fds = "chill" & p.ft > 58) // about to attack, slowed down by chill debuff
       ^ | (48 < p.ft & p.ft < 52)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
       ^(p.f = "phase3" & p.ft > 80)  ) // final phase, about to normal attack
-        ?armor < trueDmg
+        p.pa = armor
+        ?p.pa < trueDmg
           ldtF("aidActive")
-        :
+        :?trueDmg < 0 | p.pa >= trueDmg
           ldtF("pDebActive")
           ?!keepMask
             >c0,-10,#magenta,P DEB ACTIVE
+            loc.Pause()
 
 
       :?p.f ! "immune_to_debuff_damage"

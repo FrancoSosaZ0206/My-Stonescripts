@@ -477,11 +477,11 @@ var dontShowAgain = false
 
       :?keepMask
         ?p.fds ! "chill:6"
-          equipL @a.dIsword@
+          ldtF("iDeb")
         :?p.fds ! "damage"
-          equipL @a.dPsword@
+          ldtF("pDeb2")
         :?p.fds ! "dot"
-          equipL @a.dFsword@
+          ldtF("fDeb")
         :
           equipL Vantum Phoenix
 

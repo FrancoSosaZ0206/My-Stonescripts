@@ -62,8 +62,6 @@ var keepMask = true
 var resetApsTimer = true
 var restAps = false
 
-var keepAPshield = false
-
 ?p.ll
   dysanToPhase3Timer = -1
   dysanToPhase3Done = false
@@ -72,8 +70,6 @@ var keepAPshield = false
 
   resetApsTimer = true
   restAps = false
-
-  keepAPshield = false
 
   ?p.tt = 1
     nRuns++
@@ -317,17 +313,6 @@ var dontShowAgain = false
 
 
 
-/***************************/
-
->`2,15,#green,state#=#@foe.state@\n
-^time#=#@foe.time@
-
->`2,18,#red,keepAPshield#=#@keepAPshield@
-
-/***************************/
-
-
-
 ?p.irs ! a.apShield &
 ^p.ils ! a.ahHammer & p.irs ! a.ahShield
   c.doAAC("sword 0*", a.cshield1)
@@ -404,10 +389,6 @@ var dontShowAgain = false
 
   ?c.canUseQstaff() & p.si < 3 & p.fd > 15
     c.useQstaff(a.myqstaff)
-
-  :?keepAPshield
-    ldtF("pDebActive")
-    keepAPshield = false
 
   :?p.f = "dysangelos" & p.fd <= 22
   ^& c.canUseBard2() &
@@ -493,9 +474,7 @@ var dontShowAgain = false
         c.bash("Vantum Phoenix")
 
       :?p.fs = 32 & p.ft > 40
-        //ldtF("pDebActive")
-        keepAPshield = true
-        >c0,0,#cyan,P DEB ACTIVEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEE
+        ldtF("pDebActive")
 
       :?keepMask
         ?p.fds ! "chill:6"
@@ -558,8 +537,7 @@ var dontShowAgain = false
         ?p.pa < trueDmg
           ldtF("aidActive")
         :
-          //ldtF("pDebActive")
-          keepAPshield = true
+          ldtF("pDebActive")
 
 
       :?p.f ! "immune_to_debuff_damage"

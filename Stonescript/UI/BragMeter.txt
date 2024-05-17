@@ -21,9 +21,9 @@ var bigstr = 0
 var a = 50
 var b = 0
 var c = 0
-var cstr = ï¼‚ï¼‚
-var bar = ï¼»ï¼½
-var cstr2 = ï¼‚ï¼‚
+var cstr = ""
+var bar = []
+var cstr2 = ""
 var d = 0
 var donttry = false
 var num
@@ -32,22 +32,22 @@ var mmin = math.Min
 var igco = item.getCount
 var sjoi = string.Join
 
-var remark=ï¼»
-ï¼‚Didnt even tryï¼‚,ï¼‚Could be betterï¼‚,
-ï¼‚Below averageï¼‚,ï¼‚Somewhat okayï¼‚,
-ï¼‚Averageï¼‚,ï¼‚Cool, I guessï¼‚,
-ï¼‚Good enoughï¼‚,ï¼‚I would stop by nowï¼‚,
-ï¼‚Straight Aï¼‚,ï¼‚Unbelievably goodï¼‚,
-ï¼‚Perfectionï¼‚
-ï¼½
+var remark=[
+"Didnt even try","Could be better",
+"Below average","Somewhat okay",
+"Average","Cool, I guess",
+"Good enough","I would stop by now",
+"Straight A","Unbelievably good",
+"Perfection"
+]
 
-var colors =ï¼»
+var colors =[
 #999999,#EEEEEE,#cyan,#yellow,#green,#blue,
 #red,#magenta,#FFAA00,#AA00FF,#rainFF
-ï¼½
+]
 
-var text = string.Break(ï¼‚Remarks:ï¼‚,1)
-var gcc = igco(ï¼‚enchantï¼‚)
+var text = string.Break("Remarks:",1)
+var gcc = igco("enchant")
 var uion = false
 
 //first check
@@ -58,33 +58,33 @@ var hour = utc.hour
 var minute = utc.minute
 var second = utc.second
 
-var datestring = ï¼‚ï½›0ï½/ï½›1ï½/ï½›2ï½ on ï½›3ï½:ï½›4ï½:ï½›5ï½ï¼‚
-?storage.Get(ï¼‚FIRSTTIMEPLAYï¼‚,0)=0
+var datestring = "{0}/{1}/{2} on {3}:{4}:{5}"
+?storage.Get("FIRSTTIMEPLAY",0)=0
   datestring = string.Format(
   ^datestring,month,day,year,hour,minute,second)
-  storage.Set(ï¼‚FIRSTTIMEPLAYï¼‚,datestring)
+  storage.Set("FIRSTTIMEPLAY",datestring)
 
-datestring = storage.Get(ï¼‚FIRSTTIMEPLAYï¼‚)
+datestring = storage.Get("FIRSTTIMEPLAY")
  
-var coderan = storage.Get(ï¼‚RANDOMCODEDï¼‚)
-?storage.Get(ï¼‚RANDOMCODEDï¼‚,0)=0
+var coderan = storage.Get("RANDOMCODED")
+?storage.Get("RANDOMCODED",0)=0
  coderan = rng * rng
- storage.Set(ï¼‚RANDOMCODEDï¼‚,coderan)
+ storage.Set("RANDOMCODED",coderan)
   
 var hcalc =(item.GetTreasureLimit() - 100)/5
 //save grade calc
 var kic = mmin(res.ki,2000000) / 2000000.0
 var mhc = mmin((hcalc),60) / 60.0
 var gpc = mmin(totalgp,25000) / 25000.0
-var osc = mmin(igco(ï¼‚moondialï¼‚)+igco(
-^ï¼‚grappling_hook_lv2ï¼‚),2)
+var osc = mmin(igco("moondial")+igco(
+^"grappling_hook_lv2"),2)
 
 //lost item count
 var lic = mmin(192,
-^igco(ï¼‚bladeï¼‚) + igco(ï¼‚maskï¼‚)
-^+ igco(ï¼‚fire_talismanï¼‚)  +
-^igco(ï¼‚bashï¼‚) + igco(ï¼‚skeleton_armï¼‚)+
-^igco(ï¼‚aether_talismanï¼‚))
+^igco("blade") + igco("mask")
+^+ igco("fire_talisman")  +
+^igco("bash") + igco("skeleton_arm")+
+^igco("aether_talisman"))
 var licperc = lic/192.0
 var oscperc = osc/2.0
 
@@ -112,19 +112,19 @@ var grck = math.FloorToInt(gr * 10)
 var acgr = gr * 10000 / 100.00000
 var acgru = gru * 10000 / 100.00000
 
-var ccolor = colorsï¼»grckï¼½
-var cremark = remarkï¼»grckï¼½
+var ccolor = colors[grck]
+var cremark = remark[grck]
 
 var formstr =
-^ï¼‚Name:# ï½›0ï½ \n
-^Level:# ï½›1ï½ \n
-^Lost Items:# ï½›2ï½ \n
-^Key Items:# ï½›3ï½ \n
-^Ki:# ï½›4ï½ \n
-^Crystals:# ï½›8ï½ \n \n
-^Power:# ï½›5ï½ \n
-^Grade:# ï½›6ï½% \n
-^U-Grade:# ï½›7ï½% ##ï¼‚
+^"Name:# {0} \n
+^Level:# {1} \n
+^Lost Items:# {2} \n
+^Key Items:# {3} \n
+^Ki:# {4} \n
+^Crystals:# {8} \n \n
+^Power:# {5} \n
+^Grade:# {6}% \n
+^U-Grade:# {7}% ##"
 var formstrd = string.Format(
 ^formstr,player.name,hcalc,lic,osc,res.ki,
 ^totalgp,acgr,acgru,res.crystals)
@@ -132,12 +132,12 @@ var largestr=string.Split(formstrd)
 
 //scaler
 var y = 0
-?bar = ï¼‚ï¼‚
+?bar = ""
  for i = 1..20
   ?grk >= i & gr <= 1
-   bar.Add(ï¼‚â–ˆï¼‚)
+   bar.Add("█")
   :
-   bar.Add(ï¼‚â–’ï¼‚)
+   bar.Add("▒")
 
 var largstr
 
@@ -150,17 +150,17 @@ var shortwait = 0
  b = 0
  c = 0
  d = 0
- cstr = ï¼‚ï¼‚
- cstr2 = ï¼‚ï¼‚
+ cstr = ""
+ cstr2 = ""
 :
  bigstr = 0
- largstr = ï¼‚ï¼‚
+ largstr = ""
 
 //easter eggs
 ?gr > 1
  ambient.Stop()
  ccolor = #990000
- cremark = ï¼‚You know what you did.ï¼‚
+ cremark = "You know what you did."
  acgr = 0
  gr = 0
  grkr = 0
@@ -173,22 +173,22 @@ var shortwait
  ?a ! 7
   a -= 1
  :?flipflop = false
-  ?cstr = ï¼‚ï¼‚
+  ?cstr = ""
    >c7,-5,@ccolor@,Save:\n@cstr@
   ?b ! 21
    play xp_tick
-   cstr = sjoi(ï¼‚ï¼‚,bar,0,b)
+   cstr = sjoi("",bar,0,b)
    b += 1
   :
    >c7,-3,@ccolor@,@c@%
    ?c ! Math.roundToInt(grkr)
     c += 1
    :
-    ?cstr2 = ï¼‚Rï¼‚
+    ?cstr2 = "R"
      >c7,-1,@cstr2@
     ?d ! 8
      d += 1
-     cstr2 = sjoi(ï¼‚ï¼‚,text,0,d)
+     cstr2 = sjoi("",text,0,d)
     :
      ?uion = false
       play error
@@ -204,12 +204,12 @@ var shortwait
      uion = true
  :
   >c7,-5,@ccolor@,@largstr@
-  ?largestrï¼»bigstrï¼½ ! ï¼‚##ï¼‚
+  ?largestr[bigstr] ! "##"
    bigstr += 1
-   largstr = sjoi(ï¼‚ï¼‚,largestr,0,bigstr)
+   largstr = sjoi("",largestr,0,bigstr)
 ?uion = true
  var but = ui.AddButton()
- but.text = ï¼‚<click to see details>ï¼‚
+ but.text = "<click to see details>"
  but.x = 18
  but.y = 6
  but.h = 1

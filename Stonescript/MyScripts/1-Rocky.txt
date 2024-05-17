@@ -56,17 +56,25 @@ var nRuns = 0
 
 var dysanToPhase3Done = false
 var dysanToPhase3Timer = -1
+
 var keepMask = true
+
 var resetApsTimer = true
 var restAps = false
+
+var keepAPshield = false
 
 ?p.ll
   dysanToPhase3Timer = -1
   dysanToPhase3Done = false
 
   keepMask = false
+
   resetApsTimer = true
   restAps = false
+
+  keepAPshield = false
+
   ?p.tt = 1
     nRuns++
 
@@ -312,7 +320,8 @@ var dontShowAgain = false
 /***************************/
 
 >`2,15,#green,state#=#@foe.state@\n
-^time#=#@foe.time@
+^time#=#@foe.time@\n\n
+^[color=#FF0000]keepAPshield#=#@keepAPshield@[/color]
 
 /***************************/
 
@@ -383,7 +392,6 @@ var dontShowAgain = false
 
   p.aiE = ai.enabled
 
-  /************************************/
 
   ?p.f = "dysangelos" & p.fs = 108
   ^& dysanToPhase3Timer = -1 & !keepMask
@@ -392,16 +400,18 @@ var dontShowAgain = false
   ?dysanToPhase3Timer ! -1 & dysanToPhase3Timer < 90
     dysanToPhase3Timer++
 
-  /************************************/
-
 
   ?c.canUseQstaff() & p.si < 3 & p.fd > 15
     c.useQstaff(a.myqstaff)
 
+  :?keepAPshield
+    ldtF("pDebActive")
+    keepAPshield = false
+
   :?p.f = "dysangelos" & p.fd <= 22
   ^& c.canUseBard2() &
   ^(p.fs = 100 | p.fs = 101 |
-  ^p.fs = 102 | p.fs = 126)
+  ^p.fs = 102 | p.fs = 126) // Dysan's pre-dialog strat
     ?c.canUseHamm2()
       c.useHamm(a.myHamm)
     :?c.canUseQstaff()
@@ -415,7 +425,7 @@ var dontShowAgain = false
       :
         c.useBard(a.fastBard)
 
-  :?p.f = "dysangelos" & p.fs = 127 & !restAps & !keepMask
+  :?p.f = "dysangelos" & p.fs = 127 & !restAps & !keepMask // "reloading" aps strat
     ?c.apsTimer >= 10
       c.apsTimer = 0
 
@@ -433,9 +443,7 @@ var dontShowAgain = false
   ^p.fd > 15 & p.fd <= 18 & p.aiE
     c.useQstaff(a.myqstaff)
 
-  /************************************/
-
-  :?dysanToPhase3Timer >= 0 & !dysanToPhase3Done
+  :?dysanToPhase3Timer >= 0 & !dysanToPhase3Done // Dysan's phase3 transformation cutscene strat
 
     ?c.canUseQstaff()
       c.useQstaff(a.myqstaff)
@@ -451,8 +459,6 @@ var dontShowAgain = false
       c.useHamm(a.myHamm)
     :
       dysanToPhase3Done = true
-
-  /************************************/
 
 
 
@@ -486,7 +492,8 @@ var dontShowAgain = false
         c.bash("Vantum Phoenix")
 
       :?p.fs = 32 & p.ft > 40
-        ldtF("pDebActive")
+        //ldtF("pDebActive")
+        keepAPshield = true
         >c0,0,#cyan,P DEB ACTIVEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEE
 
       :?keepMask
@@ -550,7 +557,8 @@ var dontShowAgain = false
         ?p.pa < trueDmg
           ldtF("aidActive")
         :
-          ldtF("pDebActive")
+          //ldtF("pDebActive")
+          keepAPshield = true
 
 
       :?p.f ! "immune_to_debuff_damage"

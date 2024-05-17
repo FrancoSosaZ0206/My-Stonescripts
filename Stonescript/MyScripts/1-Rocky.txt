@@ -485,7 +485,7 @@ var dontShowAgain = false
       ?c.canBash()
         c.bash("Vantum Phoenix")
 
-      :?p.fs = 32 & p.ft >= 45
+      :?p.fs = 32 & p.ft > 40
         ldtF("pDebActive")
         >c0,0,#cyan,P DEB ACTIVEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEE
 
@@ -501,8 +501,6 @@ var dontShowAgain = false
 
       :?p.php ! p.pmhp
         c.doMoondial(a.dLsword, "Vantum Phoenix", moondialingMode)
-        /*equipL moon
-        equipR @a.dLsword@*/
 
       :?c.apsTimer < 10
         c.doAps("Vantum Phoenix", a.fsword,
@@ -543,10 +541,10 @@ var dontShowAgain = false
       :?p.fs = 32 & (
       ^(p.f = "phase1" &
       ^  ((p.fds = "chill" & p.ft > 58) // about to attack, slowed down by chill debuff
-      ^ | (23 < p.ft & p.ft < 30)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
+      ^ | (p.fds ! "chill" & 23 < p.ft & p.ft < 30)      )) | // same, but w/o chill (sometimes it runs out right when attacking)
       ^(p.f = "phase3" &
       ^  ((p.fds = "chill" & p.ft > 80) // final phase, about to normal attack
-      ^ | (48 < p.ft & p.ft < 55)      )) ) // same, but w/o chill
+      ^ | (p.fds ! "chill" & 48 < p.ft & p.ft < 55)      )) ) // same, but w/o chill
 
         p.pa = armor
         ?p.pa < trueDmg

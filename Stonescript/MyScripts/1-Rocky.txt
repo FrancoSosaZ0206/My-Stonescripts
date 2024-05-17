@@ -88,34 +88,34 @@ func bossFight()
 
   ?p.f = "phase1"
     ?!keepMask & p.php = p.pmhp
-      c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
+      c.doMoondial("Vantum Phoenix", a.fsword, moondialingMode)
     :
       equipL Vantum Phoenix
 
   :?p.f = "phase2"
     ?p.f = "poison"
       ?!keepMask & p.php = p.pmhp
-        c.doMoondial(Bifrost, a.isword, moondialingMode)
+        c.doMoondial("Bifrost", a.isword, moondialingMode)
       :
         equipL Bifrost
     :?p.f = "vigor"
       ?!keepMask & p.php = p.pmhp
-        c.doMoondial(Mamba Negra, a.psword, moondialingMode)
+        c.doMoondial("Mamba Negra", a.psword, moondialingMode)
       :
         equipL Mamba Negra
     :?p.f = "aether"
       ?!keepMask & p.php = p.pmhp
-        c.doMoondial(Dothaneel, a.vsword, moondialingMode)
+        c.doMoondial("Dothaneel", a.vsword, moondialingMode)
       :
         equipL Dothaneel
     :?p.f = "fire"
       ?!keepMask & p.php = p.pmhp
-        c.doMoondial(Void Slayer, a.aesword, moondialingMode)
+        c.doMoondial("Void Slayer", a.aesword, moondialingMode)
       :
         equipL Void Slayer
     :?p.f = "ice"
       ?!keepMask & p.php = p.pmhp
-        c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
+        c.doMoondial("Vantum Phoenix", a.fsword, moondialingMode)
       :
         equipL Vantum Phoenix
 
@@ -156,20 +156,20 @@ func bossFight()
         ?p.fbs ! "defense_fire"
           ?!keepMask & p.php = p.pmhp
             ?c.apsTimer < 10
-              c.doAps(Vantum Phoenix, a.fsword,
-              ^       Bifrost, a.isword,
-              ^       Dothaneel, a.vsword,
-              ^       Mamba Negra, a.psword,
-              ^       Void Slayer, a.aesword)
+              c.doAps("Vantum Phoenix", a.fsword,
+              ^       "Bifrost", a.isword,
+              ^       "Dothaneel", a.vsword,
+              ^       "Mamba Negra", a.psword,
+              ^       "Void Slayer", a.aesword)
 
             :
-              c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
+              c.doMoondial("Vantum Phoenix", a.fsword, moondialingMode)
 
           :
             equipL Vantum Phoenix
         :
           ?!keepMask & p.php = p.pmhp
-            c.doMoondial(Bifrost, a.isword, moondialingMode)
+            c.doMoondial("Bifrost", a.isword, moondialingMode)
           :
             equipL Bifrost
 
@@ -309,6 +309,15 @@ var dontShowAgain = false
 
 
 
+/***************************/
+
+>`2,15,#green,state#=#@foe.state@\n
+^time#=#@foe.time@
+
+/***************************/
+
+
+
 ?p.irs ! a.apShield &
 ^p.ils ! a.ahHammer & p.irs ! a.ahShield
   c.doAAC("sword 0*", a.cshield1)
@@ -402,7 +411,7 @@ var dontShowAgain = false
     :
       p.bs = buffs.string
       ?p.bs = "berserk"
-        c.useBard(Kubikiribocho)
+        c.useBard("Kubikiribocho")
       :
         c.useBard(a.fastBard)
 
@@ -411,11 +420,11 @@ var dontShowAgain = false
       c.apsTimer = 0
 
     : // ?c.apsTimer < 10
-      c.doAps(Vantum Phoenix, a.fsword,
-      ^       Bifrost, a.isword,
-      ^       Dothaneel, a.vsword,
-      ^       Mamba Negra, a.psword,
-      ^       Void Slayer, a.aesword)
+      c.doAps("Vantum Phoenix", a.fsword,
+      ^       "Bifrost", a.isword,
+      ^       "Dothaneel", a.vsword,
+      ^       "Mamba Negra", a.psword,
+      ^       "Void Slayer", a.aesword)
 
       ?c.apsTimer = 9
         restAps = true
@@ -437,7 +446,7 @@ var dontShowAgain = false
       c.dash(a.dLsword, a.dshield)
 
     :?c.canUseBard()
-      c.useBard(Kubikiribocho)
+      c.useBard("Kubikiribocho")
     :?c.canUseHamm()
       c.useHamm(a.myHamm)
     :
@@ -471,9 +480,14 @@ var dontShowAgain = false
     p.bs = buffs.string
 
     ?p.f = "acronian_scout"
+      p.ft = foe.time
 
       ?c.canBash()
-        c.bash(Vantum Phoenix)
+        c.bash("Vantum Phoenix")
+
+      /*:?p.fs = 32 & p.ft >= [xxx]
+        ldtF("pDebActive")
+      */
 
       :?keepMask
         ?p.fds ! "chill:6"
@@ -491,13 +505,13 @@ var dontShowAgain = false
         equipR @a.dLsword@*/
 
       :?c.apsTimer < 10
-        c.doAps(Vantum Phoenix, a.fsword,
-        ^       Bifrost, a.isword,
-        ^       Dothaneel, a.vsword,
-        ^       Mamba Negra, a.psword,
-        ^       Void Slayer, a.aesword)
+        c.doAps("Vantum Phoenix", a.fsword,
+        ^       "Bifrost", a.isword,
+        ^       "Dothaneel", a.vsword,
+        ^       "Mamba Negra", a.psword,
+        ^       "Void Slayer", a.aesword)
       :
-        c.doMoondial(Vantum Phoenix, a.fsword, moondialingMode)
+        c.doMoondial("Vantum Phoenix", a.fsword, moondialingMode)
 
 
 

@@ -487,6 +487,7 @@ var dontShowAgain = false
 
       :?p.fs = 32 & p.ft >= 45
         ldtF("pDebActive")
+        >c0,0,#cyan,P DEB ACTIVEEEEEEEEEEEE\nEEEEEEEEEEEEEEEEE
 
       :?keepMask
         ?p.fds ! "chill:6"

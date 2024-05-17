@@ -320,8 +320,9 @@ var dontShowAgain = false
 /***************************/
 
 >`2,15,#green,state#=#@foe.state@\n
-^time#=#@foe.time@\n\n
-^[color=#FF0000]keepAPshield#=#@keepAPshield@[/color]
+^time#=#@foe.time@
+
+>`2,18,#red,keepAPshield#=#@keepAPshield@
 
 /***************************/
 

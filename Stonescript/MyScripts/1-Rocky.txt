@@ -485,9 +485,8 @@ var dontShowAgain = false
       ?c.canBash()
         c.bash("Vantum Phoenix")
 
-      /*:?p.fs = 32 & p.ft >= [xxx]
+      :?p.fs = 32 & p.ft >= 45
         ldtF("pDebActive")
-      */
 
       :?keepMask
         ?p.fds ! "chill:6"

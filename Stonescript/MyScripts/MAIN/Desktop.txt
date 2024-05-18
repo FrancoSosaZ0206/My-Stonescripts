@@ -10,7 +10,7 @@
 
 HOW TO USE
 
-  import MyScripts/MAIN_PC
+  import MyScripts/MAIN/PC
 
 Enjoy your multi-location script package :3 */
 

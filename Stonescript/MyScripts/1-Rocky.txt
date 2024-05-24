@@ -129,13 +129,16 @@ func bossFight()
     :?c.canUseMask()
       c.useMask()
 
-    ?c.canUseCind()
+    ?c.canUseCind() & dpsm.DPS
       ?p.fds = a.maxIgnitions_Default |
       ^c.canKillCind(i.getFoeTotalHP(),
       ^              i.getDebuffLvl("ignition", true),
       ^              a.cindDmg_Default, dpsm.DPS)
         c.useCind()
-    
+
+    :?c.canUseCind() & !dpsm.DPS
+      ?p.fds = a.maxIgnitions_Default
+        c.useCind()
 
     p.ft = foe.time
 

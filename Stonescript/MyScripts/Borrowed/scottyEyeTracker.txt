@@ -42,5 +42,7 @@ func scottyEyeTracker()
           o_Y = o_Y + y
           y = 9
           x = 9
-  draw.Bg(o_X, o_Y, #red)
-  draw.Bg(o_X + 2, o_Y, #red)
+
+  ?o_X & o_Y
+    draw.Bg(o_X, o_Y, #red)
+    draw.Bg(o_X + 2, o_Y, #red)

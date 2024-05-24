@@ -452,7 +452,7 @@ var dontShowAgain = false
 
     p.pa = armor
 
-    ?14 <= p.pa & p.pa <= 29
+    ?14 <= p.pa & p.pa <= a.cMaxArmor
       ldtF("default")
     :
       ldtF("armorRecover")

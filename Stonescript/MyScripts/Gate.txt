@@ -21,7 +21,7 @@ var set = new MyScripts/Borrowed/scottyEyeTracker
 :
   equipL triskelion
 
-set.scottyEyeTracker("#rainbow")
+set.scottyEyeTracker("#red")
 
 
 

@@ -10,6 +10,7 @@ into your mindstone.
 Instructions:
 - At the correct locations, just call:
   scottyEyeTracker(col)
+  Where "col" is the color of the tracker (include "#").
 
 */
 
@@ -44,5 +45,5 @@ func scottyEyeTracker(col)
           x = 9
 
   ?o_X & o_Y
-    draw.Bg(o_X, o_Y, #col)
-    draw.Bg(o_X + 2, o_Y, #col)
+    draw.Bg(o_X, o_Y, col)
+    draw.Bg(o_X + 2, o_Y, col)

@@ -33,7 +33,7 @@ var somPanel = som.mkUI(0, 1, i.colToHex("red"), true, false)
   somPanel = som.mkUI(0, 1, i.colToHex("red"), true, false)
 
 
-dpsm.ENABLED = false
+dpsm.ENABLED = true
 dpsm.refreshRate = 5
 
 var dpsPanel
@@ -135,6 +135,7 @@ func bossFight()
       ^              i.getDebuffLvl("ignition", true),
       ^              a.cindDmg_Default, dpsm.DPS)
         c.useCind()
+    
 
     p.ft = foe.time
 

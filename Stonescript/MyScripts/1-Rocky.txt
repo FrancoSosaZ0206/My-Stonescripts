@@ -133,7 +133,7 @@ func bossFight()
       ?p.fds = a.maxIgnitions_Default |
       ^c.canKillCind(i.getFoeTotalHP(),
       ^              i.getDebuffLvl("ignition", true),
-      ^              a.cindDmg_Default, dpsm.DPS)
+      ^              a.cindDmg_Default, dpsm.DPS + a.cindDmg_Default)
         c.useCind()
 
     :?c.canUseCind() & !dpsm.DPS

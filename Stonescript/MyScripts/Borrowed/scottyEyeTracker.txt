@@ -4,12 +4,12 @@ ScottyEyeTracker v1.0 by MaxMinMedian
 Modified by: MetalEagle26 (Tom Crow)
 -------------------------------------
 A simple and short chest tracking script.
-Only 27 lines long, it should easily fit 
+It's quite a small script, it should easily fit 
 into your mindstone.
 
 Instructions:
 - At the correct locations, just call:
-  scottyEyeTracker()
+  scottyEyeTracker(col)
 
 */
 
@@ -17,7 +17,7 @@ var o_X
 var o_Y
 var w = screen.w
 
-func scottyEyeTracker()
+func scottyEyeTracker(col)
   ?screen.x ! 69
     return
   var L
@@ -44,5 +44,5 @@ func scottyEyeTracker()
           x = 9
 
   ?o_X & o_Y
-    draw.Bg(o_X, o_Y, #red)
-    draw.Bg(o_X + 2, o_Y, #red)
+    draw.Bg(o_X, o_Y, #col)
+    draw.Bg(o_X + 2, o_Y, #col)

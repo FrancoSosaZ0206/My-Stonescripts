@@ -20,7 +20,6 @@ var set = new MyScripts/Borrowed/scottyEyeTracker
   c.useQstaff(a.myqstaff)
 :
   equipL triskelion
-  equipR mask
 
 set.scottyEyeTracker()
 

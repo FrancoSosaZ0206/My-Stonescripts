@@ -1,6 +1,4 @@
-/*
-
-ScottyEyeTracker v1.0 by MaxMinMedian
+/* ScottyEyeTracker v1.0 by MaxMinMedian
 Modified by: MetalEagle26 (Tom Crow)
 -------------------------------------
 A simple and short chest tracking script.
@@ -10,9 +8,7 @@ into your mindstone.
 Instructions:
 - At the correct locations, just call:
   scottyEyeTracker(col)
-  Where "col" is the color of the tracker (include "#").
-
-*/
+  Where "col" is the color of the tracker (include "#"). */
 
 var o_X
 var o_Y
@@ -36,8 +32,9 @@ func scottyEyeTracker(col)
     for y = -1 .. 1 
       t = 2 - math.Abs(y)
       for x = -1 .. 1
-        L = draw.GetSymbol(o_X + t * x, o_Y + y)
-        R = draw.GetSymbol(o_X + t * x + 2, o_Y + y)
+        ?o_X & o_Y
+          L = draw.GetSymbol(o_X + t * x, o_Y + y)
+          R = draw.GetSymbol(o_X + t * x + 2, o_Y + y)
         ?"o-" = R & R + "\" = L
           o_X = o_X + t * x
           o_Y = o_Y + y

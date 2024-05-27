@@ -246,7 +246,7 @@ c.doAAC("sword 0*", a.cshield1)
 
   :?p.fd > 35
     p.pa = armor
-    ?14 <= p.pa & p.pa <= 29
+    ?14 <= p.pa & p.pa <= a.cMaxArmor
       ldtF("default")
     :?p.pa < 14
       ldtF("armorRegen")

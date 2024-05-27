@@ -112,7 +112,7 @@ var tshield = "towering shield *max golden"
 
 // Weapons damage and stats
 
-var cMaxArmor = 33
+var cMaxArmor = 35
 var boostedPdeb = 4 // [Death's Kiss]'s damage penalty (boosted)
 
 var bladeDmg = 310
@@ -133,7 +133,7 @@ var weavDmg = 1
 var weavUnmkChance = 0.14 // %
 var weavArmor = 1.35
 
-var hammDmg = 123
+var hammDmg = 145
 
 /* WARNING: These stats are for
 [Kubikiribocho] only, not for the
